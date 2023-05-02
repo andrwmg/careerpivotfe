@@ -19,7 +19,7 @@ import { Dashboard } from '@mui/icons-material';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {logout} = React.useContext(ListingContext)
+  const {userImage, logout} = React.useContext(ListingContext)
 
   const auth = useAuthUser()
   const navigate = useNavigate()
@@ -37,6 +37,10 @@ export default function UserMenu() {
     navigate('/')
 }
 
+React.useEffect(() => {
+    console.log(userImage)
+}, [userImage])
+
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
@@ -48,8 +52,8 @@ export default function UserMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-              {auth().image ? 
-            <Avatar alt='' src={auth().image.url} sx={{ width: 32, height: 32 }} />
+              {userImage ? 
+            <Avatar alt='' src={userImage} sx={{ width: 32, height: 32 }} />
             : <AvatarDefault username={auth().username} />
               }
           </IconButton>

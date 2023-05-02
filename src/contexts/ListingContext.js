@@ -460,8 +460,8 @@ export const ListingProvider = ({ children }) => {
                     }
                 )) {
                     if (data.user.image) {
-                        setUserImage(data.user.image.url)
                         window.localStorage.setItem('userImage', data.user.image.url)
+                        setUserImage(data.user.image.url)
                     }
                     navigate('/')
                     // })
@@ -514,7 +514,7 @@ export const ListingProvider = ({ children }) => {
     return (
         <ListingContext.Provider value={{
             // userImage, setUserImage, getUser, updateUser, existingImages, setExistingImages, currentListings, setCurrentListings, currentListing, model, models, setModel, year, years, setYear, trim, trims, setTrim, interior, interiors, setInterior, exterior, exteriors, setExterior, autopilot, autopilots, setAutopilot, mileage, setMileage, condition, conditions, setCondition, title, titles, setTitle, location, setLocation, price, setPrice, description, setDescription, setFilters, resetFilters, createNewListing, getListing, updateListing, deleteListing, deleteAllListings, renderEditForm, findData, seed, loading, setLoading, author, isAuthor, setIsAuthor, register, login, logout, resend, currentListingAuthor, current, sortLabel, setSortLabel, sort, setSort, order, setOrder, 
-            login, register, resend, verify, logout, message, setMessage, messageStatus, setMessageStatus, token, setToken
+            login, register, resend, verify, logout, message, setMessage, messageStatus, setMessageStatus, token, setToken, userImage, setUserImage
             // getListings, comments, setComments, allImages, setAllImages, createSeedListing, verify 
         }}>
             {children}
