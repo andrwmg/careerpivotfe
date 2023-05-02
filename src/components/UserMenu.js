@@ -53,7 +53,7 @@ React.useEffect(() => {
             aria-expanded={open ? 'true' : undefined}
           >
               {userImage ? 
-            <Avatar alt='' src={userImage} sx={{ width: 32, height: 32 }} />
+            <Avatar alt='' src={userImage} />
             : <AvatarDefault username={auth().username} />
               }
           </IconButton>

@@ -18,7 +18,7 @@ export default function RegistrationForm() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
-  const [userImage, setUserImage] = useState(null)
+  const [tempImage, setTempImage] = useState(null)
 
   const { register, setMessage, setMessageStatus } = useContext(ListingContext)
 
@@ -46,23 +46,15 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    const image = userImage ? 
-    await UploadFilesService.upload(userImage) : 
-    { filename: 'defaultUserImage', url: "/broken-image.jpg" }
-    // register(obj)
-    const obj = { username, email, password, image }
-    // axios.post('https://localhost:7070/register', obj)
-    // .then(({data})=> {
-    //   setMessage(data.message)
-    //   setMessageStatus(data.status)
-    // })
+    const image = tempImage ? await UploadFilesService.upload(tempImage) : null
+    const obj = { username, email, password, image: image ? image[0] : null }
     register(obj)
   }
 
   const selectFile = (event) => {
     const file = event.target.files
-    const image = [{ data: file[0], tempUrl: URL.createObjectURL(file[0]) }]
-    setUserImage(image)
+    const image = { data: file[0], tempUrl: URL.createObjectURL(file[0]) }
+    setTempImage(image)
   }
 
   return (
@@ -91,7 +83,7 @@ export default function RegistrationForm() {
                     variant="outlined"
                     component="div"
                     sx={{ borderRadius: '50%', p: 0 }}>
-                    <Avatar alt='' src={userImage ? userImage[0].tempUrl : "/broken-image.jpg"} style={{ height: '100px', width: '100px', objectFit: 'cover', p: 'none', borderRadius: '50%' }} />
+                    <Avatar alt='' src={tempImage ? tempImage.tempUrl : "/broken-image.jpg"} style={{ height: '100px', width: '100px', objectFit: 'cover', p: 'none', borderRadius: '50%' }} />
                   </Button>
                 </div>
               </label>

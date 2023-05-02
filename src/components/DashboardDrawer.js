@@ -300,9 +300,9 @@ function DashboardDrawer(props) {
                 <TabPanel value="1" sx={{px: 0}}>
                     <Dashboard />
                 </TabPanel>
-        <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
-        <TabPanel value="4">Item Four</TabPanel>
+        <TabPanel value="2"></TabPanel>
+        <TabPanel value="3"></TabPanel>
+        <TabPanel value="4"></TabPanel>
 
                 {/* <Dashboard /> */}
             </Box>

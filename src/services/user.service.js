@@ -26,7 +26,7 @@ class UserDataService {
     return http.get(`/reset/${token}`)
   }
 
-  resetPassword(token, data) {
+  reset(data) {
     return http.post('/reset', data)
   }
 

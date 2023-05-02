@@ -44,8 +44,9 @@ export default function ResetForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        if (password === confirm) {
             let obj = { password, confirm }
-            await userService.resetPassword(token, obj)
+            await userService.reset(obj)
                 .then(({ data }) => {
                     setMessage(data.message)
                     setMessageStatus(data.messageStatus)
@@ -53,7 +54,11 @@ export default function ResetForm() {
                         navigate('/login')
                     }
                 })
+        } else {
+            setMessage('Passwords do not match. Try again.')
+            setMessageStatus('error')
         }
+    }
 
     // const selectFile = (event) => {
     //     const file = event.target.files
@@ -95,7 +100,7 @@ export default function ResetForm() {
                                             onMouseDown={handleMouseDownPassword}
                                             edge="end"
                                         >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                             }}

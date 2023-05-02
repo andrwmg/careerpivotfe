@@ -13,7 +13,7 @@ import userService from '../services/user.service';
 
 export default function LoginForm() {
 
-    const [username, setUsername] = useState('')
+    const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [tokenLoaded, setTokenLoaded] = useState(false)
@@ -36,8 +36,8 @@ export default function LoginForm() {
     // }, [tokenLoaded])
 
 
-    const handleUsernameChange = (event) => {
-        setUsername(event.target.value)
+    const handleEmailChange = (event) => {
+        setEmail(event.target.value)
     }
 
     const handlePasswordChange = (event) => {
@@ -54,7 +54,7 @@ export default function LoginForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        let obj = { username, password }
+        let obj = { email, password }
         login(obj)
     }
 
@@ -67,12 +67,12 @@ export default function LoginForm() {
                             Log In
                         </Typography>
                         <TextField
-                            id="outlined-username-input"
-                            label="Username"
+                            id="outlined-email-input"
+                            label="Email"
                             type="text"
-                            value={username}
-                            onChange={handleUsernameChange}
-                            autoComplete="current-username"
+                            value={email}
+                            onChange={handleEmailChange}
+                            autoComplete="current-email"
                             size="small"
                             fullWidth
                             required
@@ -96,7 +96,7 @@ export default function LoginForm() {
                                             onMouseDown={handleMouseDownPassword}
                                             edge="end"
                                         >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                             }}

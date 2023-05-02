@@ -38,7 +38,7 @@ export default function Navbar(props) {
     const [anchorEl, setAnchorEl] = React.useState(null);
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
 
-    const { message, logout } = React.useContext(ListingContext)
+    const { message, logout, setUserImage } = React.useContext(ListingContext)
     const isMenuOpen = Boolean(anchorEl);
     const isMobileMenuOpen = Boolean(mobileMoreAnchorEl);
     const navigate = useNavigate()
@@ -76,6 +76,13 @@ export default function Navbar(props) {
     const handleMobileMenuOpen = (event) => {
         setMobileMoreAnchorEl(event.currentTarget);
     };
+
+    React.useEffect(() => {
+        const image = window.localStorage.getItem('userImage')
+        if (image) {
+            setUserImage(image)
+        }
+    }, [])
 
     const menuId = 'primary-search-account-menu';
 //     const renderMenu = (

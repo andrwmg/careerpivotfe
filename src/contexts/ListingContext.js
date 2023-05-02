@@ -416,99 +416,140 @@ export const ListingProvider = ({ children }) => {
     // }
 
     // // Can move to UserContext file
-    const register = async (obj) => {
-        const { data } = await userService.register(obj)
-
-        // setUser(data.user)
-        setMessage(data.message)
-        setMessageStatus(data.messageStatus)
-        if (data.messageStatus === 'success') {
-            navigate('/login')
-        }
-    }
-
-    const verify = async (token) => {
-        const { data } = await userService.verify(token)
-        setMessage(data.message)
-        setMessageStatus(data.messageStatus)
-    }
-
-    const resend = async (obj) => {
-        const { data } = await userService.resend(obj)
-        setMessage(data.message)
-        setMessageStatus(data.messageStatus)
-        navigate('/login')
-    }
-
-    const login = async (obj) => {
-        // const { data } = await userService.login(obj)
-        const { data } = await userService.login(obj)
-        setMessage(data.message)
-        setMessageStatus(data.messageStatus)
-        if (data.message === 'Account not verified') {
-            navigate('/verify')
-        } else {
-            if (data.user) {
-                if (signIn(
-                    {
-                        token: data.token,
-                        expiresIn: 1000 * 60 * 60 * 24 * 7,
-                        tokenType: "Bearer",
-                        authState: { email: data.user.email, username: data.user.username, id: data.user._id },
-                        // refreshToken: res.data.refreshToken,                    // Only if you are using refreshToken feature
-                        // refreshTokenExpireIn: res.data.refreshTokenExpireIn     // Only if you are using refreshToken feature
-                    }
-                )) {
-                    if (data.user.image) {
-                        window.localStorage.setItem('userImage', data.user.image.url)
-                        setUserImage(data.user.image.url)
-                    }
-                    navigate('/')
-                    // })
+    const register = (obj) => {
+        userService.register(obj)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setMessageStatus(data.messageStatus)
+                if (data.messageStatus === 'success') {
+                    navigate('/login')
                 }
-            }
-        }
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+            })
     }
 
-    const logout = async () => {
-        try {
-            const { data } = await userService.logout()
 
-            if (data.messageStatus === 'success') {
-                window.localStorage.clear()
-                signOut()
+    const verify = token => {
+        userService.verify(token)
+            .then(({ data }) => {
                 setMessage(data.message)
                 setMessageStatus(data.messageStatus)
-                setTimeout(()=> {
-                    navigate(0)
-                }, 1000)
-            } else {
-                setMessage(data.message)
-                setMessageStatus(data.messageStatus)
-            }
-        } catch (e) {
-            setMessageStatus('error')
-            setMessage(e)
-        }
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+            })
     }
 
-    // const updateUser = async (body) => {
-    //     const id = auth().id
-    //     userService.updateUser(id, body)
-    //     .then(({data}) => {
-    //         const obj = data.image.url
-    //         window.localStorage.setItem('userImage', obj)
-    //         // console.log(obj)
-    //         setUserImage(obj)
-    //         setMessage(data.message)
-    //         setMessageStatus(data.messageStatus)
-    //         // console.log(`Data back from updateUser: ${obj}`)
-    //         // console.log('Data in localhost before updating it: ', JSON.parse(window.localStorage.getItem('userImage')))
-    //         // console.log('Data in localhost after updating it: ', JSON.parse(window.localStorage.getItem('userImage')))
-    //         // console.log({...data.image})
-    //     })
-    //     // navigate(0)
+    const resend = obj => {
+        userService.resend(obj)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setMessageStatus(data.messageStatus)
+                navigate('/login')
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+            })
+    }
+
+
+    const login = obj => {
+        userService.login(obj)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setMessageStatus(data.messageStatus)
+                if (data.user) {
+                    if (signIn(
+                        {
+                            token: data.token,
+                            expiresIn: 1000 * 60 * 60 * 24 * 7,
+                            tokenType: "Bearer",
+                            authState: { email: data.user.email, username: data.user.username, id: data.user._id, image: data.user.image }
+                        }
+                    )) {
+                        if (data.user.image) {
+                            setUserImage(data.user.image.url)
+                            window.localStorage.setItem('userImage', data.user.image.url)
+                        }
+                        navigate('/dashboard')
+                    }
+                }
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+                if (response.data.message === 'Account not verified') {
+                    navigate('/verify')
+                }
+            })
+    }
+
+    // const login = async (obj) => {
+    //     // const { data } = await userService.login(obj)
+    //     const { data } = await userService.login(obj)
+    //     setMessage(data.message)
+    //     setMessageStatus(data.messageStatus)
+    //     if (data.message === 'Account not verified') {
+    //         navigate('/verify')
+    //     } else {
+    //         if (data.user) {
+    //             if (signIn(
+    //                 {
+    //                     token: data.token,
+    //                     expiresIn: 1000 * 60 * 60 * 24 * 7,
+    //                     tokenType: "Bearer",
+    //                     authState: { email: data.user.email, username: data.user.username, id: data.user._id },
+    //                     // refreshToken: res.data.refreshToken,                    // Only if you are using refreshToken feature
+    //                     // refreshTokenExpireIn: res.data.refreshTokenExpireIn     // Only if you are using refreshToken feature
+    //                 }
+    //             )) {
+    //                 if (data.user.image) {
+    //                     window.localStorage.setItem('userImage', data.user.image.url)
+    //                     setUserImage(data.user.image.url)
+    //                 }
+    //                 navigate('/dashboard')
+    //                 // })
+    //             }
+    //         }
+    //     }
     // }
+
+    const logout = () => {
+        userService.logout()
+            .then(({ data }) => {
+                signOut();
+                window.localStorage.clear()
+                setMessage(data.message)
+                setMessageStatus(data.messageStatus)
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+            })
+    }
+
+
+    const updateUser = async (body) => {
+        const id = auth().id
+        userService.updateUser(id, body)
+            .then(({ data }) => {
+                const obj = data.image.url
+                window.localStorage.setItem('userImage', obj)
+                setUserImage(obj)
+                setMessage(data.message)
+                setMessageStatus(data.messageStatus)
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setMessageStatus(response.data.messageStatus)
+            })
+    }
+
 
 
     return (
