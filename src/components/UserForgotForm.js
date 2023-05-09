@@ -5,11 +5,12 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import userService from '../services/user.service';
+import { ToastContext } from '../contexts/ToastContext';
 
 export default function ForgotForm() {
-    const { setMessage, setMessageStatus } = useContext(ListingContext)
+    const { setMessage, setSeverity } = useContext(ToastContext)
 
     const [email, setEmail] = useState('')
 
@@ -24,10 +25,12 @@ export default function ForgotForm() {
         await userService.forgot({ email })
             .then(({ data }) => {
                 setMessage(data.message)
-                setMessageStatus(data.messageStatus)
-                if (data.messageStatus === 'success') {
+                setSeverity('success')
                     navigate('/login')
-                }
+            })
+            .catch(({response}) => {
+                setMessage(response.data.message)
+                setSeverity('error')
             })
     }
 

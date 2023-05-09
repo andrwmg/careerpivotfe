@@ -9,7 +9,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import axios from 'axios';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import UploadFilesService from '../services/upload-files.service'
 
 export default function RegistrationForm() {
@@ -20,7 +20,7 @@ export default function RegistrationForm() {
   const [showPassword, setShowPassword] = useState(false)
   const [tempImage, setTempImage] = useState(null)
 
-  const { register, setMessage, setMessageStatus } = useContext(ListingContext)
+  const { register } = useContext(UserContext)
 
   let navigate = useNavigate()
 

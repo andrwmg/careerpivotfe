@@ -3,47 +3,47 @@ import http from "./http-common";
 class UserDataService {
 
   register(data) {
-    return http.post("/register", data);
+    return http.post("/users/register", data);
   }
 
   verify(token) {
-    return http.get(`/verify/${token}`)
+    return http.get(`/users/verify/${token}`)
   }
 
   resend(data) {
-    return http.post('/resend', data)
+    return http.post('/users/resend', data)
   }
 
   login(data) {
-    return http.post('/login', data);
+    return http.post('/users/login', data);
   }
 
   forgot(data) {
-    return http.post('/forgot', data)
+    return http.post('/users/forgot', data)
   }
 
   setToken(token) {
-    return http.get(`/reset/${token}`)
+    return http.get(`/users/reset/${token}`)
   }
 
   reset(data) {
-    return http.post('/reset', data)
+    return http.post('/users/reset', data)
   }
 
   getUser(data) {
-    return http.post('/getUser', data, { withCredentials: true })
+    return http.post('/users/getUser', data, { withCredentials: true })
   }
 
   updateUser(id, data) {
-    return http.put(`/updateUser/${id}`, data, { withCredentials: true })
+    return http.put(`/users/${id}`, data, { withCredentials: true })
   }
 
   sendMessage(data) {
-    return http.put(`/messages/${data.from}/${data.to}`, data, { withCredentials: true })
+    return http.put(`/users/messages/${data.from}/${data.to}`, data, { withCredentials: true })
   }
 
   logout() {
-    return http.get("/logout")
+    return http.get("/users/logout")
   }
 
 }

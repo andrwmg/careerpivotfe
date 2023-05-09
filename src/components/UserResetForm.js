@@ -5,15 +5,17 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid, IconButton, TextField } from '@mui/material';
 import { useNavigate, useParams } from 'react-router-dom';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import userService from '../services/user.service';
+import { ToastContext } from '../contexts/ToastContext';
 
 export default function ResetForm() {
 
-    const { setMessage, setMessageStatus, token } = useContext(ListingContext)
+    const { setMessage, setSeverity, token } = useContext(UserContext)
+    const { setAlert } = useContext(ToastContext)
 
     const [confirm, setConfirm] = useState('')
     const [password, setPassword] = useState('')
@@ -49,14 +51,16 @@ export default function ResetForm() {
             await userService.reset(obj)
                 .then(({ data }) => {
                     setMessage(data.message)
-                    setMessageStatus(data.messageStatus)
-                    if (data.messageStatus === 'success') {
+                    setSeverity('success')
                         navigate('/login')
-                    }
+                })
+                .catch(({response}) => {
+                    setMessage(response.data.message)
+                    setSeverity('error')
                 })
         } else {
             setMessage('Passwords do not match. Try again.')
-            setMessageStatus('error')
+            setSeverity('error')
         }
     }
 

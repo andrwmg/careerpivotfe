@@ -1,20 +1,20 @@
 import http from "./http-common";
 
 class CommentDataService {
-  getAll() {
-    return http.get("/comments");
+  getAll(data) {
+    return http.get(`/posts/${data}/comments`);
   }
 
   get(data) {
-    return http.get(`/listings/${data.id}/comments/${data.commentId}`);
+    return http.get(`/posts/${data.id}/comments/${data.commentId}`);
   }
 
   create(data) {
-    return http.post(`/listings/${data.id}/comments`, data);
+    return http.post(`/posts/${data.postId}/comments`, data);
   }
 
   reply(data) {
-    return http.post(`/listings/${data.id}/comments/${data.commentId}`, data);
+    return http.post(`/posts/${data.postId}/comments/${data.commentId}`, data);
   }
 
   update(id, data) {
@@ -22,7 +22,7 @@ class CommentDataService {
   }
 
   delete(data) {
-    return http.delete(`/listings/${data.id}/comments/${data.commentId}`, data);
+    return http.delete(`/posts/${data.id}/comments/${data.commentId}`, data);
   }
 
   deleteAll() {

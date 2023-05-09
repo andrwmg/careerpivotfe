@@ -8,7 +8,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import userService from '../services/user.service';
 
 export default function LoginForm() {
@@ -18,9 +18,7 @@ export default function LoginForm() {
     const [showPassword, setShowPassword] = useState(false)
     const [tokenLoaded, setTokenLoaded] = useState(false)
 
-    const { setMessage, setMessageStatus, verify } = useContext(ListingContext)
-
-    const { login } = useContext(ListingContext)
+    const { login } = useContext(UserContext)
 
     const navigate = useNavigate()
     const params = useParams()
@@ -101,7 +99,10 @@ export default function LoginForm() {
                                     </InputAdornment>
                             }}
                         />
-                        <Grid container item gap={2}>
+                        <Grid container item gap={2} wrap='wrap-reverse'>
+                            <Grid container item direction='column' xs={12} md>
+                                <Button onClick={() => navigate('/register')} variant='outlined' sx={{ width: '100%', mx: 'auto' }}>Sign Up</Button>
+                            </Grid>
                             <Grid container item direction='column' xs={12} md>
                                 <Button
                                     type="submit"
@@ -109,10 +110,6 @@ export default function LoginForm() {
                                     sx={{ width: '100%', mx: 'auto' }}>
                                     Log In
                                 </Button>
-                            </Grid>
-
-                            <Grid container item direction='column' xs={12} md>
-                                <Button onClick={() => navigate('/register')} variant='outlined' sx={{ width: '100%', mx: 'auto' }}>Sign Up</Button>
                             </Grid>
                         </Grid>
                         <Button onClick={() => navigate('/forgot')} variant='text' sx={{ width: '100%', mx: 'auto' }}>Forgot password?</Button>

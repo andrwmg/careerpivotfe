@@ -13,13 +13,13 @@ import Settings from '@mui/icons-material/Settings';
 import Logout from '@mui/icons-material/Logout';
 import { useAuthUser } from 'react-auth-kit';
 import AvatarDefault from './AvatarDefault';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
 import { Dashboard } from '@mui/icons-material';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const {userImage, logout} = React.useContext(ListingContext)
+  const {userImage, logout} = React.useContext(UserContext)
 
   const auth = useAuthUser()
   const navigate = useNavigate()
@@ -30,6 +30,11 @@ export default function UserMenu() {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const handleDashboard = () => {
+      const career = window.localStorage.getItem('career')
+      navigate('/dashboard' + (career ? `?career=${career}` : ''))
+  }
 
   const handleLogout = () => {
     setAnchorEl(null)
@@ -94,14 +99,8 @@ React.useEffect(() => {
         transformOrigin={{ horizontal: 'right', vertical: 'top' }}
         anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
       >
-          <MenuItem onClick={() => navigate('/dashboard')}>
-          <Avatar /> Dashboard
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Profile
-        </MenuItem>
-        <MenuItem onClick={handleClose}>
-          <Avatar /> Account
+          <MenuItem onClick={handleDashboard}>
+          Dashboard
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>

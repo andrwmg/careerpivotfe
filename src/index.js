@@ -5,7 +5,9 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from 'react-auth-kit';
-import { ListingProvider } from './contexts/ListingContext';
+import { UserProvider } from './contexts/UserContext';
+import { ToastProvider } from './contexts/ToastContext';
+import { GlobalProvider } from './contexts/GlobalContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
@@ -16,9 +18,13 @@ root.render(
       cookieDomain={window.location.hostname}
       cookieSecure={false}>
       <BrowserRouter>
-        <ListingProvider>
+      <ToastProvider>
+        <UserProvider>
+          <GlobalProvider>
           <App />
-        </ListingProvider>
+          </GlobalProvider>
+        </UserProvider>
+        </ToastProvider>
       </BrowserRouter>
     </AuthProvider>
   </React.StrictMode>

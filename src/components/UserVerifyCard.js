@@ -3,11 +3,11 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Button, CardMedia, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
-import { ListingContext } from '../contexts/ListingContext';
+import { UserContext } from '../contexts/UserContext';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
 export default React.memo(function VerifyCard() {
-    const { resend } = useContext(ListingContext)
+    const { resend } = useContext(UserContext)
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')

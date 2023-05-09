@@ -1,9 +1,26 @@
 import styled from "@emotion/styled";
-import { CommentOutlined, FavoriteBorder } from "@mui/icons-material";
+import { Comment, CommentOutlined, Favorite, FavoriteBorder } from "@mui/icons-material";
 import { Button, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
+import moment from 'moment'
+import { ToastContext } from "../contexts/ToastContext";
+import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
+import postService from "../services/post.service";
+import commentService from "../services/comment.service";
+import { Stack } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
-const EllipsisTypography = styled(Typography)(({ theme }) => ({
+const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': 1,
+    WebkitLineClamp: 1,
+    lineClamp: 1,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+}));
+
+const EllipsisTypographyThree = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
     '-webkit-box-orient': 'vertical',
     '-webkit-line-clamp': 3,
@@ -11,45 +28,229 @@ const EllipsisTypography = styled(Typography)(({ theme }) => ({
     lineClamp: 3,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
-  }));
+}));
 
-export default function LargeCard() {
+export default function LargeCard({ post, posts }) {
+
+    const [date, setDate] = useState('')
+    const [status, setStatus] = useState(null)
+    const [likeCount, setLikeCount] = useState(0)
+    const [dislikeCount, setDislikeCount] = useState(0)
+    const [comments, setComments] = useState([])
+    const [commentBody, setCommentBody] = useState('')
+    const [commentCount, setCommentCount] = useState(0)
+
+    const auth = useAuthUser()
+    const isAuthenticated = useIsAuthenticated()
+    const navigate = useNavigate()
+
+    const { setMessage, setSeverity } = useContext(ToastContext)
+
+    const likePost = () => {
+        if (isAuthenticated()) {
+            let newValue = likeCount
+            let newStatus
+            if (status === 'liked') {
+                newValue--
+                newStatus = 'disliked'
+            } else {
+                newValue++
+                newStatus = 'liked'
+            }
+            setStatus(newStatus)
+            setLikeCount(newValue)
+            postService.like(post._id, auth().id)
+                .then(({ data }) => {
+                    setMessage(data.message)
+                    setSeverity('success')
+                    console.log("Post liked!", data)
+                })
+                .catch(({ response }) => {
+                    if (newStatus === 'liked') {
+                        setStatus('disliked')
+                        console.log(newValue)
+                        newValue--
+                        setLikeCount(newValue)
+                    } else {
+                        setStatus('liked')
+                        console.log(newValue)
+                        newValue++
+                        setLikeCount(newValue)
+                    }
+                    setMessage(response.data.message)
+                    setSeverity('error')
+                    console.log('oops!')
+                })
+        } else {
+            setMessage("You must be logged in to like post")
+            setSeverity('error')
+        }
+    }
+
+    const unlike = () => {
+        const value = likeCount + 1
+        setStatus('disliked')
+        setLikeCount(value)
+        postService.like(post._id, auth().id)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setSeverity('success')
+                console.log("Post unliked!", data)
+            })
+            .catch(({ response }) => {
+                setStatus('disliked')
+                setLikeCount(value - 1)
+                setMessage(response.data.message)
+                setSeverity('error')
+                console.log('oops!')
+            })
+    }
+
+    const submitComment = () => {
+        if (isAuthenticated()) {
+
+            const newValue = commentCount + 1
+            setCommentCount(newValue)
+            const obj = { postId: post._id, userId: auth().id, body: commentBody }
+            commentService.create(obj)
+                .then(({ data }) => {
+                    if (commentCount) {
+                        showComments()
+                    }
+                    setCommentBody('')
+                    setMessage(data.message)
+                    setSeverity('success')
+                })
+                .catch(({ response }) => {
+                    setCommentCount(newValue - 1)
+                    setMessage(response.data.message)
+                    setSeverity('error')
+                })
+        } else {
+            setMessage("You must be logged in to comment")
+            setSeverity('error')
+        }
+    }
+
+    const showComments = () => {
+        if (commentCount !== 0) {
+            commentService.getAll(post._id)
+                .then(({ data }) => {
+                    console.log(data)
+                    setComments(data.comments)
+                })
+                .catch(({ response }) => {
+                    setMessage(response.data.message)
+                    setSeverity('error')
+                })
+        }
+    }
+
+    const updateLikes = () => {
+        if (post.likes.length !== 0) {
+            setLikeCount(post.likes.length)
+        }
+        if (post.dislikes.length !== 0) {
+            setDislikeCount(post.dislikes.length)
+        }
+        if (auth() && post.likes.map(l => l.userId).includes(auth().id)) {
+            setStatus('liked')
+        } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
+            setStatus('disliked')
+        } else {
+            setStatus(null)
+        }
+    }
+
+    const handleClick = () => {
+        navigate(`/dashboard/posts/${post._id}`)
+    }
+
+    useEffect(() => {
+        console.log(post)
+
+        updateLikes()
+        setCommentCount(post.commentCount)
+
+        const diffInMillis = moment().diff(moment(post.createdAt))
+
+        if (diffInMillis < 60000) {
+            const diffInSeconds = Math.floor(moment.duration(diffInMillis).asSeconds())
+            setDate(`${diffInSeconds} hour${diffInSeconds > 1 ? 's' : ''} ago`)
+            return
+        } else if (diffInMillis < 3600000) {
+            const diffInMinutes = Math.floor(moment.duration(diffInMillis).asMinutes())
+            setDate(`${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`)
+            return
+        } else if (diffInMillis < 86400000) {
+            const diffInHours = Math.floor(moment.duration(diffInMillis).asHours())
+            setDate(`${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`)
+            return
+        } else {
+            const diffInDays = Math.floor(moment.duration(diffInMillis).asDays())
+            if (diffInDays > 30) {
+                setDate('30+ days ago')
+            } else {
+                setDate(`${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`)
+            }
+        }
+    }, [])
+
+    useEffect(() => {
+        updateLikes()
+    }, [posts])
 
     return (
-        <Button onClick={()=>console.log('Hey!')} variant="contained" sx={{  maxWidth: {xs: '100%', lg: 'calc(50% - 16px)'}, height: '292px', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, flexGrow: .5 }}>
-            <Grid container item direction='column' alignItems='start' xs={12} justifyContent='space-between' height='100%'>
-                <Grid container item justifyContent='space-between' alignItems='center' rowGap={1}>
-                    <Button variant="contained" sx={{height: '40px', borderRadius: '20px'}}>
-                        Product Design for Dummies
-                    </Button>
-                    <Typography variant='subtitle1' color='text.secondary'>6 hours ago</Typography>
-                    </Grid>
+        <Button onClick={handleClick} variant="contained" sx={{ maxWidth: { xs: '100%', lg: 'calc(50% - 16px)' }, bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none'}, boxShadow: 'none' }}>
+        <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
+            {/* <Grid container item justifyContent='space-between' alignItems='center' rowGap={1}>
+                <Button variant="contained" sx={{ height: '40px', borderRadius: '20px' }}>
+                    Product Design for Dummies
+                </Button>
+                <Typography variant='subtitle1' color='text.secondary'>{date}</Typography>
+            </Grid> */}
+            <Stack spacing={1} maxWidth='100%'>
+                <EllipsisTypographyOne variant="h4" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
+                <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                    {`${date} in `}
+                    <span style={{ fontWeight: 500 }}>
+                        {`${post.community ? post.community.title : "Freelancing"}`}
+                    </span>
+                </EllipsisTypographyOne>
+                <EllipsisTypographyThree variant='h4' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='90px'>
+                    {`${post.body}`}
+                    {/* This is some sample body text. This is some sample body text. This is some sample body text. Up to three lines of total body text. */}
+                </EllipsisTypographyThree>
+                </Stack>
+
+            <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
+                <Grid container item direction='column' xs='auto'>
                     <Grid container item gap={1}>
-                <Typography variant="body" fontWeight={700} noWrap>Title Text</Typography>
-                <EllipsisTypography variant='body2' textAlign='start'>This is some sample body text. This is some sample body text. This is some sample body text. Up to three lines of total body text.</EllipsisTypography>
+
+                        {/* <IconButton sx={{ p: 0 }} onClick={likePost}>
+                            {status !== 'liked' ?
+                                <FavoriteBorder color='primary' sx={{ fontSize: '22px' }} />
+                                : */}
+                                <Favorite color='primary' sx={{ fontSize: '22px' }} />
+                            {/* }
+                        </IconButton> */}
+
+                        <Typography variant='body1' color='primary' fontWeight={700}>{likeCount}</Typography>
+                    </Grid>
                 </Grid>
-                <Grid container item justifyContent='start' alignItems='start' gap={4} color='primary'>
-                    <Grid container item direction='column' xs='auto'>
-                    <Grid container item gap={1}>
-                    <IconButton sx={{p: 0}} color='primary'>
-                        <FavoriteBorder  sx={{fontSize: '18px'}}/>
-                    </IconButton>
-                    <Typography variant='body1' color='primary' fontWeight={700}>251</Typography>
-                    </Grid>
-                    </Grid>
-                    <Grid container item direction='column' xs>
+                <Grid container item direction='column' xs>
 
                     <Grid container item gap={1} xs='auto'>
-                    <IconButton sx={{p: 0}} color='primary'>
-                        <CommentOutlined  sx={{fontSize: '18px'}}/>
-                    </IconButton>
-                    <Typography variant='body1' color='primary' fontWeight={700}>35</Typography>
+                        {/* <IconButton sx={{ p: 0 }} color='primary'> */}
+                            <Comment color="primary" sx={{ fontSize: '22px' }} />
+                        {/* </IconButton> */}
+                        <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
                     </Grid>
-                    </Grid>
-
                 </Grid>
-                
+
             </Grid>
+
+        </Grid>
         </Button>
     )
 }

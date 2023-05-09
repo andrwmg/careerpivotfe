@@ -1,49 +1,49 @@
 import React, { useContext, useEffect, useState } from 'react';
 import Snackbar from '@mui/material/Snackbar';
-import Fade from '@mui/material/Fade';
+import Slide from '@mui/material/Slide';
 import { Alert } from '@mui/material';
-import { ListingContext } from '../contexts/ListingContext';
+import { ToastContext } from '../contexts/ToastContext';
+
+function SlideTransition(props) {
+  return <Slide {...props} direction='down' />
+}
 
 export default function MessageSnackbar() {
-    const {message, setMessage, messageStatus} = useContext(ListingContext)
+  const { message, setMessage, severity } = useContext(ToastContext)
+  const [open, setOpen] = useState(false)
 
   const [state, setState] = useState({
-    open: false,
-    Transition: Fade,
-    vertical: 'bottom',
+    vertical: 'top',
     horizontal: 'center'
   });
 
-  const {open, Transition, vertical, horizontal} = state
+  const { vertical, horizontal } = state
 
   const handleClose = () => {
-    setState({
-      ...state,
-      open: false,
-    })
-    setMessage('')
+    setOpen(false)
   };
 
-  useEffect(()=> {
-      if (message) { 
-          setState({...state, open: true})
-      }
-  },[message])
+  useEffect(() => {
+    if (message) {
+      setOpen(true)
+    }
+  }, [message])
+
 
   return (
     <div>
       <Snackbar
-        anchorOrigin={{vertical, horizontal}}
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
         open={open}
         autoHideDuration={3000}
         onClose={handleClose}
-        TransitionComponent={Transition}
+        TransitionComponent={SlideTransition}
         message={message}
-        key={Transition.name}
-        >
-               <Alert onClose={handleClose} severity={messageStatus}>
-      {message}
-   </Alert>
+      >
+        <Alert variant='filled' onClose={handleClose} severity={severity} sx={{zIndex: 10}}
+>
+          {message}
+        </Alert>
       </Snackbar>
     </div>
   );

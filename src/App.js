@@ -8,19 +8,25 @@ import UserWrapper from './components/UserWrapper';
 import LoginForm from './components/UserLoginForm';
 import RegistrationForm from './components/UserRegistrationForm';
 import { useContext, useState } from 'react';
-import { ListingContext } from './contexts/ListingContext';
+import { UserContext } from './contexts/UserContext';
 import ResetForm from './components/UserResetForm';
 import ForgotForm from './components/UserForgotForm';
 import userService from './services/user.service';
 import UserVerifyCard from './components/UserVerifyCard';
 import Dashboard from './components/Dashboard';
-import DashboardDrawer from './components/DashboardDrawer';
+import DashboardDrawer from './components/DashboardDrawer copy';
 import { light } from '@mui/material/styles/createPalette';
+import Posts from './components/Posts';
+import { ToastContext } from './contexts/ToastContext';
+import DashboardNav from './components/DashboardNav';
+import PostPage from './components/PostPage';
+import MessageSnackbar from './components/MessageSnackbar';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: 'rgba(89, 111, 255, 1)'
+      main: 'rgba(89, 111, 255, 1)',
+      hover: 'rgba(89, 111, 255, .8)'
     }
   },
   typography: {
@@ -45,7 +51,7 @@ const theme = createTheme({
       fontSize: ["20px", '!important'],
     },
     h6: {
-      color: 'black',
+      fontSize: '24px',
       fontWeight: 600
     },
     body1: {
@@ -53,6 +59,9 @@ const theme = createTheme({
     },
     body2: {
       fontSize: ["14px", '!important']
+    },
+    subtitle1: {
+        fontSize: ["16px", '!important']
     },
     p: {
       fontSize: '13px',
@@ -123,7 +132,7 @@ const dark = unstable_createMuiStrictModeTheme({
 
 function App() {
 
-  const { setMessage, setMessageStatus } = useContext(ListingContext)
+  const { setMessage, setSeverity } = useContext(ToastContext)
   const navigate = useNavigate()
 
 
@@ -137,7 +146,7 @@ function App() {
       .then(({ data }) => {
         if (data.messageStatus === 'success') {
           setMessage(data.message)
-          setMessageStatus(data.messageStatus)
+          setSeverity(data.messageStatus)
           navigate('/login')
         } else {
           navigate('/')
@@ -153,7 +162,7 @@ function App() {
         if (data.messageStatus === 'success') {
           console.log('here')
           setMessage(data.message)
-          setMessageStatus(data.messageStatus)
+          setSeverity(data.messageStatus)
           navigate('/reset')
           // return <Navigate to={'/reset'} />
         } else {
@@ -165,7 +174,8 @@ function App() {
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
-        <Navbar>
+        <DashboardDrawer>
+          <MessageSnackbar />
           <Routes>
             <Route path='/' element={<Landing />} />
             <Route path='/register' element={<UserWrapper form={<RegistrationForm />} />} />
@@ -175,10 +185,12 @@ function App() {
             <Route path='/reset/:token' element={<ResetLink />} />
             <Route path='/verify/:token' element={<VerifyLink />} />
             <Route path='/verify' element={<UserWrapper form={<UserVerifyCard />} />} />
-            <Route path='/dashboard' element={<DashboardDrawer />} />
+            <Route path='/dashboard/posts/:postId' element={<PostPage />} />
+            <Route path='/dashboard' element={<DashboardNav />} />
+            <Route path='/dashboard/posts' element={<Posts />} />
             <Route path="*" element={<HomeRedirect />} />
           </Routes>
-        </Navbar>
+        </DashboardDrawer>
       </ThemeProvider>
     </div>
     // https://www.careerpivot.io/verify/${verificationToken}
