@@ -31,6 +31,7 @@ export default function Dashboard() {
                 console.log(data)
                 setTrending(data.data)
                 setMessage(data.message)
+                setSeverity('success')
                 console.log('Trending: ', data)
             })
             .catch(({ response }) => {
@@ -39,7 +40,6 @@ export default function Dashboard() {
             })
         const searchParams = new URLSearchParams(location.search);
             setCommunity(searchParams.get('community'))
-
             postService.getAll()
         .then(({data}) => {
             setPosts(data)
@@ -52,6 +52,7 @@ export default function Dashboard() {
     }, [])
 
     useEffect(() => {
+        if (career) {
         communityService.getPopular(career)
             .then(({ data }) => {
                 console.log(data)
@@ -63,6 +64,7 @@ export default function Dashboard() {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
+        }
     }, [career])
 
     return (
@@ -78,6 +80,7 @@ export default function Dashboard() {
                     ))}
                 </Grid> */}
                 </Grid>
+                {career && 
                 <Grid container item direction='column' xs={12} height='149px'>
                     <Typography variant='body1' fontWeight={700} px={{ xs: 3, md: '50px' }}>
                         {`Popular ${career ? `${career}` : ''} Communities`}
@@ -86,6 +89,7 @@ export default function Dashboard() {
                     </Typography>
                     <SmallCardRow communities={popular} />
                 </Grid>
+}
             <Feed posts={posts} heading='Your Feed' />
         </Grid>
     )
