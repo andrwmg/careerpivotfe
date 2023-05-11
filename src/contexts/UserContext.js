@@ -11,6 +11,7 @@ export const UserProvider = ({ children }) => {
 
     const [userImage, setUserImage] = useState(null)
     const [career, setCareer] = useState(null)
+    const [communities, setCommunities] = useState([])
     const [token, setToken] = useState(null)
 
     const { setMessage, setSeverity } = useContext(ToastContext)
@@ -73,6 +74,7 @@ export const UserProvider = ({ children }) => {
                             authState: { email: data.user.email, username: data.user.username, id: data.user._id, image: data.user.image }
                         }
                     )) {
+                        localStorage.setItem('token', data.token)
                         if (data.user.image) {
                             setUserImage(data.user.image.url)
                             window.localStorage.setItem('userImage', data.user.image.url)
@@ -81,9 +83,14 @@ export const UserProvider = ({ children }) => {
                             setCareer(data.user.career)
                             window.localStorage.setItem('career', data.user.career)
                         }
+                        if (data.user.communities) {
+                            setCommunities(data.user.communities)
+                            window.localStorage.setItem('communities', JSON.stringify(data.user.communities))
+                        }
+                       
                         setMessage(data.message)
                         setSeverity('success')
-                        navigate(`/dashboard?career=${data.user.career || 'Product Design'}`)
+                        navigate(`/dashboard?career=${data.user.career || ''}`)
                     }
                 }
             })
@@ -129,7 +136,7 @@ export const UserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
-            login, register, resend, verify, logout, token, setToken, userImage, setUserImage
+            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, communities, setCommunities
         }}>
             {children}
         </UserContext.Provider>

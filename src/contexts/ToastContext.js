@@ -9,7 +9,7 @@ export const ToastContext = createContext();
 export const ToastProvider = ({ children }) => {
 
     const [message, setMessage] = useState('')
-    const [severity, setSeverity] = useState('')
+    const [severity, setSeverity] = useState('success')
 
     return (
         <ToastContext.Provider value={{

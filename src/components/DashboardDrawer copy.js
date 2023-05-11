@@ -32,25 +32,10 @@ import { grey } from '@mui/material/colors';
 import styled from '@emotion/styled';
 import UserMenu from './UserMenu';
 import DashboardNav from './DashboardNav';
+import { UserContext } from '../contexts/UserContext';
 
 
 const drawerWidth = 256;
-
-const menuItems = [
-    {
-        first: {
-            icon: <NotificationsOutlined sx={{ fontSize: '18px' }} />,
-            text: 'Notifications',
-            link: ''
-        }
-    },
-    {
-        first: {
-            icon: <MessageOutlined sx={{ fontSize: '18px' }} />,
-            text: 'Messages',
-            link: ''
-        }
-    }]
 
 const pivotItems = [
     {
@@ -103,6 +88,9 @@ const SearchBar = styled(OutlinedInput)(({ theme }) => ({
     "& .MuiOutlinedInput-notchedOutline, &:hover .MuiOutlinedInput-notchedOutline": {
         border: '1px solid #596FFF'
     },
+    "& :active .MuiOutlinedInput-notchedOutline": {
+        border: '2px solid #596FFF'
+    },
     color: '#596FFF',
 }))
 
@@ -116,12 +104,12 @@ function DashboardDrawer(props) {
     const [helpOpen, setHelpOpen] = React.useState(false)
     const [settingsOpen, setSettingsOpen] = React.useState(false)
     const [value, setValue] = React.useState('1');
-    const [communities, setCommunities] = React.useState([])
     const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
     const [indicatorPosition, setIndicatorPosition] = React.useState(0)
     const [drawerAnimation, setDrawerAnimation] = React.useState(false)
 
     const { setMessage, setSeverity } = React.useContext(ToastContext)
+    const { career, communities, setCommunities } = React.useContext(UserContext)
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
@@ -150,6 +138,10 @@ function DashboardDrawer(props) {
         setSettingsOpen(!settingsOpen)
     }
 
+    const handleGroupClick = (id) => {
+        navigate(`/dashboard/community/${id}`)
+    }
+
     const bottomMenu = [
         { icon: <CarpenterOutlined sx={{ fontSize: '18px' }} />, text: 'About', setOpen: handleAboutOpen, open: aboutOpen },
         { icon: <HelpOutlined sx={{ fontSize: '18px' }} />, text: 'Help', setOpen: handleHelpOpen, open: helpOpen },
@@ -170,16 +162,8 @@ function DashboardDrawer(props) {
 
     React.useEffect(() => {
         setDrawerAnimation(true)
-        if (isAuthenticated()) {
-            communityService.getMy(auth().id)
-                .then(({ data }) => {
-                    setCommunities(data)
-                })
-                .catch(({ response }) => {
-                    setMessage(response.data.message)
-                    setSeverity('error')
-                })
-        }
+        const result = localStorage.getItem('communities')
+        setCommunities(result ? JSON.parse(result) : [])
     }, [])
 
     const drawer = (
@@ -188,7 +172,7 @@ function DashboardDrawer(props) {
             <Grid container item bgcolor='rgba(62, 85, 205, 0.02)'>
                 <Grid container item direction='column' px={3}>
                     <Grid container item width='100%' my={4} justifyContent='center'>
-                        <Button variant='outlined' color='primary' fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
+                        <Button onClick={()=>navigate('/dashboard/posts/new')} variant='outlined' color='primary' fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
                     </Grid>
 
                     <List disablePadding>
@@ -239,30 +223,11 @@ function DashboardDrawer(props) {
                                 <Collapse in={groupsOpen} timeout="auto" unmountOnExit>
                                     {communities.length !== 0 ? communities.map(item => (
                                         <List key={item._id} component="div" disablePadding>
-                                            <ListItemButton sx={{ pl: 6.5 }}>
+                                            <ListItemButton onClick={()=>handleGroupClick(item._id)} sx={{ pl: 6.5 }}>
                                                 <ListItemText primary={item.title} />
                                             </ListItemButton>
                                         </List>))
-                                        : [
-                                            {
-                                                text: 'Remote Workers',
-                                                link: ''
-                                            },
-                                            {
-                                                text: 'Freelancing',
-                                                link: ''
-                                            },
-                                            {
-                                                text: 'Financial Freedom',
-                                                link: ''
-                                            }
-                                        ].map(item => (
-                                            <List key={item._id} component="div" disablePadding>
-                                                <ListItemButton sx={{ pl: 6.5 }}>
-                                                    <ListItemText primary={item.title} />
-                                                </ListItemButton>
-                                            </List>
-                                        ))}
+                                        : null}
                                 </Collapse>
                             </> : null}
                             <Divider />
@@ -319,7 +284,7 @@ function DashboardDrawer(props) {
                             mt={location.pathname.includes('/dashboard') ? 3 : '10px'}
                             px={location.pathname.includes('/dashboard') ? '4vw' : 3}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
-                            <Link to='/' style={{ display: 'flex', flexDirection: 'row', textDecoration: 'none', alignItems: 'center' }}>
+                            <Link to={isAuthenticated ? '/dashboard' : '/'} style={{ display: 'flex', flexDirection: 'row', textDecoration: 'none', alignItems: 'center' }}>
 
                                 <Box mr={{ xs: 1, p: 0, maxHeight: '25px' }}>
                                     <img src={logo} />
@@ -410,7 +375,7 @@ function DashboardDrawer(props) {
                 <Box
                     component="nav"
                     sx={{
-                        width: location.pathname.includes('/dashboard') && { sm: drawerWidth }, flexShrink: { sm: 0 },
+                        width: location.pathname.includes('/dashboard') ? { md: drawerWidth } : {md: 0}, flexShrink: { md: 0 },
                     }}
                     aria-label="mailbox folders"
                 >
@@ -423,16 +388,21 @@ function DashboardDrawer(props) {
                             keepMounted: true, // Better open performance on mobile.
                         }}
                         sx={{
-                            display: { xs: 'block', sm: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1 },
+                            position: 'relative',
+                            display: { xs: 'block', md: 'none' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1, bgcolor: 'white' },
                         }}
                     >
+                                                <Box id='back' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='rgba(62, 85, 205, 0.02)' zIndex={0} />
+
                         {drawer}
+
                     </Drawer>
                     <Drawer
                         variant='permanent'
                         sx={{
-                            display: { xs: 'none', sm: 'block' },
+                            position: 'relative',
+                            display: { xs: 'none', md: 'block' },
                             '& .MuiDrawer-paper': {
                                 boxSizing: 'border-box',
                                 left: (!drawerAnimation || location.pathname.includes('/dashboard')) ? 0 : '-256px',
@@ -442,9 +412,10 @@ function DashboardDrawer(props) {
                         open
                     >
                         {drawer}
+                        <Box position='absolute' flexGrow={1} bgcolor='white' />
                     </Drawer>
                 </Box>
-                <Box maxWidth='100%' mt='60px'>
+                <Box flexGrow={1} maxWidth='100%' mt='60px'>
                     {props.children}
                 </Box>
                 {/* <Box

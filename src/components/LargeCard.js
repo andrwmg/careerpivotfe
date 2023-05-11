@@ -8,7 +8,7 @@ import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import postService from "../services/post.service";
 import commentService from "../services/comment.service";
 import { Stack } from "@mui/system";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
@@ -43,6 +43,7 @@ export default function LargeCard({ post, posts }) {
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
     const navigate = useNavigate()
+    const location = useLocation()
 
     const { setMessage, setSeverity } = useContext(ToastContext)
 
@@ -150,13 +151,13 @@ export default function LargeCard({ post, posts }) {
         if (post.likes.length !== 0) {
             setLikeCount(post.likes.length)
         }
-        if (post.dislikes.length !== 0) {
-            setDislikeCount(post.dislikes.length)
-        }
-        if (auth() && post.likes.map(l => l.userId).includes(auth().id)) {
+        // if (post.dislikes.length !== 0) {
+        //     setDislikeCount(post.dislikes.length)
+        // }
+        if (auth() && post.likes.map(l => l.user._id).includes(auth().id)) {
             setStatus('liked')
-        } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-            setStatus('disliked')
+        // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
+        //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -201,7 +202,8 @@ export default function LargeCard({ post, posts }) {
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ maxWidth: { xs: '100%', lg: 'calc(50% - 16px)' }, bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none'}, boxShadow: 'none' }}>
+        <Button onClick={handleClick} variant="contained" sx={{ maxWidth: { xs: '100%', md: 'calc(50% - 16px)' }, minWidth: 'calc(50% - 16px)', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none'}, boxShadow: 'none', flexGrow: 1  }}>
+            {post && 
         <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
             {/* <Grid container item justifyContent='space-between' alignItems='center' rowGap={1}>
                 <Button variant="contained" sx={{ height: '40px', borderRadius: '20px' }}>
@@ -212,9 +214,9 @@ export default function LargeCard({ post, posts }) {
             <Stack spacing={1} maxWidth='100%'>
                 <EllipsisTypographyOne variant="h4" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
                 <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                    {`${date} in `}
+                    {`${date} ${!location.pathname.includes('/community') && post.community ? 'in ': ''}`}
                     <span style={{ fontWeight: 500 }}>
-                        {`${post.community ? post.community.title : "Freelancing"}`}
+                        {`${!location.pathname.includes('/community') && post.community ? post.community.title : ""}`}
                     </span>
                 </EllipsisTypographyOne>
                 <EllipsisTypographyThree variant='h4' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='90px'>
@@ -244,13 +246,14 @@ export default function LargeCard({ post, posts }) {
                         {/* <IconButton sx={{ p: 0 }} color='primary'> */}
                             <Comment color="primary" sx={{ fontSize: '22px' }} />
                         {/* </IconButton> */}
-                        <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
+                        <Typography variant='body1' color='primary' fontWeight={700} textAlign='start'>{commentCount}</Typography>
                     </Grid>
                 </Grid>
 
             </Grid>
 
         </Grid>
+}
         </Button>
     )
 }

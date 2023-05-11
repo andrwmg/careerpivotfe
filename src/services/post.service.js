@@ -8,6 +8,11 @@ class PostDataService {
     return http.get(path);
   }
 
+  trending() {
+    const path = "/posts/trending"
+    return http.get(path);
+  }
+
   create(data) {
       return http.post("/posts", data)
   }

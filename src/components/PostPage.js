@@ -2,7 +2,7 @@ import { Comment, CommentOutlined, Favorite, FavoriteBorder, FavoriteBorderOutli
 import { Button, Grid, IconButton, TextField, Toolbar, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
 import { ToastContext } from "../contexts/ToastContext";
 import commentService from "../services/comment.service";
@@ -94,7 +94,8 @@ export default function PostPage() {
         // if (post.dislikes.length !== 0) {
         //     setDislikeCount(post.dislikes.length)
         // }
-        if (auth() && post.likes.map(l => l.userId).includes(auth().id)) {
+        console.log(post)
+        if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
             setStatus('liked')
         // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
         //     setStatus('disliked')
@@ -148,17 +149,17 @@ export default function PostPage() {
     return (
         <Grid container item mt='62px' p={{xs: 2, sm: 7}} flexGrow={1}>
             {post ? 
-            <Grid container item direction='column' xs={12} gap={4}>
+            <Grid container item direction='column' xs={12} gap={2}>
                 <Typography variant='h3'>{post.title}</Typography>
                 <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
                     {`${timestamp} in `}
-                    <span style={{ fontWeight: 500 }}>
-                        {`${post.community ? post.community.title : "Freelancing"}`}
-                    </span>
+                    <Link to={`/dashboard/community/${post.community && post.community._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        {`${post.community ? post.community.title : "Freelancing"}`}
+                    </Link>
                 </Typography>
                 <Typography variant='body1'>{post.body}</Typography>
                 
-                <Grid container item gap={1}>
+                <Grid container item gap={4}>
+                <Grid container item gap={1} xs='auto'>
 
                         <IconButton sx={{ p: 0 }} onClick={like}>
                             {status !== 'liked' ?
@@ -169,6 +170,7 @@ export default function PostPage() {
                         </IconButton>
 
                         <Typography variant='body1' color='primary' fontWeight={700}>{trimLikes()}</Typography>
+                        </Grid>
                         <Grid container item gap={1} xs='auto'>
                         <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
                             <Comment color="primary" sx={{ fontSize: '22px' }} />

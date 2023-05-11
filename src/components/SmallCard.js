@@ -7,6 +7,16 @@ import { useNavigate } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
 import { ToastContext } from "../contexts/ToastContext";
 
+const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': 1,
+    WebkitLineClamp: 1,
+    lineClamp: 1,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+}));
+
 const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
     '-webkit-box-orient': 'vertical',
@@ -17,7 +27,7 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
 }));
 
-export default function SmallCard({post}) {
+export default function SmallCard({post, community}) {
 
 
     const [date, setDate] = useState('')
@@ -74,10 +84,11 @@ export default function SmallCard({post}) {
         if (post.dislikes.length !== 0) {
             setDislikeCount(post.dislikes.length)
         }
-        if (auth() && post.likes.map(l => l.userId).includes(auth().id)) {
+        console.log(post.likes)
+        if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
             setStatus('liked')
-        } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-            setStatus('disliked')
+        // } else if (auth() && post.dislikes.map(d => d.user._id.toString()).includes(auth().id)) {
+        //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -94,30 +105,34 @@ export default function SmallCard({post}) {
     }
 
     const handleClick = () => {
-        navigate(`/dashboard/posts/${post._id}`)
+        if (post) {
+            navigate(`/dashboard/posts/${post._id}`)
+        } else if (community) {
+            navigate(`/dashboard/community/${community._id}`)
+        }
     }
 
     useEffect(() => {
-        updateLikes()
+        post && updateLikes()
     }, [])
 
     return (
         <Button onClick={handleClick} sx={{ minWidth: '131px', height: '93px', bgcolor: 'primary.main', color: 'primary', p: 1.5, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
-            <Grid container item direction='column' justifyContent='space-between' height='100%' >
+            <Grid container item direction='column' justifyContent='space-between' height='100%'>
                 <Grid container item>
                 <EllipsisTypographyTwo variant="p" noWrap color='white'>
-                    {post.title}
+                    {post ? post.title : community.title}
                     </EllipsisTypographyTwo>
                 </Grid>
                 <Grid container item alignItems='center' gap={1} width='100%'>
-                    {/* <IconButton sx={{p: 0}} onClick={like}>
-                        {status !== 'liked' ?
-                        <FavoriteBorder  sx={{fontSize: '18px', color: 'white'}}/>
-                        : */}
+                    {post ?
+                    <>
                         <Favorite sx={{fontSize: '18px', color: 'white'}}/>
-                        {/* }
-                    </IconButton> */}
                     <Typography variant='body1' color='white' fontWeight={500}>{trimLikes()}</Typography>
+                    </>
+                    :
+                    <EllipsisTypographyOne variant='body1' color='white' fontWeight={500} textAlign='start'>{community && community.tagline}</EllipsisTypographyOne>
+}
                 </Grid>
             </Grid>
             </Button>

@@ -21,6 +21,8 @@ import { ToastContext } from './contexts/ToastContext';
 import DashboardNav from './components/DashboardNav';
 import PostPage from './components/PostPage';
 import MessageSnackbar from './components/MessageSnackbar';
+import NewPostPage from './components/NewPostPage';
+import CommunityPage from './components/CommunityPage';
 
 const theme = createTheme({
   palette: {
@@ -185,7 +187,10 @@ function App() {
             <Route path='/reset/:token' element={<ResetLink />} />
             <Route path='/verify/:token' element={<VerifyLink />} />
             <Route path='/verify' element={<UserWrapper form={<UserVerifyCard />} />} />
+            <Route path='/dashboard/posts/new' element={<NewPostPage />} />
             <Route path='/dashboard/posts/:postId' element={<PostPage />} />
+            <Route path='/dashboard/community/:communityId' element={<CommunityPage />} />
+
             <Route path='/dashboard' element={<DashboardNav />} />
             <Route path='/dashboard/posts' element={<Posts />} />
             <Route path="*" element={<HomeRedirect />} />
