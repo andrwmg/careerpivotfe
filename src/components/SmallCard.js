@@ -128,7 +128,7 @@ export default function SmallCard({post, community}) {
     }, [])
 
     return (
-        <Button onClick={handleClick} sx={{ width: '300px', bgcolor: 'primary.main', color: 'primary', p: 1.5, py: 2, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
+        <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', bgcolor: 'primary.main', color: 'primary', p: 1.5, py: 2, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
             <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
                 <Stack spacing={1} textAlign='start'>
                 <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>

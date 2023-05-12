@@ -74,6 +74,7 @@ export default function ProfileForm() {
           setCareer(data.data.career)
           setMessage(data.message)
           setSeverity('success')
+          setIsEditing(false)
         })
         .catch(({ response }) => {
           setMessage(response.data.message)
