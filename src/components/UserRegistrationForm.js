@@ -62,7 +62,7 @@ export default function RegistrationForm() {
       <CardContent>
         <form onSubmit={handleSubmit}>
           <Grid container item rowGap={4}>
-            <Typography variant="h4" color="text.secondary">
+            <Typography variant="h3" color="text.secondary">
               Register
             </Typography>
             <Grid container item direction='column' xs={12} justifyContent='center' alignItems='center' gap={2}>
@@ -87,7 +87,7 @@ export default function RegistrationForm() {
                   </Button>
                 </div>
               </label>
-              <Typography variant='p' textAlign='center'>Upload profile picture</Typography>
+              <Typography variant='h5' textAlign='center'>Upload profile picture</Typography>
             </Grid>
             <TextField
               id="outlined-email-input"

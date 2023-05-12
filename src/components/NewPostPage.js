@@ -144,11 +144,11 @@ export default function NewPostPage() {
   }, [newPost.community]);
 
   return (
-    <Grid container item mt="62px" p={{ xs: 2, sm: 7 }} flexGrow={1} width='100%'>
+    <Grid container item mt={4} px={{ xs: 3, sm: 6 }} flexGrow={1} width='100%'>
         <form onSubmit={createPost} style={{width: '100%'}}>
-        <Grid container item direction="column" xs={12} gap={4}>
+        <Grid container item direction="column" xs={12} gap={2}>
         <Typography variant="h3">Create New Post</Typography>
-            <FormControl required={true} fullWidth>
+            {/* <FormControl required={true} fullWidth>
               <InputLabel id="communitySelector">Community</InputLabel>
               <Select
                 name="communitySelector"
@@ -170,7 +170,7 @@ export default function NewPostPage() {
                   </MenuItem>
                 ))}
               </Select>
-            </FormControl>
+            </FormControl> */}
             <TextField
               label="Title"
               type="text"
@@ -184,17 +184,18 @@ export default function NewPostPage() {
               label="Body"
               required
               value={newPost.body}
-              minRows={10}
+              rows={10}
+              multiline
               onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
             />
-            <TextField
+            {/* <TextField
               label="Career"
               required
               value={newPost.career}
               onChange={(e) =>
                 setNewPost({ ...newPost, career: e.target.value })
               }
-            />
+            /> */}
             <Button type="submit" variant='contained' size="large">Create Post</Button>
         </Grid>
         </form>

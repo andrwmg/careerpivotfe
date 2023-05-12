@@ -17,8 +17,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Dashboard from './Dashboard';
-import { Button, Collapse, Grid, Tab } from '@mui/material';
-import { CarpenterOutlined, ExpandLess, ExpandMore, GroupOutlined, HelpOutlined, Message, MessageOutlined, Notifications, NotificationsOutlined, PatternSharp, SettingsOutlined, StarBorder } from '@mui/icons-material';
+import { Button, Collapse, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
+import { CarpenterOutlined, ExpandLess, ExpandMore, GroupOutlined, HelpOutlined, MenuOutlined, Message, MessageOutlined, Notifications, NotificationsOutlined, PatternSharp, Search, Settings, SettingsOutlined, StarBorder } from '@mui/icons-material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
@@ -26,103 +26,104 @@ import Posts from './Posts';
 import communityService from '../services/community.service';
 import { useAuthUser, useIsAuthenticated } from 'react-auth-kit';
 import { ToastContext } from '../contexts/ToastContext';
+import logo from '../images/logo.png'
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { grey } from '@mui/material/colors';
+import styled from '@emotion/styled';
+import UserMenu from './UserMenu';
+import DashboardNav from './DashboardNav';
+import { UserContext } from '../contexts/UserContext';
+
 
 const drawerWidth = 256;
 
-const menuItems = [
+const pivotItems = [
     {
-        first: {
-            icon: <NotificationsOutlined sx={{ fontSize: '18px' }} />,
-            text: 'Notifications',
-            link: ''
-        }
+        text: 'Overview',
+        link: ''
     },
     {
-        first: {
-            icon: <MessageOutlined sx={{ fontSize: '18px' }} />,
-            text: 'Messages',
-            link: ''
-        }
+        text: 'Getting started',
+        link: ''
     },
     {
-        first: {
-            icon: <PatternSharp sx={{ fontSize: '18px' }} />,
-            text: 'My Pivot Path',
-            link: '',
-        },
-        second: [
-            {
-                text: 'Product Designer',
-                link: ''
-            }
-        ],
-        third: [
-            {
-                text: 'Overview',
-                link: ''
-            },
-            {
-                text: 'Getting started',
-                link: ''
-            },
-            {
-                text: 'Education',
-                link: ''
-            },
-            {
-                text: 'Experience',
-                link: ''
-            },
-            {
-                text: 'Getting the job',
-                link: ''
-            },
-            {
-                text: 'Leveling up',
-                link: ''
-            }
-        ]
+        text: 'Education',
+        link: ''
     },
     {
-        first: {
-            icon: <GroupOutlined sx={{ fontSize: '18px' }} />,
-            text: 'My Groups',
-            link: '',
-        },
-        second: [
-            {
-                text: 'Remote Workers',
-                link: ''
-            },
-            {
-                text: 'Freelancing',
-                link: ''
-            },
-            {
-                text: 'Financial Freedom',
-                link: ''
-            }
-        ]
+        text: 'Experience',
+        link: ''
+    },
+    {
+        text: 'Getting the job',
+        link: ''
+    },
+    {
+        text: 'Leveling up',
+        link: ''
     }
-
 ]
 
+const TextButton = styled(Button)(({ theme }) => ({
+    color: grey[800],
+    fontSize: '16px',
+    fontWeight: 500,
+    letterSpacing: -.14,
+    textTransform: 'inherit',
+    padding: '10px',
+    borderRadius: '8px',
+    '& .MuiButtonBase-root ': {
+        wrap: 'nowrap'
+    }
+}))
 
+const MainButton = styled(TextButton)(({ theme }) => ({
+    color: grey[50],
+    boxShadow: 'none'
+}))
+
+const SearchBar = styled(OutlinedInput)(({ theme }) => ({
+    borderRadius: '9.5px',
+    color: '#596FFF',
+    width: '280px',
+    fontSize: '13px',
+    fontWeight: 600,
+    paddingLeft: 3,
+    "& input::placeholder": {
+        color: '#596FFF',
+        fontWeight: 500
+    },
+    "& .MuiOutlinedInput-notchedOutline, :hover .MuiOutlinedInput-notchedOutline": {
+        borderColor: '#596FFF'
+    },
+    "& :hover .Mui-focused, .Mui-focused": {
+        border: '2px solid #596FFF'
+    },
+}))
 
 function DashboardDrawer(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [open, setOpen] = React.useState(true)
+    const [pivotOpen, setPivotOpen] = React.useState(false)
+    const [groupsOpen, setGroupsOpen] = React.useState(false)
     const [aboutOpen, setAboutOpen] = React.useState(false)
     const [helpOpen, setHelpOpen] = React.useState(false)
     const [settingsOpen, setSettingsOpen] = React.useState(false)
     const [value, setValue] = React.useState('1');
-    const [communities, setCommunities] = React.useState([])
+    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
+    const [indicatorPosition, setIndicatorPosition] = React.useState(0)
+    const [drawerAnimation, setDrawerAnimation] = React.useState(false)
 
     const { setMessage, setSeverity } = React.useContext(ToastContext)
+    const { career, communities, setCommunities } = React.useContext(UserContext)
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
+    const navigate = useNavigate()
+    const location = useLocation()
+
+    const mobileMenuId = 'primary-search-account-menu-mobile';
 
     const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -136,120 +137,81 @@ function DashboardDrawer(props) {
         setHelpOpen(!helpOpen)
     }
 
+    const handleRegistrationLink = () => {
+        navigate('/register')
+    }
+
     const handleSettingsOpen = () => {
         setSettingsOpen(!settingsOpen)
     }
 
-    const bottomMenu = [
-        { icon: <CarpenterOutlined sx={{ fontSize: '18px' }} />, text: 'About', setOpen: handleAboutOpen, open: aboutOpen },
-        { icon: <HelpOutlined sx={{ fontSize: '18px' }} />, text: 'Help', setOpen: handleHelpOpen, open: helpOpen },
-        { icon: <SettingsOutlined sx={{ fontSize: '18px' }} />, text: 'Settings', setOpen: handleSettingsOpen, open: settingsOpen }
-    ]
+    const handleGroupClick = (id) => {
+        navigate(`/dashboard/community/${id}`)
+    }
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
+    const handleMobileMenuOpen = (event) => {
+        setMobileMoreAnchorEl(event.currentTarget);
+    };
+
+    const handleMobileMenuClose = () => {
+        setMobileMoreAnchorEl(null);
+    };
+
     React.useEffect(() => {
-        if (isAuthenticated()) {
-            communityService.getMy(auth().id)
-                .then(({ data }) => {
-                    setCommunities(data)
-                })
-                .catch(({ response }) => {
-                    setMessage(response.data.message)
-                    setSeverity('error')
-                })
-        }
+        setDrawerAnimation(true)
+        const result = localStorage.getItem('communities')
+        setCommunities(result ? JSON.parse(result) : [])
     }, [])
 
     const drawer = (
         <div>
-            <Toolbar sx={{ height: { xs: '114px', sm: '128px' } }} />
+            <Toolbar sx={{ height: { xs: !location.pathname.includes('/dashboard') ? '60px' : '122px', sm: !location.pathname.includes('/dashboard') ? '60px' : '122px' } }} />
             <Grid container item bgcolor='rgba(62, 85, 205, 0.02)'>
                 <Grid container item direction='column' px={3}>
                     <Grid container item width='100%' my={4} justifyContent='center'>
-                        <Button variant='outlined' color='primary' fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
+                        <Button onClick={() => navigate('/dashboard/posts/new')} variant='outlined' color='primary' sx={{bgcolor: 'white'}} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
                     </Grid>
-                    
-                        <List disablePadding>
-                        {isAuthenticated() ?
-                    <>
-                            {menuItems.map((item, index) => (
-                                <div key={item.first.text}>
-                                    <Divider />
 
-                                    <ListItem disablePadding>
-                                        <ListItemButton href={item.first.link}>
-                                            <ListItemIcon sx={{ minWidth: '36px' }}>
-                                                {item.first.icon}
-                                            </ListItemIcon>
-                                            <ListItemText primary={item.first.text} />
-                                        </ListItemButton>
-                                    </ListItem>
-                                    {item.second && item.second.map(second => (
-                                        <List key={second.text} component="div" disablePadding>
-                                            <ListItemButton sx={{ pl: 6.5 }}>
-                                                <ListItemText primary={second.text} />
-                                            </ListItemButton>
-                                            {item.third ? item.third.map(third => (
-                                                <Collapse key={third.text} in={true} timeout="auto" unmountOnExit>
-                                                    <List component="div" disablePadding>
-                                                        <ListItemButton sx={{ pl: 9 }}>
-                                                            <ListItemText primary={third.text} />
-                                                        </ListItemButton>
-                                                    </List>
-                                                </Collapse>
-                                            ))
-                                                : null}
-                                        </List>
-                                    ))
-                                    }
-                                    {/* <Divider /> */}
-                                </div>
-                            ))}
-                            <Divider />
-                            <ListItem disablePadding>
+                    <List disablePadding>
+                        {isAuthenticated() ?
+                            <div>
+                                <Divider />
                                 <ListItemButton href=''>
                                     <ListItemIcon sx={{ minWidth: '36px' }}>
-                                        <GroupOutlined sx={{ fontSize: '18px' }} />
+                                        <NotificationsOutlined sx={{ fontSize: '20px' }} />
                                     </ListItemIcon>
-                                    <ListItemText primary='My Groups' />
+                                    <ListItemText primary={
+                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                            Notifications
+                                        </Typography>} />
                                 </ListItemButton>
-                            </ListItem>
-                            {communities.length !== 0 && communities.map(item => (
-                                <List key={item._id} component="div" disablePadding>
-                                    <ListItemButton sx={{ pl: 6.5 }}>
-                                        <ListItemText primary={item.title} />
-                                    </ListItemButton>
-                                </List>
-                            ))}
-                            </> : null}
-                            <List> 
-                                {bottomMenu.map(item => (
-                                    <div key={item.text}>
-                                        <ListItemButton onClick={item.setOpen}>
-                                            <ListItemIcon>
-                                                {item.icon}
-                                            </ListItemIcon>
-                                            <ListItemText primary={item.text} />
-                                            {item.open ? <ExpandLess /> : <ExpandMore />}
-                                        </ListItemButton>
-                                        <Collapse in={item.open} timeout="auto" unmountOnExit>
-                                            <List component="div" disablePadding>
-                                                <ListItemButton sx={{ pl: 4 }}>
-                                                    <ListItemIcon>
-                                                        <StarBorder />
-                                                    </ListItemIcon>
-                                                    <ListItemText primary="Starred" />
-                                                </ListItemButton>
-                                            </List>
-                                        </Collapse>
-                                    </div>
-                                ))}
-
-                            </List>
-                        </List>
+                                <Divider />
+                                <ListItemButton href=''>
+                                    <ListItemIcon sx={{ minWidth: '36px' }}>
+                                        <MessageOutlined sx={{ fontSize: '20px' }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                            Messages
+                                        </Typography>} />
+                                </ListItemButton>
+                            </div>
+                            : null}
+                        <Divider />
+                        <ListItemButton href=''>
+                            <ListItemIcon sx={{ minWidth: '36px' }}>
+                                <Settings sx={{ fontSize: '20px' }} />
+                            </ListItemIcon>
+                            <ListItemText primary={
+                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                            Settings
+                                        </Typography>} />
+                        </ListItemButton>
+                    </List>
                 </Grid>
             </Grid>
 
@@ -261,53 +223,116 @@ function DashboardDrawer(props) {
     return (
         <TabContext value={value}>
 
-            <Box sx={{ display: 'flex', flexGrow: 1 }}>
+            <Box sx={{ display: 'flex', flexGrow: 1, width: '100vw' }}>
                 <CssBaseline />
                 <AppBar
                     position="fixed"
                     sx={{
-                        top: '64px',
+                        height: location.pathname.includes('/dashboard') ? '122px' : '60px',
                         bgcolor: 'white', boxShadow: 'none', borderBottom: '1px solid #cbcbcb',
+                        transition: '.3s ease-in-out',
+                        overflow: 'hidden',
                         zIndex: (theme) => theme.zIndex.drawer + 1
                     }}
                 >
-                    <Toolbar>
-                        <IconButton
-                            color="primary"
-                            aria-label="open drawer"
-                            edge="start"
-                            onClick={handleDrawerToggle}
-                            size='large'
-                            sx={{ mr: 2, display: { sm: 'none' }, zIndex: 10, }}
-                        >
-                            <MenuIcon fontSize='49px' />
-                        </IconButton>
-                        <Grid container item alignItems='center' wrap='nowrap' overflow='scroll'>
+                    <Grid container item direction='column' width='100vw' justifyContent='space-between'>
+                        <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='40px'
+                            mt={location.pathname.includes('/dashboard') ? 3 : '10px'}
+                            px={location.pathname.includes('/dashboard') ? '4vw' : 3}
+                            wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
+                            <Link to={isAuthenticated ? '/dashboard' : '/'} style={{ display: 'flex', flexDirection: 'row', textDecoration: 'none', alignItems: 'center' }}>
 
-                            {/* <Grid container item maxWidth='100%' wrap='nowrap' overflow='scroll'> */}
-                            <Box sx={{ width: `calc(${drawerWidth}px + 80px)` }} />
-                            <Grid container item width='fit-content'>
+                                <Box mr={{ xs: 1, p: 0, maxHeight: '25px' }}>
+                                    <img src={logo} />
+                                </Box>
+                                <Typography
+                                    color='black'
+                                    variant="h2"
+                                    noWrap
+                                    component="div"
+                                    minWidth='27px'
+                                    letterSpacing='-.75px'
+                                >
+                                    Career<span style={{ color: 'rgba(89, 111, 255, 1)' }}>Pivot</span>
+                                </Typography>
+                            </Link>
+                            <Box sx={{ position: 'absolute', left: 'calc(256px + 50px)', display: { xs: 'none', md: 'flex' } }}>
+                                <FormControl sx={{ m: 1, maxWidth: '300px', maxHeight: '38px' }} variant="outlined">
+                                    <SearchBar
+                                        id="outlined-adornment-weight"
+                                        placeholder='Search'
+                                        endAdornment={<InputAdornment position="end"
+                                        >
+                                            <IconButton color='primary' sx={{ fontSize: '20px' }}>
+                                                <Search />
+                                            </IconButton>
+                                        </InputAdornment>}
+                                        aria-describedby="outlined-weight-helper-text"
+                                        inputProps={{
+                                            'aria-label': 'weight',
+                                        }}
+                                        sx={{ maxHeight: '38px' }}
+                                    />
+                                </FormControl>
+                            </Box>
+                            <Box sx={{ display: { xs: 'none', md: 'flex' }, minWidth: '474px', gap: 2, justifyContent: 'end' }}>
+                                <TextButton sx={{display: {xs: 'none', lg: 'block'}}}>Career Test</TextButton>
+                                {/* <TextButton>Career Paths</TextButton> */}
 
-                                <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                    <Tab label="Home" value="1" sx={{ width: '120px' }} />
-                                    <Tab label="Resources" value="2" sx={{ width: '120px' }} />
-                                    <Tab label="Jobs" value="3" sx={{ width: '120px' }} />
-                                    <Tab label="Events" value="4" sx={{ width: '120px' }} />
-                                </TabList>
-                            </Grid>
+                                {auth() ?
+                                    <UserMenu />
 
-                            <Box sx={{ flexGrow: 1 }} />
-
-                            {/* </Grid> */}
+                                    :
+                                    <MainButton variant='contained' onClick={handleRegistrationLink}>Get started</MainButton>
+                                }
+                            </Box>
+                            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                                <IconButton
+                                    aria-label="show more"
+                                    aria-controls={mobileMenuId}
+                                    aria-haspopup="true"
+                                    size='small'
+                                >
+                                    <Search color='primary' sx={{ fontSize: '26px' }} />
+                                </IconButton>
+                                <IconButton
+                                    aria-label="show more"
+                                    aria-controls={mobileMenuId}
+                                    aria-haspopup="true"
+                                    onClick={handleDrawerToggle}
+                                    size='small'
+                                >
+                                    <MenuOutlined color='primary' sx={{ fontSize: '26px' }} />
+                                </IconButton>
+                            </Box>
                         </Grid>
-                    </Toolbar>
+                        <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='64px'
+                            px={!location.pathname.includes('/dashboard') ? '4vw' : 3}
+                            wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
+                            <Grid container item alignItems='center' wrap='nowrap' overflow='scroll'>
+                                <Box sx={{ width: {xs: '0px', md: `calc(${drawerWidth}px + 30px)`}, transition: '.3s ease-in-out' }} />
+                                <Grid container item width='fit-content' position='relative' >
+
+                                    <TabList onChange={handleChange} aria-label="lab API tabs example">
+                                        <Tab label="Home" value="1" sx={{ width: '120px' }} onClick={() => navigate('/dashboard?career=Product%20Design')} />
+                                        {/* <Tab label="Resources" value="2" sx={{ width: '120px' }} /> */}
+                                        <Tab label="Jobs" value="2" sx={{ width: '120px', mx: 3 }} />
+                                        <Tab label="Events" value="3" sx={{ width: '120px' }} />
+                                    </TabList>
+                                    <Box height='5px' width='120px' position='absolute' bottom={0} left={indicatorPosition} />
+                                </Grid>
+                                <Box sx={{ flexGrow: 1 }} />
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </AppBar>
                 <Box
                     component="nav"
-                    sx={{ width: { sm: drawerWidth }, flexShrink: { sm: 0 } }}
+                    sx={{
+                        width: location.pathname.includes('/dashboard') ? { md: drawerWidth } : { md: '0px' }, flexShrink: { md: 0 }, transition: '.3s ease-in-out'
+                    }}
                     aria-label="mailbox folders"
                 >
-                    {/* The implementation can be swapped with js to avoid SEO duplication of links. */}
                     <Drawer
                         container={container}
                         variant="temporary"
@@ -317,26 +342,39 @@ function DashboardDrawer(props) {
                             keepMounted: true, // Better open performance on mobile.
                         }}
                         sx={{
-                            display: { xs: 'block', sm: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1 },
+                            position: 'relative',
+                            display: { xs: 'block', md: 'none' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1, bgcolor: 'white' },
                         }}
                     >
+                        <Box id='back' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='rgba(62, 85, 205, 0.02)' zIndex={0} />
+
                         {drawer}
+
                     </Drawer>
                     <Drawer
-                        variant="permanent"
+                        variant='permanent'
                         sx={{
-                            display: { xs: 'none', sm: 'block' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1, bgcolor: 'rgba(62, 85, 205, 0.02)' },
+                            position: 'relative',
+                            display: { xs: 'none', md: 'block' },
+                            '& .MuiDrawer-paper': {
+                                boxSizing: 'border-box',
+                                left: (!drawerAnimation || location.pathname.includes('/dashboard')) ? 0 : '-256px',
+                                width: drawerWidth, transition: '.3s ease-in', zIndex: 1, bgcolor: 'rgba(62, 85, 205, 0.02)'
+                            },
                         }}
                         open
                     >
                         {drawer}
+                        <Box position='absolute' flexGrow={1} bgcolor='white' />
                     </Drawer>
                 </Box>
-                <Box
+                <Box flexGrow={1} maxWidth='100%' mt={location.pathname.includes('/dashboard') ? '122px' : '60px'}>
+                    {props.children}
+                </Box>
+                {/* <Box
                     component="main"
-                    sx={{ flexGrow: 1, py: 4, width: { sm: `calc(100% - ${drawerWidth}px)`, maxWidth: '100%' } }}
+                    sx={{ flexGrow: 1, py: 4, mt: 4, width: { sm: `calc(100% - ${drawerWidth}px)`, maxWidth: '100%' } }}
                 >
                     <Toolbar sx={{ height: '64px' }} />
                     <TabPanel value="1" sx={{ px: 0 }}>
@@ -349,7 +387,7 @@ function DashboardDrawer(props) {
                     <TabPanel value="4"></TabPanel>
 
                     {/* <Dashboard /> */}
-                </Box>
+                {/* </Box> */}
             </Box>
         </TabContext>
 

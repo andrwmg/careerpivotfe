@@ -1,6 +1,7 @@
 import styled from "@emotion/styled";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { Button, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
+import { Stack } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
@@ -25,6 +26,17 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     lineClamp: 2,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
+}));
+
+const EllipsisTypographyThree = styled(Typography)(({ theme }) => ({
+    display: '-webkit-box',
+    '-webkit-box-orient': 'vertical',
+    '-webkit-line-clamp': 3,
+    WebkitLineClamp: 3,
+    lineClamp: 3,
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    lineHeight: 'auto'
 }));
 
 export default function SmallCard({post, community}) {
@@ -117,22 +129,20 @@ export default function SmallCard({post, community}) {
     }, [])
 
     return (
-        <Button onClick={handleClick} sx={{ minWidth: '131px', height: '93px', bgcolor: 'primary.main', color: 'primary', p: 1.5, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
-            <Grid container item direction='column' justifyContent='space-between' height='100%'>
-                <Grid container item>
-                <EllipsisTypographyTwo variant="p" noWrap color='white'>
-                    {post ? post.title : community.title}
+        <Button onClick={handleClick} sx={{ minWidth: '300px', bgcolor: 'primary.main', color: 'primary', p: 1.5, py: 2, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
+            <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
+                <Stack spacing={1} textAlign='start'>
+                <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
+                    {post && post.title}
                     </EllipsisTypographyTwo>
-                </Grid>
+                    <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
+                        {post && post.body}
+                    </EllipsisTypographyThree>
+                </Stack>
+
                 <Grid container item alignItems='center' gap={1} width='100%'>
-                    {post ?
-                    <>
                         <Favorite sx={{fontSize: '18px', color: 'white'}}/>
-                    <Typography variant='body1' color='white' fontWeight={500}>{trimLikes()}</Typography>
-                    </>
-                    :
-                    <EllipsisTypographyOne variant='body1' color='white' fontWeight={500} textAlign='start'>{community && community.tagline}</EllipsisTypographyOne>
-}
+                    <Typography variant='h6' color='white' fontWeight={600}>{trimLikes()}</Typography>
                 </Grid>
             </Grid>
             </Button>

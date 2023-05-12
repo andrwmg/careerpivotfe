@@ -26,6 +26,8 @@ function stringAvatar(name) {
   return {
     sx: {
       bgcolor: 'primary.main',
+      fontSize: '16px',
+      fontWeight: 700
     },
     children: `${name.split(' ')[0][0].toUpperCase()}`,
   };

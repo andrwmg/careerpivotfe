@@ -15,7 +15,7 @@ import { useAuthUser } from 'react-auth-kit';
 import AvatarDefault from './AvatarDefault';
 import { UserContext } from '../contexts/UserContext';
 import { useNavigate } from 'react-router-dom';
-import { Dashboard } from '@mui/icons-material';
+import { ArrowDownward, ArrowDropDown, ArrowDropDownOutlined, Dashboard, KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 export default function UserMenu() {
   const [anchorEl, setAnchorEl] = React.useState(null);
@@ -53,6 +53,7 @@ React.useEffect(() => {
           <IconButton
             onClick={handleClick}
             size="small"
+            disableRipple
             aria-controls={open ? 'account-menu' : undefined}
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
@@ -61,6 +62,8 @@ React.useEffect(() => {
             <Avatar alt='' src={userImage} />
             : <AvatarDefault username={auth().username} />
               }
+              <Typography variant='body1' fontWeight={700} mx={1} color='primary'>{auth().username}</Typography>
+              {open ? <KeyboardArrowUp color='primary' /> : <KeyboardArrowDown color='primary' />}
           </IconButton>
         </Tooltip>
       </Box>
@@ -103,12 +106,6 @@ React.useEffect(() => {
           Dashboard
         </MenuItem>
         <Divider />
-        <MenuItem onClick={handleClose}>
-          <ListItemIcon>
-            <PersonAdd fontSize="14px" />
-          </ListItemIcon>
-          Add another account
-        </MenuItem>
         <MenuItem onClick={handleClose}>
           <ListItemIcon>
             <Settings fontSize="14px" />

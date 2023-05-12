@@ -14,7 +14,7 @@ export default function Feed({heading, posts}) {
         <Grid container item direction='column' xs={12}>
             {heading ?
                 <Grid container item alignItems='center' gap={1} px={{ xs: 3, md: 6 }}>
-                    <Typography variant='h6'>{heading}</Typography>
+                    <Typography variant='h2'>{heading}</Typography>
                     <IconButton variant='text' color='primary'>
                         <SettingsOutlined sx={{ fontSize: "24px" }} />
                         {/* <Typography variant='h4'>Settings</Typography> */}

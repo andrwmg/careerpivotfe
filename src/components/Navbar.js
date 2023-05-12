@@ -201,7 +201,7 @@ export default function Navbar(props) {
                         </Box>
                         <Typography
                             color='black'
-                            variant="h6"
+                            variant="h2"
                             noWrap
                             component="div"
                             minWidth='27px'

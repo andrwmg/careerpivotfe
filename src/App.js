@@ -14,7 +14,7 @@ import ForgotForm from './components/UserForgotForm';
 import userService from './services/user.service';
 import UserVerifyCard from './components/UserVerifyCard';
 import Dashboard from './components/Dashboard';
-import DashboardDrawer from './components/DashboardDrawer copy';
+import DashboardDrawer from './components/DashboardDrawer';
 import { light } from '@mui/material/styles/createPalette';
 import Posts from './components/Posts';
 import { ToastContext } from './contexts/ToastContext';
@@ -42,22 +42,25 @@ const theme = createTheme({
       letterSpacing: -3.2
     },
     h2: {
-      fontWeight: 500,
-      fontSize: ["32px", '!important'],
+      fontWeight: 600,
+      fontSize: ["24px", '!important'],
     },
     h3: {
-      fontWeight: 400,
-      fontSize: ["29px", '!important'],
-    },
-    h4: {
+      fontWeight: 700,
       fontSize: ["20px", '!important'],
     },
+    h4: {
+      fontSize: ["16px", '!important'],
+    },
+    h5: {
+      fontSize: ["14px", '!important'],
+    },
     h6: {
-      fontSize: '24px',
+      fontSize: '13px',
       fontWeight: 600
     },
     body1: {
-      fontSize: ["16px", '!important']
+      fontSize: ["20px", '!important']
     },
     body2: {
       fontSize: ["14px", '!important']
@@ -66,8 +69,7 @@ const theme = createTheme({
         fontSize: ["16px", '!important']
     },
     p: {
-      fontSize: '13px',
-      fontWeight: 500,
+      fontSize: '12px',
     },
     fontFamily: [
       'Work Sans',

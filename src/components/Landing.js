@@ -33,7 +33,7 @@ export default function Landing() {
         navigate('/register')
     }
     return (
-        <Grid container item width='100vw' px='4vw' alignItems='center' rowGap={8} flexWrap='wrap-reverse' overflow='scroll' minHeight='100vh' boxSizing='border-box' bgcolor='#E8EBFF' zIndex={1}>
+        <Grid container item width='100vw' px='4vw' alignItems='center' rowGap={8} flexWrap='wrap-reverse' overflow='scroll' minHeight='calc(100vh - 60px)' boxSizing='border-box' bgcolor='#E8EBFF' zIndex={1}>
             <Grid container item direction='column' xs={12} lg={5} gap={4} pb={4}>
                 <Typography variant='h1'>
                     Want to change your career? We’ll help you <span style={{ color: 'rgba(89, 111, 255, 1)' }}>pivot</span>.

@@ -1,4 +1,4 @@
-import { Comment, CommentOutlined, Favorite, FavoriteBorder, FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
+import { Comment, CommentOutlined, Favorite, FavoriteBorder, FavoriteBorderOutlined, FavoriteOutlined, Visibility } from "@mui/icons-material";
 import { Button, Grid, IconButton, TextField, Toolbar, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
@@ -147,12 +147,12 @@ export default function PostPage() {
     }, [])
 
     return (
-        <Grid container item mt='62px' p={{xs: 2, sm: 7}} flexGrow={1}>
+        <Grid container item mt={4} px={{ xs: 3, md: 6 }} flexGrow={1}>
             {post ? 
             <Grid container item direction='column' xs={12} gap={2}>
                 <Typography variant='h3'>{post.title}</Typography>
                 <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                    {`${timestamp} in `}
+                    {`${timestamp} by ${post.author.username} in `}
                     <Link to={`/dashboard/community/${post.community && post.community._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        {`${post.community ? post.community.title : "Freelancing"}`}
                     </Link>
                 </Typography>
@@ -176,6 +176,12 @@ export default function PostPage() {
                             <Comment color="primary" sx={{ fontSize: '22px' }} />
                         </IconButton>
                         <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
+                    </Grid>
+                    <Grid container item gap={1} xs='auto'>
+                        <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
+                            <Visibility color="primary" sx={{ fontSize: '22px' }} />
+                        </IconButton>
+                        <Typography variant='body1' color='primary' fontWeight={700}>{post.views.length}</Typography>
                     </Grid>
                     </Grid>
                 <Grid container item gap={2}>

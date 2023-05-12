@@ -156,8 +156,8 @@ export default function LargeCard({ post, posts }) {
         // }
         if (auth() && post.likes.map(l => l.user._id).includes(auth().id)) {
             setStatus('liked')
-        // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-        //     setStatus('disliked')
+            // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
+            //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -202,58 +202,39 @@ export default function LargeCard({ post, posts }) {
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ maxWidth: { xs: '100%', md: 'calc(50% - 16px)' }, minWidth: 'calc(50% - 16px)', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none'}, boxShadow: 'none', flexGrow: 1  }}>
-            {post && 
-        <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
-            {/* <Grid container item justifyContent='space-between' alignItems='center' rowGap={1}>
-                <Button variant="contained" sx={{ height: '40px', borderRadius: '20px' }}>
-                    Product Design for Dummies
-                </Button>
-                <Typography variant='subtitle1' color='text.secondary'>{date}</Typography>
-            </Grid> */}
-            <Stack spacing={1} maxWidth='100%'>
-                <EllipsisTypographyOne variant="h4" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
-                <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                    {`${date} ${!location.pathname.includes('/community') && post.community ? 'in ': ''}`}
-                    <span style={{ fontWeight: 500 }}>
-                        {`${!location.pathname.includes('/community') && post.community ? post.community.title : ""}`}
-                    </span>
-                </EllipsisTypographyOne>
-                <EllipsisTypographyThree variant='h4' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='90px'>
-                    {`${post.body}`}
-                    {/* This is some sample body text. This is some sample body text. This is some sample body text. Up to three lines of total body text. */}
-                </EllipsisTypographyThree>
-                </Stack>
-
-            <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
-                <Grid container item direction='column' xs='auto'>
-                    <Grid container item gap={1}>
-
-                        {/* <IconButton sx={{ p: 0 }} onClick={likePost}>
-                            {status !== 'liked' ?
-                                <FavoriteBorder color='primary' sx={{ fontSize: '22px' }} />
-                                : */}
+        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none' }, boxShadow: 'none', flexGrow: 1 }}>
+            {post &&
+                <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
+                    <Stack spacing={1} maxWidth='100%'>
+                        <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
+                        <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                            {`${date} by ${post.author.username} ${!location.pathname.includes('/community') && post.community ? 'in ' : ''}`}
+                            <span style={{ fontWeight: 500 }}>
+                                {`${!location.pathname.includes('/community') && post.community ? post.community.title : ""}`}
+                            </span>
+                        </EllipsisTypographyOne>
+                        <EllipsisTypographyThree variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='90px'>
+                            {`${post.body}`}
+                        </EllipsisTypographyThree>
+                    </Stack>
+                    <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
+                        <Grid container item direction='column' xs='auto'>
+                            <Grid container item alignItems='center' gap={1}>
                                 <Favorite color='primary' sx={{ fontSize: '22px' }} />
-                            {/* }
-                        </IconButton> */}
+                                <Typography variant='body1' color='primary' fontWeight={700}>{likeCount}</Typography>
+                            </Grid>
+                        </Grid>
+                        <Grid container item direction='column' xs>
+                            <Grid container item gap={1} xs='auto' alignItems='center'>
+                                <Comment color="primary" sx={{ fontSize: '22px' }} />
+                                <Typography variant='body1' color='primary' fontWeight={700} textAlign='start'>{commentCount}</Typography>
+                            </Grid>
+                        </Grid>
 
-                        <Typography variant='body1' color='primary' fontWeight={700}>{likeCount}</Typography>
                     </Grid>
+
                 </Grid>
-                <Grid container item direction='column' xs>
-
-                    <Grid container item gap={1} xs='auto'>
-                        {/* <IconButton sx={{ p: 0 }} color='primary'> */}
-                            <Comment color="primary" sx={{ fontSize: '22px' }} />
-                        {/* </IconButton> */}
-                        <Typography variant='body1' color='primary' fontWeight={700} textAlign='start'>{commentCount}</Typography>
-                    </Grid>
-                </Grid>
-
-            </Grid>
-
-        </Grid>
-}
+            }
         </Button>
     )
 }

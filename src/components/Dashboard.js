@@ -1,4 +1,4 @@
-import { SettingsOutlined } from "@mui/icons-material";
+import { LocalConvenienceStoreOutlined, SettingsOutlined } from "@mui/icons-material";
 import { Button, Grid, IconButton, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useIsAuthenticated } from "react-auth-kit";
@@ -28,11 +28,8 @@ export default function Dashboard() {
     useEffect(() => {
         postService.trending()
             .then(({ data }) => {
-                console.log(data)
+                console.table(data.data)
                 setTrending(data.data)
-                setMessage(data.message)
-                setSeverity('success')
-                console.log('Trending: ', data)
             })
             .catch(({ response }) => {
                 setMessage(response.data.message)
@@ -51,26 +48,24 @@ export default function Dashboard() {
 
     }, [])
 
-    useEffect(() => {
-        if (career) {
-        communityService.getPopular(career)
-            .then(({ data }) => {
-                console.log(data)
-                setPopular(data.data)
-                // setMessage(data.message)
-                // setSeverity('success')
-            })
-            .catch(({ response }) => {
-                setMessage(response.data.message)
-                setSeverity('error')
-            })
-        }
-    }, [career])
+    // useEffect(() => {
+    //     if (career) {
+    //     communityService.getPopular(career)
+    //         .then(({ data }) => {
+    //             console.log(data)
+    //             setPopular(data.data)
+    //         })
+    //         .catch(({ response }) => {
+    //             setMessage(response.data.message)
+    //             setSeverity('error')
+    //         })
+    //     }
+    // }, [career])
 
     return (
         <Grid container item gap={4} maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0}>
-                <Grid container item direction='column' xs={12} height='149px'>
-                    <Typography variant='body1' fontWeight={700} px={{ xs: 3, md: 6 }}>
+                <Grid container item direction='column' xs={12}>
+                    <Typography variant='h4' fontWeight={700} px={{ xs: 3, md: 6 }}>
                         {`Trending ${career ? `in ${career}` : 'now'}`}
                     </Typography>
                     <SmallCardRow posts={trending} />
@@ -80,16 +75,14 @@ export default function Dashboard() {
                     ))}
                 </Grid> */}
                 </Grid>
-                {career && 
+                {/* {career && 
                 <Grid container item direction='column' xs={12} height='149px'>
                     <Typography variant='body1' fontWeight={700} px={{ xs: 3, md: '50px' }}>
                         {`Popular ${career ? `${career}` : ''} Communities`}
-
-                        {/* Popular Product Design Communities */}
                     </Typography>
                     <SmallCardRow communities={popular} />
                 </Grid>
-}
+} */}
             <Feed posts={posts} heading='Your Feed' />
         </Grid>
     )
