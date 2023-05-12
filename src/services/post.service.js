@@ -8,8 +8,12 @@ class PostDataService {
     return http.get(path);
   }
 
-  trending() {
-    const path = "/posts/trending"
+  getSome(data) {
+    return http.get(`/posts/careers/${data}`)
+  }
+
+  trending(data) {
+    const path = `/posts/careers/${data}/trending`
     return http.get(path);
   }
 

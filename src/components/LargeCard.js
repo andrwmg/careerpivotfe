@@ -168,7 +168,6 @@ export default function LargeCard({ post, posts }) {
     }
 
     useEffect(() => {
-        console.log(post)
 
         updateLikes()
         setCommentCount(post.commentCount)

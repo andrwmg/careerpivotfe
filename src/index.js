@@ -11,7 +11,7 @@ import { GlobalProvider } from './contexts/GlobalContext';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <AuthProvider
       authType={'cookie'}
       authName={'_auth'}
@@ -27,7 +27,7 @@ root.render(
         </ToastProvider>
       </BrowserRouter>
     </AuthProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
 
 // If you want to start measuring performance in your app, pass a function

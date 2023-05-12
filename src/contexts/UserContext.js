@@ -4,6 +4,8 @@ import { useAuthUser, useIsAuthenticated, useSignOut, useSignIn } from 'react-au
 import axios from "axios";
 import userService from "../services/user.service";
 import { ToastContext } from "./ToastContext";
+import Cookies from 'js-cookie'
+
 
 export const UserContext = createContext();
 
@@ -65,16 +67,17 @@ export const UserProvider = ({ children }) => {
     const login = obj => {
         userService.login(obj)
             .then(({ data }) => {
-                if (data.user) {
+                const token = Cookies.get('token')
+                if (token) {
                     if (signIn(
                         {
-                            token: data.token,
+                            token,
                             expiresIn: 1000 * 60 * 60 * 24 * 7,
                             tokenType: "Bearer",
                             authState: { email: data.user.email, username: data.user.username, id: data.user._id, image: data.user.image }
                         }
                     )) {
-                        localStorage.setItem('token', data.token)
+                        localStorage.setItem('token', token)
                         if (data.user.image) {
                             setUserImage(data.user.image.url)
                             window.localStorage.setItem('userImage', data.user.image.url)
@@ -87,7 +90,7 @@ export const UserProvider = ({ children }) => {
                             setCommunities(data.user.communities)
                             window.localStorage.setItem('communities', JSON.stringify(data.user.communities))
                         }
-                       
+
                         setMessage(data.message)
                         setSeverity('success')
                         navigate(`/dashboard?career=${data.user.career || ''}`)

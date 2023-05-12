@@ -27,14 +27,14 @@ function stringAvatar(name) {
     sx: {
       bgcolor: 'primary.main',
       fontSize: '16px',
-      fontWeight: 700
+      fontWeight: 700,
     },
     children: `${name.split(' ')[0][0].toUpperCase()}`,
   };
 }
 
-export default function AvatarDefault({username}) {
+export default function AvatarDefault({username, size}) {
   return (
-      <Avatar {...stringAvatar(username)} />
+      <Avatar {...stringAvatar(username)} sx={{height: size, width: size, bgcolor: 'primary.main'}} />
   );
 }

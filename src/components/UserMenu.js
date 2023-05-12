@@ -36,6 +36,10 @@ export default function UserMenu() {
       navigate('/dashboard' + (career ? `?career=${career}` : ''))
   }
 
+  const handleProfile = () => {
+      navigate(`/dashboard/profile/${auth().id}`)
+  }
+
   const handleLogout = () => {
     setAnchorEl(null)
     logout()
@@ -49,7 +53,7 @@ React.useEffect(() => {
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>
-        <Tooltip title="Account settings">
+        <Tooltip>
           <IconButton
             onClick={handleClick}
             size="small"
@@ -104,6 +108,9 @@ React.useEffect(() => {
       >
           <MenuItem onClick={handleDashboard}>
           Dashboard
+        </MenuItem>
+        <MenuItem onClick={handleProfile}>
+          Profile
         </MenuItem>
         <Divider />
         <MenuItem onClick={handleClose}>

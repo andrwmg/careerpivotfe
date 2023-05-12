@@ -23,6 +23,8 @@ import PostPage from './components/PostPage';
 import MessageSnackbar from './components/MessageSnackbar';
 import NewPostPage from './components/NewPostPage';
 import CommunityPage from './components/CommunityPage';
+import { RequireAuth, useAuthUser, useIsAuthenticated } from 'react-auth-kit';
+import ProfileForm from './components/UserProfileForm';
 
 const theme = createTheme({
   palette: {
@@ -38,35 +40,35 @@ const theme = createTheme({
     },
     h1: {
       fontWeight: 700,
-      fontSize: ['53px', '!important'],
+      fontSize: '53px',
       letterSpacing: -3.2
     },
     h2: {
       fontWeight: 600,
-      fontSize: ["24px", '!important'],
+      fontSize: "24px",
     },
     h3: {
       fontWeight: 700,
-      fontSize: ["20px", '!important'],
+      fontSize: "20px",
     },
     h4: {
-      fontSize: ["16px", '!important'],
+      fontSize: "16px",
     },
     h5: {
-      fontSize: ["14px", '!important'],
+      fontSize: "14px",
     },
     h6: {
       fontSize: '13px',
       fontWeight: 600
     },
     body1: {
-      fontSize: ["20px", '!important']
+      fontSize: "20px"
     },
     body2: {
-      fontSize: ["14px", '!important']
+      fontSize: "14px"
     },
     subtitle1: {
-        fontSize: ["16px", '!important']
+      fontSize: "16px"
     },
     p: {
       fontSize: '12px',
@@ -91,21 +93,21 @@ const dark = unstable_createMuiStrictModeTheme({
   // typography: {
   //   h1: {
   //     fontWeight: 700,
-  //     fontSize: ['50px', '!important'],
+  //     fontSize: ['50px',
   //     color: 'white'
   //   },
   //   h2: {
   //     fontWeight: 500,
-  //     fontSize: ["32px", '!important'],
+  //     fontSize: ["32px",
   //     color: 'white'
   //   },
   //   h3: {
   //     fontWeight: 400,
-  //     fontSize: ["29px", '!important'],
+  //     fontSize: ["29px",
   //     color: 'white'
   //   },
   //   h4: {
-  //     fontSize: ["24px", '!important'],
+  //     fontSize: ["24px",
   //     letterSpacing: '.1em',
   //     textTransform: 'uppercase',
   //     color: 'white'
@@ -115,11 +117,11 @@ const dark = unstable_createMuiStrictModeTheme({
   //     fontWeight: 700
   //   },
   //   body1: {
-  //     fontSize: ["16px", '!important'],
+  //     fontSize: ["16px",
   //     color: 'white'
   //   },
   //   body2: {
-  //     fontSize: ["14px", '!important'],
+  //     fontSize: ["14px",
   //     color: 'white'
   //   },
   //   p: {
@@ -137,11 +139,26 @@ const dark = unstable_createMuiStrictModeTheme({
 function App() {
 
   const { setMessage, setSeverity } = useContext(ToastContext)
+  const {career} = useContext(UserContext)
   const navigate = useNavigate()
+  const isAuthenticated = useIsAuthenticated()
+  const auth = useAuthUser()
 
 
   const HomeRedirect = () => {
     return <Navigate to={'/'} />
+  }
+
+  const LoginRedirect = () => {
+    setMessage('You must be logged in')
+    setSeverity('error')
+    return <Navigate to={'/login'} />
+  }
+
+  const ProfileRedirect = () => {
+    setMessage('You must select a PivotPath')
+    setSeverity('error')
+    return <Navigate to={`/dashboard/profile/${auth().id}`} />
   }
 
   const VerifyLink = () => {
@@ -189,7 +206,9 @@ function App() {
             <Route path='/reset/:token' element={<ResetLink />} />
             <Route path='/verify/:token' element={<VerifyLink />} />
             <Route path='/verify' element={<UserWrapper form={<UserVerifyCard />} />} />
-            <Route path='/dashboard/posts/new' element={<NewPostPage />} />
+            <Route path='/dashboard/profile/:userId' element={<ProfileForm />} />
+            <Route path='/dashboard/posts/new' element={isAuthenticated() ? 
+                career ? <NewPostPage /> : <ProfileRedirect /> : <LoginRedirect />} />
             <Route path='/dashboard/posts/:postId' element={<PostPage />} />
             <Route path='/dashboard/community/:communityId' element={<CommunityPage />} />
 

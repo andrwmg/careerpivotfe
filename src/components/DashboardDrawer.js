@@ -116,7 +116,7 @@ function DashboardDrawer(props) {
     const [drawerAnimation, setDrawerAnimation] = React.useState(false)
 
     const { setMessage, setSeverity } = React.useContext(ToastContext)
-    const { career, communities, setCommunities } = React.useContext(UserContext)
+    const { setCareer, setUserImage, communities, setCommunities } = React.useContext(UserContext)
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
@@ -163,8 +163,10 @@ function DashboardDrawer(props) {
 
     React.useEffect(() => {
         setDrawerAnimation(true)
-        const result = localStorage.getItem('communities')
-        setCommunities(result ? JSON.parse(result) : [])
+        const result = localStorage.getItem('career')
+        setCareer(result)
+        const image = localStorage.getItem('userImage')
+        setUserImage(image)
     }, [])
 
     const drawer = (
@@ -173,7 +175,7 @@ function DashboardDrawer(props) {
             <Grid container item bgcolor='rgba(62, 85, 205, 0.02)'>
                 <Grid container item direction='column' px={3}>
                     <Grid container item width='100%' my={4} justifyContent='center'>
-                        <Button onClick={() => navigate('/dashboard/posts/new')} variant='outlined' color='primary' sx={{bgcolor: 'white'}} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
+                        <Button onClick={() => navigate('/dashboard/posts/new')} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
                     </Grid>
 
                     <List disablePadding>
@@ -207,9 +209,9 @@ function DashboardDrawer(props) {
                                 <Settings sx={{ fontSize: '20px' }} />
                             </ListItemIcon>
                             <ListItemText primary={
-                                        <Typography variant='h4' fontWeight={500} py={.75}>
-                                            Settings
-                                        </Typography>} />
+                                <Typography variant='h4' fontWeight={500} py={.75}>
+                                    Settings
+                                </Typography>} />
                         </ListItemButton>
                     </List>
                 </Grid>
@@ -276,7 +278,7 @@ function DashboardDrawer(props) {
                                 </FormControl>
                             </Box>
                             <Box sx={{ display: { xs: 'none', md: 'flex' }, minWidth: '474px', gap: 2, justifyContent: 'end' }}>
-                                <TextButton sx={{display: {xs: 'none', lg: 'block'}}}>Career Test</TextButton>
+                                <TextButton sx={{ display: { xs: 'none', lg: 'block' } }}>Career Test</TextButton>
                                 {/* <TextButton>Career Paths</TextButton> */}
 
                                 {auth() ?
@@ -310,13 +312,13 @@ function DashboardDrawer(props) {
                             px={!location.pathname.includes('/dashboard') ? '4vw' : 3}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
                             <Grid container item alignItems='center' wrap='nowrap' overflow='scroll'>
-                                <Box sx={{ width: {xs: '0px', md: `calc(${drawerWidth}px + 30px)`}, transition: '.3s ease-in-out' }} />
+                                <Box sx={{ width: { xs: '0px', md: `calc(${drawerWidth}px + 30px)` }, transition: '.3s ease-in-out' }} />
                                 <Grid container item width='fit-content' position='relative' >
 
                                     <TabList onChange={handleChange} aria-label="lab API tabs example">
-                                        <Tab label="Home" value="1" sx={{ width: '120px' }} onClick={() => navigate('/dashboard?career=Product%20Design')} />
+                                        <Tab label="Home" value="1" sx={{ width: '120px' }} onClick={() => navigate('/dashboard')} />
                                         {/* <Tab label="Resources" value="2" sx={{ width: '120px' }} /> */}
-                                        <Tab label="Jobs" value="2" sx={{ width: '120px', mx: 3 }} />
+                                        <Tab label="Jobs" value="2" sx={{ width: '120px', px: 3 }} />
                                         <Tab label="Events" value="3" sx={{ width: '120px' }} />
                                     </TabList>
                                     <Box height='5px' width='120px' position='absolute' bottom={0} left={indicatorPosition} />

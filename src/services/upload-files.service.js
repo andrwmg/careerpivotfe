@@ -11,10 +11,11 @@ class UploadFilesService {
     //   }
     let output = []
     for (let image of images) {
+      console.log(image)
       if (image.data) {
         let formData = new FormData();
         formData.append('images', image.data)
-        await axios.post(`${loc.protocol}//${loc.hostname}${loc.hostname === 'localhost' ? ':7070/data/upload' : '/data/upload'}`, formData, {
+        await axios.post(`${loc.protocol}//${loc.hostname}${loc.hostname === 'localhost' ? ':7070/data/users/upload' : '/data/users/upload'}`, formData, {
           headers: {
             "Access-Control-Allow-Origin": ["http://localhost:7071", "https://www.careerpivot.io"],
             'Content-Type': 'multipart/form-data'
@@ -26,24 +27,6 @@ class UploadFilesService {
         output.push(image)
       }
     }
-  //   images.map(async (image) => {
-  //   if (image.data) {
-  //     let formData = new FormData();
-  //     formData.append('images', image.data)
-  //     await axios.post(`${loc.protocol}//${loc.hostname}${loc.hostname === 'localhost' ? ':8080/data/listings/upload' : '/data/listings/upload'}`, formData, {
-  //       headers: {
-  //         "Access-Control-Allow-Origin": "http://localhost:8081",
-  //         'Content-Type': 'multipart/form-data'
-  //       }
-  //     }).then(data => {
-  //       console.log(data)
-  //       // output.push(data)
-  //     })
-  //   } else {
-  //     console.log(image)
-  //     // output.push(image)
-  //   }
-  // })
   return output
   }
 }

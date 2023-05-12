@@ -26,7 +26,7 @@ export default function Dashboard() {
     const location = useLocation()
 
     useEffect(() => {
-        postService.trending()
+        postService.trending(career)
             .then(({ data }) => {
                 console.table(data.data)
                 setTrending(data.data)
@@ -35,16 +35,14 @@ export default function Dashboard() {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
-        const searchParams = new URLSearchParams(location.search);
-            setCommunity(searchParams.get('community'))
-            postService.getAll()
-        .then(({data}) => {
-            setPosts(data)
-        })
-        .catch(({response}) => {
-            setMessage(response.data.message)
-            setSeverity('error')
-        })
+        postService.getSome(career)
+            .then(({ data }) => {
+                setPosts(data)
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setSeverity('error')
+            })
 
     }, [])
 
@@ -63,26 +61,13 @@ export default function Dashboard() {
     // }, [career])
 
     return (
-        <Grid container item gap={4} maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0}>
-                <Grid container item direction='column' xs={12}>
-                    <Typography variant='h4' fontWeight={700} px={{ xs: 3, md: 6 }}>
-                        {`Trending ${career ? `in ${career}` : 'now'}`}
-                    </Typography>
-                    <SmallCardRow posts={trending} />
-                    {/* <Grid container item gap={3} wrap='nowrap' maxWidth='100%' overflow='scroll' pl={{ xs: 3, md: '100px' }} pr={3} py={2}>
-                    {trending.length !== 0 && trending.map(trend => (
-                        <SmallCard key={`row1${trend}`} post={trend} />
-                    ))}
-                </Grid> */}
-                </Grid>
-                {/* {career && 
-                <Grid container item direction='column' xs={12} height='149px'>
-                    <Typography variant='body1' fontWeight={700} px={{ xs: 3, md: '50px' }}>
-                        {`Popular ${career ? `${career}` : ''} Communities`}
-                    </Typography>
-                    <SmallCardRow communities={popular} />
-                </Grid>
-} */}
+        <Grid container item gap={2} maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0}>
+            <Grid container item direction='column' xs={12} minHeight='195px' rowGap={2}>
+                <Typography variant='h4' fontWeight={700} px={{ xs: 3, md: 6 }}>
+                    {`Trending ${career ? `in ${career}` : 'now'}`}
+                </Typography>
+                <SmallCardRow posts={trending} />
+            </Grid>
             <Feed posts={posts} heading='Your Feed' />
         </Grid>
     )

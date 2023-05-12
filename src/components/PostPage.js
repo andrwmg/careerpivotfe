@@ -22,7 +22,7 @@ export default function PostPage() {
     const { setMessage, setSeverity } = useContext(ToastContext)
     const { likePost, convertTime } = useContext(GlobalContext)
 
-    const {communityId, postId} = useParams()
+    const { postId } = useParams()
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
@@ -69,18 +69,18 @@ export default function PostPage() {
             setLikeCount(newValue)
             const response = likePost(post._id)
             if (response === 'error') {
-            if (newStatus === 'liked') {
-                setStatus('disliked')
-                console.log(newValue)
-                newValue--
-                setLikeCount(newValue)
-            } else {
-                setStatus('liked')
-                console.log(newValue)
-                newValue++
-                setLikeCount(newValue)
+                if (newStatus === 'liked') {
+                    setStatus('disliked')
+                    console.log(newValue)
+                    newValue--
+                    setLikeCount(newValue)
+                } else {
+                    setStatus('liked')
+                    console.log(newValue)
+                    newValue++
+                    setLikeCount(newValue)
+                }
             }
-        }
         } else {
             setMessage("You must be logged in to like post")
             setSeverity('error')
@@ -97,8 +97,8 @@ export default function PostPage() {
         console.log(post)
         if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
             setStatus('liked')
-        // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-        //     setStatus('disliked')
+            // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
+            //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -121,7 +121,7 @@ export default function PostPage() {
                     console.log(data)
                     setComments(data.comments)
                 })
-                .catch(({response}) => {
+                .catch(({ response }) => {
                     setMessage(response.data.message)
                     setSeverity('error')
                 })
@@ -134,11 +134,11 @@ export default function PostPage() {
 
     useEffect(() => {
         if (post) {
-        console.log(post)
-        updateLikes()
-        setCommentCount(post.commentCount)
-        const date = convertTime(post.createdAt)
-        setTimestamp(date)
+            console.log(post)
+            updateLikes()
+            setCommentCount(post.commentCount)
+            const date = convertTime(post.createdAt)
+            setTimestamp(date)
         }
     }, [post])
 
@@ -148,46 +148,48 @@ export default function PostPage() {
 
     return (
         <Grid container item mt={4} px={{ xs: 3, md: 6 }} flexGrow={1}>
-            {post ? 
-            <Grid container item direction='column' xs={12} gap={2}>
-                <Typography variant='h3'>{post.title}</Typography>
-                <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                    {`${timestamp} by ${post.author.username} in `}
-                    <Link to={`/dashboard/community/${post.community && post.community._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        {`${post.community ? post.community.title : "Freelancing"}`}
-                    </Link>
-                </Typography>
-                <Typography variant='body1'>{post.body}</Typography>
-                
-                <Grid container item gap={4}>
-                <Grid container item gap={1} xs='auto'>
+            {post ?
+                <Grid container item direction='column' xs={12} gap={2}>
+                    <Typography variant='h3'>{post.title}</Typography>
+                    <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                        {`${timestamp} by ${post.author.username}`}
+                        {/* {post.community ?
+                        <Link to={`/dashboard/community/${post.community && post.community._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        
+                        {`${post.community.title}`}
+                        </Link> : null} */}
+                    </Typography>
+                    <Typography variant='body1'>{post.body}</Typography>
 
-                        <IconButton sx={{ p: 0 }} onClick={like}>
-                            {status !== 'liked' ?
-                                <FavoriteBorder color='primary' sx={{ fontSize: '22px' }} />
-                                :
-                                <Favorite color='primary' sx={{ fontSize: '22px' }} />
-                            }
-                        </IconButton>
+                    <Grid container item gap={4}>
+                        <Grid container item gap={1} xs='auto'>
 
-                        <Typography variant='body1' color='primary' fontWeight={700}>{trimLikes()}</Typography>
+                            <IconButton sx={{ p: 0 }} onClick={like}>
+                                {status !== 'liked' ?
+                                    <FavoriteBorder color='primary' sx={{ fontSize: '22px' }} />
+                                    :
+                                    <Favorite color='primary' sx={{ fontSize: '22px' }} />
+                                }
+                            </IconButton>
+
+                            <Typography variant='body1' color='primary' fontWeight={700}>{trimLikes()}</Typography>
                         </Grid>
                         <Grid container item gap={1} xs='auto'>
-                        <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
-                            <Comment color="primary" sx={{ fontSize: '22px' }} />
-                        </IconButton>
-                        <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
+                            <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
+                                <Comment color="primary" sx={{ fontSize: '22px' }} />
+                            </IconButton>
+                            <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
+                        </Grid>
+                        {/* <Grid container item gap={1} xs='auto'>
+                            <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
+                                <Visibility color="primary" sx={{ fontSize: '22px' }} />
+                            </IconButton>
+                            <Typography variant='body1' color='primary' fontWeight={700}>{post.views.length}</Typography>
+                        </Grid> */}
                     </Grid>
-                    <Grid container item gap={1} xs='auto'>
-                        <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
-                            <Visibility color="primary" sx={{ fontSize: '22px' }} />
-                        </IconButton>
-                        <Typography variant='body1' color='primary' fontWeight={700}>{post.views.length}</Typography>
+                    <Grid container item gap={2}>
+                        <Comments comments={comments} commentCount={commentCount} setCommentCount={setCommentCount} post={post} initial={true} />
                     </Grid>
-                    </Grid>
-                <Grid container item gap={2}>
-                <Comments comments={comments} commentCount={commentCount} setCommentCount={setCommentCount} post={post} initial={true} />
-                </Grid>
-            </Grid> : null}
+                </Grid> : null}
         </Grid>
     )
 }

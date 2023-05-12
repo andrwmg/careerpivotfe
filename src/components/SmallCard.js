@@ -96,7 +96,6 @@ export default function SmallCard({post, community}) {
         if (post.dislikes.length !== 0) {
             setDislikeCount(post.dislikes.length)
         }
-        console.log(post.likes)
         if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
             setStatus('liked')
         // } else if (auth() && post.dislikes.map(d => d.user._id.toString()).includes(auth().id)) {
