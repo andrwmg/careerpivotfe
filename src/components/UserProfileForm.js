@@ -13,6 +13,7 @@ import { ToastContext } from '../contexts/ToastContext';
 import AvatarDefault from './AvatarDefault';
 import { Edit } from '@mui/icons-material';
 import useUpdateReactAuthKitUserState from '../hooks/useUpdateReactAuthKitUserState';
+import { Stack } from '@mui/system';
 
 
 export default function ProfileForm() {
@@ -22,7 +23,7 @@ export default function ProfileForm() {
   const [username, setUsername] = useState('')
   const [newCareer, setNewCareer] = useState(career)
   const [email, setEmail] = useState('')
-  const [password, setPassword] = useState("")
+  const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [tempImage, setTempImage] = useState(null)
@@ -33,11 +34,6 @@ export default function ProfileForm() {
   const updateAuth = useUpdateReactAuthKitUserState()
 
   // const [userImage, setUserImage] = useState((profile !== undefined) ? [JSON.parse(profile)] : null)
-
-  useEffect(() => {
-    setUsername(auth().username)
-    setEmail(auth().email)
-  }, [])
 
   const handleCareerChange = (event) => {
     setNewCareer(event.target.value)
@@ -73,6 +69,7 @@ export default function ProfileForm() {
           const obj = {career: data.data.career, username: data.data.username, email: data.data.email, image: data.data.image, id: data.data._id}
           updateAuth(obj)
           localStorage.setItem('userImage', data.data.image.url)
+          localStorage.setItem('career', data.data.career)
           setUserImage(data.data.image.url)
           setCareer(data.data.career)
           setMessage(data.message)
@@ -92,10 +89,11 @@ export default function ProfileForm() {
     setTempImage(image)
   }
 
-  useEffect(()=>{
-    const result = localStorage.getItem('career')
-    setNewCareer(result)
-  },[])
+  useEffect(() => {
+    setNewCareer(auth().career)
+    setUsername(auth().username)
+    setEmail(auth().email)
+  }, [])
 
   return (
     <Card elevation={0} sx={{ width: '100%', px: {xs: 3, md: 6} }}>
@@ -147,6 +145,8 @@ export default function ProfileForm() {
                 {/* <Typography variant='h4' fontWeight={700}>Change profile picture</Typography> */}
               </Grid>
             </Grid>
+            <Stack gap={2} width='360px'>
+
             <TextField
 
               id="outlined-pivotpath-input"
@@ -156,7 +156,6 @@ export default function ProfileForm() {
               onChange={handleCareerChange}
               autoComplete="new-pivotpath"
               size="small"
-              fullWidth
               disabled={!isEditing}
             />
             <TextField
@@ -168,7 +167,6 @@ export default function ProfileForm() {
               onChange={handleEmailChange}
               autoComplete="new-email"
               size="small"
-              fullWidth
               disabled={!isEditing}
             />
             <TextField
@@ -179,7 +177,6 @@ export default function ProfileForm() {
               onChange={handleUsernameChange}
               autoComplete="new-username"
               size="small"
-              fullWidth
               disabled={!isEditing}
             />
             {isEditing ?
@@ -187,31 +184,31 @@ export default function ProfileForm() {
                 <TextField
                   id="outlined-password-input"
                   label="New Password"
-                  type="text"
+                  type="password"
                   value={password}
                   onChange={handlePasswordChange}
                   autoComplete="new-password"
                   size="small"
-                  fullWidth
-                // disabled={!isEditing}
+                disabled={!isEditing}
                 />
                 <TextField
                   id="outlined-confirm-input"
                   label="Confirm New Password"
-                  type="text"
+                  type="password"
                   value={confirm}
                   onChange={handleConfirmChange}
                   autoComplete="new-confirm"
                   size="small"
-                  fullWidth
-                // disabled={!isEditing}
+                disabled={!isEditing}
                 />
 
-                <Button type='submit' disabled={!tempImage && !username && !email && !password} variant='contained' sx={{ width: '100%', mx: 'auto' }}>
+                <Button type='submit' disabled={!tempImage && username === auth().username && email === auth().email && (!password || !confirm) && newCareer === career} variant='contained' sx={{ width: '100%', mx: 'auto' }}>
                   Save
                 </Button>
               </>
               : null}
+                          </Stack>
+
           </Grid>
         </form>
 

@@ -32,8 +32,8 @@ export default function UserMenu() {
   };
 
   const handleDashboard = () => {
-      const career = window.localStorage.getItem('career')
-      navigate('/dashboard' + (career ? `?career=${career}` : ''))
+    //   const career = window.localStorage.getItem('career')
+      navigate('/dashboard')
   }
 
   const handleProfile = () => {
