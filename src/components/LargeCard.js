@@ -202,7 +202,7 @@ export default function LargeCard({ post, posts }) {
 
     return (
         <Button onClick={handleClick} variant="contained" sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none' }, boxShadow: 'none', flexGrow: 1 }}>
-            {post &&
+            {post ?
                 <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
                     <Stack spacing={1} maxWidth='100%'>
                         <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
@@ -233,7 +233,7 @@ export default function LargeCard({ post, posts }) {
                     </Grid>
 
                 </Grid>
-            }
+            : null}
         </Button>
     )
 }

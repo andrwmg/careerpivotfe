@@ -39,7 +39,7 @@ const EllipsisTypographyThree = styled(Typography)(({ theme }) => ({
     lineHeight: 'auto'
 }));
 
-export default function SmallCard({post, community}) {
+export default function SmallCard({ post, community }) {
 
 
     const [date, setDate] = useState('')
@@ -71,18 +71,18 @@ export default function SmallCard({post, community}) {
             setLikeCount(newValue)
             const response = likePost(post._id)
             if (response === 'error') {
-            if (newStatus === 'liked') {
-                setStatus('disliked')
-                console.log(newValue)
-                newValue--
-                setLikeCount(newValue)
-            } else {
-                setStatus('liked')
-                console.log(newValue)
-                newValue++
-                setLikeCount(newValue)
+                if (newStatus === 'liked') {
+                    setStatus('disliked')
+                    console.log(newValue)
+                    newValue--
+                    setLikeCount(newValue)
+                } else {
+                    setStatus('liked')
+                    console.log(newValue)
+                    newValue++
+                    setLikeCount(newValue)
+                }
             }
-        }
         } else {
             setMessage("You must be logged in to like post")
             setSeverity('error')
@@ -98,8 +98,8 @@ export default function SmallCard({post, community}) {
         }
         if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
             setStatus('liked')
-        // } else if (auth() && post.dislikes.map(d => d.user._id.toString()).includes(auth().id)) {
-        //     setStatus('disliked')
+            // } else if (auth() && post.dislikes.map(d => d.user._id.toString()).includes(auth().id)) {
+            //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -128,22 +128,24 @@ export default function SmallCard({post, community}) {
     }, [])
 
     return (
-        <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', bgcolor: 'primary.main', color: 'primary', p: 1.5, py: 2, borderRadius: 2, '&:hover': {bgcolor: 'primary.hover'} }}>
-            <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
-                <Stack spacing={1} textAlign='start'>
-                <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
-                    {post && post.title}
-                    </EllipsisTypographyTwo>
-                    <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
-                        {post && post.body}
-                    </EllipsisTypographyThree>
-                </Stack>
+        <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', bgcolor: 'primary.main', color: 'primary', p: 1.5, py: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
+            {post ?
+                <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
+                    <Stack spacing={1} textAlign='start'>
+                        <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
+                            {post && post.title}
+                        </EllipsisTypographyTwo>
+                        <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
+                            {post && post.body}
+                        </EllipsisTypographyThree>
+                    </Stack>
 
-                <Grid container item alignItems='center' gap={1} width='100%'>
-                        <Favorite sx={{fontSize: '18px', color: 'white'}}/>
-                    <Typography variant='h6' color='white' fontWeight={600}>{trimLikes()}</Typography>
+                    <Grid container item alignItems='center' gap={1} width='100%'>
+                        <Favorite sx={{ fontSize: '18px', color: 'white' }} />
+                        <Typography variant='h6' color='white' fontWeight={600}>{trimLikes()}</Typography>
+                    </Grid>
                 </Grid>
-            </Grid>
-            </Button>
+                : null}
+        </Button>
     )
 }
