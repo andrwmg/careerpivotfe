@@ -93,7 +93,7 @@ export const UserProvider = ({ children }) => {
 
                         setMessage(data.message)
                         setSeverity('success')
-                        navigate(`/dashboard?career=${data.user.career || ''}`)
+                        navigate('/dashboard')
                     }
                 }
             })
@@ -111,6 +111,8 @@ export const UserProvider = ({ children }) => {
             .then(({ data }) => {
                 signOut();
                 window.localStorage.clear()
+                setUserImage(null)
+                setCareer(null)
                 setMessage(data.message)
                 setSeverity('success')
             })

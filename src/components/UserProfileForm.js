@@ -20,18 +20,19 @@ export default function ProfileForm() {
   const { career, setCareer, userImage, setUserImage } = useContext(UserContext)
   const { setMessage, setSeverity } = useContext(ToastContext)
 
-  const [username, setUsername] = useState('')
-  const [newCareer, setNewCareer] = useState(career)
-  const [email, setEmail] = useState('')
+  const auth = useAuthUser()
+  const authHeader = useAuthHeader()
+  const updateAuth = useUpdateReactAuthKitUserState()
+
+  const [username, setUsername] = useState(auth().username)
+  const [newCareer, setNewCareer] = useState(auth().career)
+  const [email, setEmail] = useState(auth().email)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [tempImage, setTempImage] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const auth = useAuthUser()
-  const authHeader = useAuthHeader()
-  const updateAuth = useUpdateReactAuthKitUserState()
 
   // const [userImage, setUserImage] = useState((profile !== undefined) ? [JSON.parse(profile)] : null)
 
@@ -58,7 +59,7 @@ export default function ProfileForm() {
   const handleSubmit = async (event) => {
     event.preventDefault()
     setLoading(true)
-    let obj = {career: newCareer, username, email, password, confirm}
+    let obj = { career: newCareer, username, email, password, confirm }
     if (tempImage) {
       const image = await UploadFilesService.upload([tempImage])
       obj['image'] = image[0]
@@ -66,18 +67,21 @@ export default function ProfileForm() {
     if (password === confirm || !password) {
       await userService.updateUser(auth().id, obj)
         .then(({ data }) => {
-          const obj = {career: data.data.career, username: data.data.username, email: data.data.email, image: data.data.image, id: data.data._id}
+          const obj = { career: data.data.career, username: data.data.username, email: data.data.email, image: data.data.image, id: data.data._id }
           updateAuth(obj)
-          localStorage.setItem('userImage', data.data.image.url)
+          if (obj.image) {
+            localStorage.setItem('userImage', data.data.image.url);
+            setUserImage(data.data.image.url)
+          }
           localStorage.setItem('career', data.data.career)
-          setUserImage(data.data.image.url)
           setCareer(data.data.career)
           setMessage(data.message)
           setSeverity('success')
           setIsEditing(false)
         })
-        .catch(({ response }) => {
-          setMessage(response.data.message)
+        .catch((response) => {
+          console.log(response)
+          setMessage(response.response.data.message)
           setSeverity('error')
         })
     }
@@ -90,14 +94,8 @@ export default function ProfileForm() {
     setTempImage(image)
   }
 
-  useEffect(() => {
-    setNewCareer(auth().career)
-    setUsername(auth().username)
-    setEmail(auth().email)
-  }, [])
-
   return (
-    <Card elevation={0} sx={{ width: '100%', px: {xs: 3, md: 6} }}>
+    <Card elevation={0} sx={{ width: '100%', px: { xs: 3, md: 6 } }}>
       <CardContent>
         <form onSubmit={handleSubmit}>
           <Grid container item rowGap={4}>
@@ -106,7 +104,7 @@ export default function ProfileForm() {
                 Profile
               </Typography>
               <IconButton onClick={() => setIsEditing(!isEditing)} size='large'>
-                <Edit color='primary' sx={{fontSize: '24px'}} />
+                <Edit color='primary' sx={{ fontSize: '24px' }} />
               </IconButton>
             </Grid>
             <Grid container item justifyContent='start'>
@@ -148,67 +146,67 @@ export default function ProfileForm() {
             </Grid>
             <Stack gap={2} width='360px'>
 
-            <TextField
+              <TextField
 
-              id="outlined-pivotpath-input"
-              label="PivotPath"
-              type="text"
-              value={newCareer}
-              onChange={handleCareerChange}
-              autoComplete="new-pivotpath"
-              size="small"
-              disabled={!isEditing}
-            />
-            <TextField
-
-              id="outlined-email-input"
-              label="Email"
-              type="email"
-              value={email}
-              onChange={handleEmailChange}
-              autoComplete="new-email"
-              size="small"
-              disabled={!isEditing}
-            />
-            <TextField
-              id="outlined-username-input"
-              label="Username"
-              type="text"
-              value={username}
-              onChange={handleUsernameChange}
-              autoComplete="new-username"
-              size="small"
-              disabled={!isEditing}
-            />
-            {isEditing ?
-              <>
-                <TextField
-                  id="outlined-password-input"
-                  label="New Password"
-                  type="password"
-                  value={password}
-                  onChange={handlePasswordChange}
-                  autoComplete="new-password"
-                  size="small"
+                id="outlined-pivotpath-input"
+                label="PivotPath"
+                type="text"
+                value={newCareer}
+                onChange={handleCareerChange}
+                autoComplete="new-pivotpath"
+                size="small"
                 disabled={!isEditing}
-                />
-                <TextField
-                  id="outlined-confirm-input"
-                  label="Confirm New Password"
-                  type="password"
-                  value={confirm}
-                  onChange={handleConfirmChange}
-                  autoComplete="new-confirm"
-                  size="small"
-                disabled={!isEditing}
-                />
+              />
+              <TextField
 
-                <Button type='submit' disabled={!tempImage && username === auth().username && email === auth().email && (!password || !confirm) && newCareer === career} variant='contained' sx={{ width: '100%', mx: 'auto' }}>
-                  Save
-                </Button>
-              </>
-              : null}
-                          </Stack>
+                id="outlined-email-input"
+                label="Email"
+                type="email"
+                value={email}
+                onChange={handleEmailChange}
+                autoComplete="new-email"
+                size="small"
+                disabled={!isEditing}
+              />
+              <TextField
+                id="outlined-username-input"
+                label="Username"
+                type="text"
+                value={username}
+                onChange={handleUsernameChange}
+                autoComplete="new-username"
+                size="small"
+                disabled={!isEditing}
+              />
+              {isEditing ?
+                <>
+                  <TextField
+                    id="outlined-password-input"
+                    label="New Password"
+                    type="password"
+                    value={password}
+                    onChange={handlePasswordChange}
+                    autoComplete="new-password"
+                    size="small"
+                    disabled={!isEditing}
+                  />
+                  <TextField
+                    id="outlined-confirm-input"
+                    label="Confirm New Password"
+                    type="password"
+                    value={confirm}
+                    onChange={handleConfirmChange}
+                    autoComplete="new-confirm"
+                    size="small"
+                    disabled={!isEditing}
+                  />
+
+                  <Button type='submit' disabled={!tempImage && username === auth().username && email === auth().email && (!password || !confirm) && newCareer === career} variant='contained' sx={{ width: '100%', mx: 'auto' }}>
+                    Save
+                  </Button>
+                </>
+                : null}
+            </Stack>
 
           </Grid>
         </form>

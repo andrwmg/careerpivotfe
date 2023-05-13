@@ -168,7 +168,7 @@ export default function LargeCard({ post, posts }) {
     }
 
     useEffect(() => {
-
+        if (post) {
         updateLikes()
         setCommentCount(post.commentCount)
 
@@ -194,10 +194,13 @@ export default function LargeCard({ post, posts }) {
                 setDate(`${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`)
             }
         }
+    }
     }, [])
 
     useEffect(() => {
-        updateLikes()
+        if (post) {
+            updateLikes()
+        }
     }, [posts])
 
     return (

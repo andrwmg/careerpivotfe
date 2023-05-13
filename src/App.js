@@ -165,32 +165,32 @@ function App() {
     const { token } = useParams()
     userService.verify(token)
       .then(({ data }) => {
-        if (data.messageStatus === 'success') {
           setMessage(data.message)
-          setSeverity(data.messageStatus)
+          setSeverity('success')
           navigate('/login')
-        } else {
-          navigate('/')
-        }
-      })
-  }
+        })
+        .catch(({response}) => {
+          setMessage(response.data.message)
+          setSeverity('error')
+          navigate('/login')
+        })
+      }
 
   const ResetLink = () => {
     const { token } = useParams()
     userService.setToken(token)
       .then(({ data }) => {
         window.localStorage.setItem('returned stuff', data)
-        if (data.messageStatus === 'success') {
-          console.log('here')
           setMessage(data.message)
-          setSeverity(data.messageStatus)
+          setSeverity('success')
           navigate('/reset')
-          // return <Navigate to={'/reset'} />
-        } else {
-          navigate('/')
-        }
-      })
-  }
+        })
+        .catch(({response}) => {
+          setMessage(response.data.message)
+          setSeverity('error')
+          navigate('/login')
+        })
+      }
 
   return (
     <div className="App">
