@@ -13,7 +13,7 @@ export const UserProvider = ({ children }) => {
 
     const [userImage, setUserImage] = useState(null)
     const [career, setCareer] = useState(null)
-    const [communities, setCommunities] = useState([])
+    const [groups, setGroups] = useState([])
     const [token, setToken] = useState(null)
 
     const { setMessage, setSeverity } = useContext(ToastContext)
@@ -74,7 +74,7 @@ export const UserProvider = ({ children }) => {
                             token,
                             expiresIn: 1000 * 60 * 60 * 24 * 7,
                             tokenType: "Bearer",
-                            authState: { email: data.user.email, username: data.user.username, id: data.user._id, image: data.user.image }
+                            authState: { email: data.user.email, username: data.user.username, id: data.user._id, image: data.user.image, career: data.user.career }
                         }
                     )) {
                         localStorage.setItem('token', token)
@@ -86,9 +86,9 @@ export const UserProvider = ({ children }) => {
                             setCareer(data.user.career)
                             window.localStorage.setItem('career', data.user.career)
                         }
-                        if (data.user.communities) {
-                            setCommunities(data.user.communities)
-                            window.localStorage.setItem('communities', JSON.stringify(data.user.communities))
+                        if (data.user.groups) {
+                            setGroups(data.user.groups)
+                            window.localStorage.setItem('groups', JSON.stringify(data.user.groups))
                         }
 
                         setMessage(data.message)
@@ -141,7 +141,7 @@ export const UserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
-            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, communities, setCommunities
+            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, groups, setGroups
         }}>
             {children}
         </UserContext.Provider>

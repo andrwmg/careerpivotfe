@@ -66,7 +66,7 @@ React.useEffect(() => {
             <Avatar alt='' src={userImage} />
             : <AvatarDefault username={auth().username} />
               }
-              <Typography variant='body1' fontWeight={700} mx={1} color='primary'>{auth().username}</Typography>
+              <Typography variant='body1' fontWeight={700} mx={1} color='primary' sx={{display: {xs: 'none', md: 'flex'}}}>{auth().username}</Typography>
               {open ? <KeyboardArrowUp color='primary' /> : <KeyboardArrowDown color='primary' />}
           </IconButton>
         </Tooltip>

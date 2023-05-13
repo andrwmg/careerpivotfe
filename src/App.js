@@ -22,9 +22,10 @@ import DashboardNav from './components/DashboardNav';
 import PostPage from './components/PostPage';
 import MessageSnackbar from './components/MessageSnackbar';
 import NewPostPage from './components/NewPostPage';
-import CommunityPage from './components/CommunityPage';
+import GroupPage from './components/GroupPage';
 import { RequireAuth, useAuthUser, useIsAuthenticated } from 'react-auth-kit';
 import ProfileForm from './components/UserProfileForm';
+import NewGroupPage from './components/GroupNew';
 
 const theme = createTheme({
   palette: {
@@ -68,7 +69,7 @@ const theme = createTheme({
       fontSize: "14px"
     },
     subtitle1: {
-      fontSize: "16px"
+      fontSize: "15px"
     },
     p: {
       fontSize: '12px',
@@ -208,10 +209,11 @@ function App() {
             <Route path='/verify' element={<UserWrapper form={<UserVerifyCard />} />} />
             <Route path='/dashboard/profile/:userId' element={<ProfileForm />} />
             <Route path='/dashboard/posts/new' element={isAuthenticated() ? 
-                career ? <NewPostPage /> : <ProfileRedirect /> : <LoginRedirect />} />
+                auth().career ? <NewPostPage /> : <ProfileRedirect /> : <LoginRedirect />} />
             <Route path='/dashboard/posts/:postId' element={<PostPage />} />
-            <Route path='/dashboard/community/:communityId' element={<CommunityPage />} />
-
+            <Route path='/dashboard/groups/new' element={isAuthenticated() ? 
+                auth().career ? <NewGroupPage /> : <ProfileRedirect /> : <LoginRedirect />} />
+            <Route path='/dashboard/groups/:groupId' element={<GroupPage />} />
             <Route path='/dashboard' element={<DashboardNav />} />
             <Route path='/dashboard/posts' element={<Posts />} />
             <Route path="*" element={<HomeRedirect />} />

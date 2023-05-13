@@ -41,11 +41,12 @@ export default function PostPage() {
     }
 
     const deletePost = () => {
+        const groupId = post.group && post.group._id
         postService.delete(postId)
             .then(({ data }) => {
                 setMessage(data.message)
                 setSeverity('success')
-                navigate('/dashboard/communityId')
+                navigate(`/dashboard/groups/${groupId}`)
             })
             .catch(({ response }) => {
                 console.log(response)
@@ -153,9 +154,9 @@ export default function PostPage() {
                     <Typography variant='h3'>{post.title}</Typography>
                     <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
                         {`${timestamp} by ${post.author.username}`}
-                        {/* {post.community ?
-                        <Link to={`/dashboard/community/${post.community && post.community._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        
-                        {`${post.community.title}`}
+                        {/* {post.group ?
+                        <Link to={`/dashboard/group/${post.group && post.group._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        
+                        {`${post.group.title}`}
                         </Link> : null} */}
                     </Typography>
                     <Typography variant='body1'>{post.body}</Typography>

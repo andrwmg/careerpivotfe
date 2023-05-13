@@ -13,7 +13,7 @@ import { ToastContext } from '../contexts/ToastContext';
 import AvatarDefault from './AvatarDefault';
 import { Edit } from '@mui/icons-material';
 import useUpdateReactAuthKitUserState from '../hooks/useUpdateReactAuthKitUserState';
-import { Stack } from '@mui/system';
+import { Box, Stack } from '@mui/system';
 
 
 export default function ProfileForm() {
@@ -128,7 +128,7 @@ export default function ProfileForm() {
                         variant="outlined"
                         component="div"
                         disableRipple={!isEditing}
-                        sx={{ borderRadius: '50%', p: 0, height: '150px', width: '150px', position: 'absolute', zIndex: 101251 }}>
+                        sx={{ borderRadius: '50%', p: 0, height: '150px', width: '150px', position: 'absolute', zIndex: 2 }}>
                         {(tempImage || userImage) ?
                           <Avatar
                             alt={auth().username}
@@ -144,8 +144,7 @@ export default function ProfileForm() {
                 {/* <Typography variant='h4' fontWeight={700}>Change profile picture</Typography> */}
               </Grid>
             </Grid>
-            <Stack gap={2} width='360px'>
-
+            <Stack gap={4} py={1} width='360px' maxHeight={isEditing ? '500px' : '220px'} overflow='hidden' sx={{transition: '.3s ease-in-out'}}>
               <TextField
 
                 id="outlined-pivotpath-input"
@@ -178,8 +177,9 @@ export default function ProfileForm() {
                 size="small"
                 disabled={!isEditing}
               />
-              {isEditing ?
-                <>
+              <Stack rowGap={4} 
+              // sx={{opacity: isEditing ? 1 : 0, flexDirection: 'column', transitionDelay: '.1s', transition: '.3s ease-in-out'}}
+              >
                   <TextField
                     id="outlined-password-input"
                     label="New Password"
@@ -204,8 +204,7 @@ export default function ProfileForm() {
                   <Button type='submit' disabled={!tempImage && username === auth().username && email === auth().email && (!password || !confirm) && newCareer === career} variant='contained' sx={{ width: '100%', mx: 'auto' }}>
                     Save
                   </Button>
-                </>
-                : null}
+                  </Stack>
             </Stack>
 
           </Grid>

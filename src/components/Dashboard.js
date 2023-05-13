@@ -5,7 +5,7 @@ import { useIsAuthenticated } from "react-auth-kit";
 import { useLocation } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
-import communityService from "../services/community.service";
+import groupService from "../services/group.service";
 import postService from "../services/post.service";
 import Feed from "./Feed";
 import LargeCard from "./LargeCard";
@@ -15,7 +15,7 @@ import SmallCardRow from "./SmallCardRow";
 export default function Dashboard() {
 
     const [trending, setTrending] = useState([])
-    const [community, setCommunity] = useState([])
+    const [group, setGroup] = useState([])
     const [popular, setPopular] = useState([])
     const [posts, setPosts] = useState([])
 
@@ -48,7 +48,7 @@ export default function Dashboard() {
 
     // useEffect(() => {
     //     if (career) {
-    //     communityService.getPopular(career)
+    //     groupService.getPopular(career)
     //         .then(({ data }) => {
     //             console.log(data)
     //             setPopular(data.data)

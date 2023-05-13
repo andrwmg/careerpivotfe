@@ -18,12 +18,12 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Dashboard from './Dashboard';
 import { Button, Collapse, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
-import { CarpenterOutlined, ExpandLess, ExpandMore, GroupOutlined, HelpOutlined, MenuOutlined, Message, MessageOutlined, Notifications, NotificationsOutlined, PatternSharp, Search, Settings, SettingsOutlined, StarBorder } from '@mui/icons-material';
+import { AccountCircleOutlined, CarpenterOutlined, DashboardOutlined, DesktopAccessDisabledSharp, ExpandLess, ExpandMore, GroupOutlined, HelpOutlined, MenuOutlined, Message, MessageOutlined, Notifications, NotificationsOutlined, PatternSharp, Search, Settings, SettingsOutlined, StarBorder } from '@mui/icons-material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
 import Posts from './Posts';
-import communityService from '../services/community.service';
+import groupService from '../services/group.service';
 import { useAuthUser, useIsAuthenticated } from 'react-auth-kit';
 import { ToastContext } from '../contexts/ToastContext';
 import logo from '../images/logo.png'
@@ -33,6 +33,7 @@ import styled from '@emotion/styled';
 import UserMenu from './UserMenu';
 import DashboardNav from './DashboardNav';
 import { UserContext } from '../contexts/UserContext';
+import { Stack } from '@mui/system';
 
 
 const drawerWidth = 256;
@@ -104,6 +105,7 @@ const SearchBar = styled(OutlinedInput)(({ theme }) => ({
 function DashboardDrawer(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
+    // const [dashboard, setDashboard] = React.useState(false)
     const [open, setOpen] = React.useState(true)
     const [pivotOpen, setPivotOpen] = React.useState(false)
     const [groupsOpen, setGroupsOpen] = React.useState(false)
@@ -116,12 +118,14 @@ function DashboardDrawer(props) {
     const [drawerAnimation, setDrawerAnimation] = React.useState(false)
 
     const { setMessage, setSeverity } = React.useContext(ToastContext)
-    const { setCareer, setUserImage, communities, setCommunities } = React.useContext(UserContext)
+    const { setCareer, setUserImage, logout } = React.useContext(UserContext)
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
     const navigate = useNavigate()
     const location = useLocation()
+
+    const dashboard = location.pathname.includes('/dashboard')
 
     const mobileMenuId = 'primary-search-account-menu-mobile';
 
@@ -146,7 +150,7 @@ function DashboardDrawer(props) {
     }
 
     const handleGroupClick = (id) => {
-        navigate(`/dashboard/community/${id}`)
+        navigate(`/dashboard/groups/${id}`)
     }
 
     const handleDrawerToggle = () => {
@@ -161,26 +165,77 @@ function DashboardDrawer(props) {
         setMobileMoreAnchorEl(null);
     };
 
+    const handleNewPost = () => {
+        setMobileOpen(false)
+        navigate('/dashboard/posts/new')
+    }
+
+    const handleNewGroup = () => {
+        setMobileOpen(false)
+        navigate('/dashboard/groups/new')
+    }
+
+    const handleLogout = () => {
+        logout()
+        setMobileOpen(false)
+        navigate('/dashboard')
+    }
+
     React.useEffect(() => {
         setDrawerAnimation(true)
         const result = localStorage.getItem('career')
         setCareer(result)
         const image = localStorage.getItem('userImage')
         setUserImage(image)
+        // setDashboard(location.pathname.includes('/dashboard'))
     }, [])
+
+    // React.useEffect(() => {
+    //     setDashboard(location.pathname.includes('/dashboard'))
+    // }, [location.pathname])
 
     const drawer = (
         <div>
-            <Toolbar sx={{ height: { xs: !location.pathname.includes('/dashboard') ? '60px' : '122px', sm: !location.pathname.includes('/dashboard') ? '60px' : '122px' } }} />
+            <Toolbar sx={{ height: dashboard ? '122px' : '60px' }} />
             <Grid container item bgcolor='rgba(62, 85, 205, 0.02)'>
                 <Grid container item direction='column' px={3}>
-                    <Grid container item width='100%' my={4} justifyContent='center'>
-                        <Button onClick={() => navigate('/dashboard/posts/new')} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
-                    </Grid>
-
+                    <Stack width='100%' spacing={2} my={4} justifyContent='center'>
+                        <Button onClick={handleNewPost} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
+                    {isAuthenticated() ?
+                        <Button onClick={handleNewGroup} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
+                            Create a group
+                        </Button> : null}
+                    </Stack>
                     <List disablePadding>
+                        {!isAuthenticated() &&
+                        <div>
+                    <Divider />
+                                    <ListItemButton href={location.pathname !== '/dashboard' && '/dashboard'}>
+                                        <ListItemIcon sx={{ minWidth: '36px' }}>
+                                            <DashboardOutlined sx={{ fontSize: '20px' }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary={
+                                            <Typography variant='h4' fontWeight={500} py={.75}>
+                                                Dashboard
+                                            </Typography>} />
+                                    </ListItemButton>
+                                    </div>
+}
                         {isAuthenticated() ?
                             <div>
+                                <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
+                                    
+                                    <Divider />
+                                    <ListItemButton href={!location.pathname.includes('profile') ? `/dashboard/profile/${auth().id}` : ''}>
+                                        <ListItemIcon sx={{ minWidth: '36px' }}>
+                                            <AccountCircleOutlined username={auth().username} size='20px' sx={{ fontSize: '20px' }} />
+                                        </ListItemIcon>
+                                        <ListItemText primary={
+                                            <Typography variant='h4' fontWeight={500} py={.75}>
+                                                Profile
+                                            </Typography>} />
+                                    </ListItemButton>
+                                </Box>
                                 <Divider />
                                 <ListItemButton href=''>
                                     <ListItemIcon sx={{ minWidth: '36px' }}>
@@ -213,6 +268,20 @@ function DashboardDrawer(props) {
                                     Settings
                                 </Typography>} />
                         </ListItemButton>
+                        {isAuthenticated() &&
+                            <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
+                                <Divider />
+                                <ListItemButton onClick={handleLogout}>
+                                    <ListItemIcon sx={{ minWidth: '36px' }}>
+                                        <DashboardOutlined sx={{ fontSize: '20px' }} />
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                            Logout
+                                        </Typography>} />
+                                </ListItemButton>
+                            </Box>
+                        }
                     </List>
                 </Grid>
             </Grid>
@@ -230,7 +299,7 @@ function DashboardDrawer(props) {
                 <AppBar
                     position="fixed"
                     sx={{
-                        height: location.pathname.includes('/dashboard') ? '122px' : '60px',
+                        height: dashboard ? '122px' : '60px',
                         bgcolor: 'white', boxShadow: 'none', borderBottom: '1px solid #cbcbcb',
                         transition: '.3s ease-in-out',
                         overflow: 'hidden',
@@ -239,8 +308,8 @@ function DashboardDrawer(props) {
                 >
                     <Grid container item direction='column' width='100vw' justifyContent='space-between'>
                         <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='40px'
-                            mt={location.pathname.includes('/dashboard') ? 3 : '10px'}
-                            px={location.pathname.includes('/dashboard') ? '4vw' : 3}
+                            mt={dashboard ? 3 : '10px'}
+                            px={dashboard ? '4vw' : 3}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
                             <Link to={isAuthenticated ? '/dashboard' : '/'} style={{ display: 'flex', flexDirection: 'row', textDecoration: 'none', alignItems: 'center' }}>
 
@@ -309,7 +378,7 @@ function DashboardDrawer(props) {
                             </Box>
                         </Grid>
                         <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='64px'
-                            px={!location.pathname.includes('/dashboard') ? '4vw' : 3}
+                            px={dashboard ? 3 : '4vw'}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
                             <Grid container item alignItems='center' wrap='nowrap' overflow='scroll'>
                                 <Box sx={{ width: { xs: '0px', md: `calc(${drawerWidth}px + 30px)` }, transition: '.3s ease-in-out' }} />
@@ -331,7 +400,7 @@ function DashboardDrawer(props) {
                 <Box
                     component="nav"
                     sx={{
-                        width: location.pathname.includes('/dashboard') ? { md: drawerWidth } : { md: '0px' }, flexShrink: { md: 0 }, transition: '.3s ease-in-out'
+                        width: dashboard ? { md: drawerWidth } : { md: '0px' }, flexShrink: { md: 0 }
                     }}
                     aria-label="mailbox folders"
                 >
@@ -361,7 +430,7 @@ function DashboardDrawer(props) {
                             display: { xs: 'none', md: 'block' },
                             '& .MuiDrawer-paper': {
                                 boxSizing: 'border-box',
-                                left: (!drawerAnimation || location.pathname.includes('/dashboard')) ? 0 : '-256px',
+                                left: (dashboard) ? 0 : '-256px',
                                 width: drawerWidth, transition: '.3s ease-in', zIndex: 1, bgcolor: 'rgba(62, 85, 205, 0.02)'
                             },
                         }}
@@ -371,7 +440,7 @@ function DashboardDrawer(props) {
                         <Box position='absolute' flexGrow={1} bgcolor='white' />
                     </Drawer>
                 </Box>
-                <Box flexGrow={1} maxWidth='100%' mt={location.pathname.includes('/dashboard') ? '122px' : '60px'}>
+                <Box flexGrow={1} maxWidth={'100%'} mt={dashboard ? '122px' : '60px'}>
                     {props.children}
                 </Box>
                 {/* <Box

@@ -6,15 +6,15 @@ class MessageDataService {
   }
 
   get(data) {
-    return http.get(`/listings/${data.id}/comments/${data.commentId}`);
+    return http.get(`/messages/${data.id}/comments/${data.commentId}`);
   }
 
   create(data) {
-    return http.post(`/listings/${data.id}/comments`, data);
+    return http.post(`/messages/${data.id}/comments`, data);
   }
 
   reply(data) {
-    return http.post(`/listings/${data.id}/comments/${data.commentId}`, data);
+    return http.post(`/messages/${data.id}/comments/${data.commentId}`, data);
   }
 
   update(id, data) {
@@ -22,7 +22,7 @@ class MessageDataService {
   }
 
   delete(data) {
-    return http.delete(`/listings/${data.id}/comments/${data.commentId}`, data);
+    return http.delete(`/messages/${data.id}/comments/${data.commentId}`, data);
   }
 
   deleteAll() {

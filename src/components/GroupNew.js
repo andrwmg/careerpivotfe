@@ -25,31 +25,31 @@ import { GlobalContext } from "../contexts/GlobalContext";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
 import commentService from "../services/comment.service";
+import groupService from "../services/group.service";
 import postService from "../services/post.service";
 
-export default function NewPostPage() {
+export default function NewGroupPage() {
     const { setMessage, setSeverity } = useContext(ToastContext);
     const { career } = useContext(UserContext);
 
-    const [newPost, setNewPost] = useState({
+    const [newGroup, setNewGroup] = useState({
         title: "",
-        body: "",
-        career,
+        tagline: "",
+        career: '',
     });
 
     const auth = useAuthUser();
     const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate();
 
-    const createPost = (e) => {
+    const createGroup = (e) => {
         e.preventDefault();
-        const obj = { ...newPost, author: auth().id };
-        postService
+        const obj = { ...newGroup, author: auth().id };
+        groupService
             .create(obj)
             .then(({ data }) => {
                 console.log(data)
-                navigate(`/dashboard/posts/${data.data._id}`);
-                // setNewPost({ title: "", body: "", career });
+                navigate(`/dashboard/groups/${data.data._id}`);
                 setMessage(data.message);
                 setSeverity("success");
             })
@@ -61,64 +61,50 @@ export default function NewPostPage() {
 
     useEffect(() => {
         if (career) {
-            setNewPost({ ...newPost, career })
+            setNewGroup({ ...newGroup, career })
         }
     }, []);
 
     return (
         <Grid container item mt={4} px={{ xs: 3, sm: 6 }} flexGrow={1} width='100%'>
-            <form onSubmit={createPost} style={{ width: '100%' }}>
+            <form onSubmit={createGroup} style={{ width: '100%' }}>
                 <Grid container item direction="column" xs={12} gap={2}>
-                    <Typography variant="h3">Create New Post</Typography>
-                    {/* <FormControl required={true} fullWidth>
-              <InputLabel id="groupSelector">Group</InputLabel>
-              <Select
-                name="groupSelector"
-                onChange={(e) =>
-                    setNewPost({ ...newPost, group: e.target.value })
-                }
-                label='Group'
-                value={newPost.group}
-                type="text"
-                required={true}
-                fullWidth
-              >
-                  <MenuItem value="" disabled={true}>
-                    <em>Select a group</em>
-                  </MenuItem>
-                {groups.length !== 0 && groups.map((item) => (
-                  <MenuItem key={item._id} value={item._id}>
-                    {item.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
+                    <Typography variant="h3">Create New Group</Typography>
+                    <TextField
+                        label="Career"
+                        type="text"
+                        required
+                        value={newGroup.career}
+                        onChange={(e) =>
+                            setNewGroup({ ...newGroup, career: e.target.value })
+                        }
+                    />
                     <TextField
                         label="Title"
                         type="text"
                         required
-                        value={newPost.title}
+                        value={newGroup.title}
                         onChange={(e) =>
-                            setNewPost({ ...newPost, title: e.target.value })
+                            setNewGroup({ ...newGroup, title: e.target.value })
                         }
                     />
                     <TextField
-                        label="Body"
+                        label="Tagline"
                         required
-                        value={newPost.body}
-                        rows={10}
+                        value={newGroup.tagline}
+                        rows={5}
                         multiline
-                        onChange={(e) => setNewPost({ ...newPost, body: e.target.value })}
+                        onChange={(e) => setNewGroup({ ...newGroup, tagline: e.target.value })}
                     />
                     {/* <TextField
               label="Career"
               required
-              value={newPost.career}
+              value={newGroup.career}
               onChange={(e) =>
-                setNewPost({ ...newPost, career: e.target.value })
+                setnewGroup({ ...newGroup, career: e.target.value })
               }
             /> */}
-                    <Button type="submit" variant='contained' size="large">Create Post</Button>
+                    <Button type="submit" variant='contained' size="large">Create Group</Button>
                 </Grid>
             </form>
         </Grid>

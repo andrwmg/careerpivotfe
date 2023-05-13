@@ -7,9 +7,9 @@ import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { useLocation, useParams } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
-import communityService from "../services/community.service";
+import groupService from "../services/group.service";
 import postService from "../services/post.service";
-import CommunityVisor from "./CommunityVisor";
+import GroupVisor from "./GroupVisor";
 import Feed from "./Feed";
 import LargeCard from "./LargeCard";
 import SmallCard from "./SmallCard";
@@ -34,29 +34,29 @@ const MainButton = styled(TextButton)(({ theme }) => ({
     lineHeight: '20px'
 }))
 
-export default function CommunityPage() {
+export default function GroupPage() {
 
-    const [community, setCommunity] = useState({ title: '' })
+    const [group, setGroup] = useState({ title: '' })
 
     const { setMessage, setSeverity } = useContext(ToastContext)
 
-    const { communityId } = useParams()
+    const { groupId } = useParams()
 
     useEffect(() => {
-        communityService.get(communityId)
+        groupService.get(groupId)
             .then(({ data }) => {
-                setCommunity(data)
+                setGroup(data)
             })
             .catch(({ response }) => {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
-    }, [communityId])
+    }, [groupId])
 
     return (
         <Grid container item gap={4} mt="62px" direction='column' maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0} flexGrow={1}>
-            <CommunityVisor community={community} />
-            <Feed posts={community.posts} />
+            <groupVisor group={group} />
+            <Feed posts={group.posts} />
         </Grid>
     )
 }

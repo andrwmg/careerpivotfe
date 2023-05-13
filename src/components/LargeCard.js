@@ -20,12 +20,12 @@ const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
 }));
 
-const EllipsisTypographyThree = styled(Typography)(({ theme }) => ({
+const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
     '-webkit-box-orient': 'vertical',
-    '-webkit-line-clamp': 3,
-    WebkitLineClamp: 3,
-    lineClamp: 3,
+    '-webkit-line-clamp': 2,
+    WebkitLineClamp: 2,
+    lineClamp: 2,
     overflow: 'hidden',
     textOverflow: 'ellipsis',
 }));
@@ -204,32 +204,38 @@ export default function LargeCard({ post, posts }) {
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 1)', color: 'black', p: 3, borderRadius: 2, '&:hover': { bgcolor: 'rgba(232, 235, 255, .6)', boxShadow: 'none' }, boxShadow: 'none', flexGrow: 1 }}>
+        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, borderWidth: '1px', borderStyle: 'solid', borderColor: 'primary.main', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: 'none', flexGrow: 1 }}>
             {post ?
                 <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
-                    <Stack spacing={1} maxWidth='100%'>
+                    <Stack gap={1} maxWidth='100%'>
                         <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
                         <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                            {`${date} by ${post.author.username} ${!location.pathname.includes('/community') && post.community ? 'in ' : ''}`}
+                            <span>
+                                {`${date} by `}
+                             <i>
+                                 {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
+                             </i>
+                                 {'in '}
                             <span style={{ fontWeight: 500 }}>
-                                {`${!location.pathname.includes('/community') && post.community ? post.community.title : ""}`}
+                                {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
+                            </span>
                             </span>
                         </EllipsisTypographyOne>
-                        <EllipsisTypographyThree variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='90px'>
+                        <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px'>
                             {`${post.body}`}
-                        </EllipsisTypographyThree>
+                        </EllipsisTypographyTwo>
                     </Stack>
                     <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
                         <Grid container item direction='column' xs='auto'>
                             <Grid container item alignItems='center' gap={1}>
                                 <Favorite color='primary' sx={{ fontSize: '22px' }} />
-                                <Typography variant='body1' color='primary' fontWeight={700}>{likeCount}</Typography>
+                                <Typography variant='h4' color='black'>{likeCount}</Typography>
                             </Grid>
                         </Grid>
                         <Grid container item direction='column' xs>
                             <Grid container item gap={1} xs='auto' alignItems='center'>
                                 <Comment color="primary" sx={{ fontSize: '22px' }} />
-                                <Typography variant='body1' color='primary' fontWeight={700} textAlign='start'>{commentCount}</Typography>
+                                <Typography variant='h4' color='black' textAlign='start'>{commentCount}</Typography>
                             </Grid>
                         </Grid>
 
