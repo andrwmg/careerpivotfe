@@ -19,7 +19,14 @@ export default function Dashboard() {
     const isAuthenticated = useIsAuthenticated()
 
     useEffect(() => {
-        postService.trending(career ? {career} : {})
+        const result = window.localStorage.getItem('message')
+        if (result) {
+            setMessage(result)
+            setSeverity('success')
+        }
+        window.localStorage.removeItem('message')
+
+        postService.trending(career ? { career } : {})
             .then(({ data }) => {
                 setTrending(data.data)
                 setTrendingLoad(false)
@@ -28,7 +35,7 @@ export default function Dashboard() {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
-            postService.latest(career ? {career} : {})
+        postService.latest(career ? { career } : {})
             .then(({ data }) => {
                 setLatest(data.data)
                 setFeedLoading(false)
