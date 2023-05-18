@@ -88,7 +88,7 @@ export const UserProvider = ({ children }) => {
                             setGroups(data.user.groups)
                             window.localStorage.setItem('groups', JSON.stringify(data.user.groups))
                         }
-                        // navigate(0)
+                        navigate(0)
 
                         setMessage(data.message)
                         setSeverity('success')

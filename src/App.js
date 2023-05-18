@@ -113,6 +113,8 @@ function App() {
 
   const DashboardRedirect = (route) => {
     if (isAuthenticated()) {
+      setMessage(`Welcome back to CareerPivot, ${auth().username}`)
+      setSeverity('success')
       return <Navigate to='/dashboard' />
     } else {
      return route 

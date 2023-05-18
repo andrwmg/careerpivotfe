@@ -29,6 +29,7 @@ export default function PostPage() {
             .then(({ data }) => {
                 console.log('Get posts data: ', data)
                 setPost(data)
+                setComments(data.comments)
             })
             .catch(({ response }) => {
                 setMessage(response.data.message)

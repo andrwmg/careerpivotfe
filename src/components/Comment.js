@@ -128,8 +128,8 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                 .then(({ data }) => {
                     console.log(data)
                     setReplies(data.replies)
-                    setMessage(data.message)
-                    setSeverity('success')
+                    // setMessage(data.message)
+                    // setSeverity('success')
                 })
                 .catch(({ response }) => {
                     setMessage(response.data.message)
