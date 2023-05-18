@@ -1,8 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Button, CardMedia, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
+import { Button, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
 import { UserContext } from '../contexts/UserContext';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 

@@ -6,24 +6,16 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import IconButton from '@mui/material/IconButton';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
-import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import Dashboard from './Dashboard';
-import { Button, Collapse, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
-import { AccountCircleOutlined, CarpenterOutlined, DashboardOutlined, DesktopAccessDisabledSharp, ExpandLess, ExpandMore, GroupOutlined, HelpOutlined, MenuOutlined, Message, MessageOutlined, Notifications, NotificationsOutlined, PatternSharp, Search, Settings, SettingsOutlined, StarBorder } from '@mui/icons-material';
+import { Button, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
+import { AccountCircleOutlined, CloseOutlined, DashboardOutlined, DocumentScanner, MenuOutlined, MessageOutlined, NotificationsOutlined, Search, Settings } from '@mui/icons-material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
-import TabPanel from '@mui/lab/TabPanel';
-import Posts from './Posts';
-import groupService from '../services/group.service';
 import { useAuthUser, useIsAuthenticated } from 'react-auth-kit';
 import { ToastContext } from '../contexts/ToastContext';
 import logo from '../images/logo.png'
@@ -31,39 +23,12 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import styled from '@emotion/styled';
 import UserMenu from './UserMenu';
-import DashboardNav from './DashboardNav';
 import { UserContext } from '../contexts/UserContext';
 import { Stack } from '@mui/system';
+import AvatarDefault from './AvatarDefault';
 
 
 const drawerWidth = 256;
-
-const pivotItems = [
-    {
-        text: 'Overview',
-        link: ''
-    },
-    {
-        text: 'Getting started',
-        link: ''
-    },
-    {
-        text: 'Education',
-        link: ''
-    },
-    {
-        text: 'Experience',
-        link: ''
-    },
-    {
-        text: 'Getting the job',
-        link: ''
-    },
-    {
-        text: 'Leveling up',
-        link: ''
-    }
-]
 
 const TextButton = styled(Button)(({ theme }) => ({
     color: grey[800],
@@ -95,7 +60,7 @@ const SearchBar = styled(OutlinedInput)(({ theme }) => ({
         fontWeight: 500
     },
     "& .MuiOutlinedInput-notchedOutline, :hover .MuiOutlinedInput-notchedOutline": {
-        borderColor: '#596FFF'
+        borderColor: '#596FFF',
     },
     "& :hover .Mui-focused, .Mui-focused": {
         border: '2px solid #596FFF'
@@ -105,19 +70,8 @@ const SearchBar = styled(OutlinedInput)(({ theme }) => ({
 function DashboardDrawer(props) {
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
-    // const [dashboard, setDashboard] = React.useState(false)
-    const [open, setOpen] = React.useState(true)
-    const [pivotOpen, setPivotOpen] = React.useState(false)
-    const [groupsOpen, setGroupsOpen] = React.useState(false)
-    const [aboutOpen, setAboutOpen] = React.useState(false)
-    const [helpOpen, setHelpOpen] = React.useState(false)
-    const [settingsOpen, setSettingsOpen] = React.useState(false)
     const [value, setValue] = React.useState('1');
-    const [mobileMoreAnchorEl, setMobileMoreAnchorEl] = React.useState(null);
-    const [indicatorPosition, setIndicatorPosition] = React.useState(0)
-    const [drawerAnimation, setDrawerAnimation] = React.useState(false)
 
-    const { setMessage, setSeverity } = React.useContext(ToastContext)
     const { setCareer, setUserImage, logout } = React.useContext(UserContext)
 
     const auth = useAuthUser()
@@ -133,37 +87,36 @@ function DashboardDrawer(props) {
         setValue(newValue);
     };
 
-    const handleAboutOpen = () => {
-        setAboutOpen(!aboutOpen)
-    }
-
-    const handleHelpOpen = () => {
-        setHelpOpen(!helpOpen)
-    }
-
     const handleRegistrationLink = () => {
         navigate('/register')
-    }
-
-    const handleSettingsOpen = () => {
-        setSettingsOpen(!settingsOpen)
-    }
-
-    const handleGroupClick = (id) => {
-        navigate(`/dashboard/groups/${id}`)
     }
 
     const handleDrawerToggle = () => {
         setMobileOpen(!mobileOpen);
     };
 
-    const handleMobileMenuOpen = (event) => {
-        setMobileMoreAnchorEl(event.currentTarget);
-    };
+    const handleProfileClick = () => {
+        if (location.pathname.includes('profile')) {
+            setMobileOpen(false)
+        } else {
+            setMobileOpen(false)
+            navigate(`/dashboard/profile/${auth().id}`)
+        }
+    }
 
-    const handleMobileMenuClose = () => {
-        setMobileMoreAnchorEl(null);
-    };
+    const handleDashboardClick = () => {
+        if (location.pathname === '/dashboard') {
+            setMobileOpen(false)
+        } else {
+            setMobileOpen(false)
+            navigate('/dashboard')
+        }
+    }
+
+    const handleStart = () => {
+        setMobileOpen(false)
+        navigate('/login')
+    }
 
     const handleNewPost = () => {
         setMobileOpen(false)
@@ -182,77 +135,123 @@ function DashboardDrawer(props) {
     }
 
     React.useEffect(() => {
-        setDrawerAnimation(true)
         const result = localStorage.getItem('career')
         setCareer(result)
         const image = localStorage.getItem('userImage')
         setUserImage(image)
-        // setDashboard(location.pathname.includes('/dashboard'))
     }, [])
-
-    // React.useEffect(() => {
-    //     setDashboard(location.pathname.includes('/dashboard'))
-    // }, [location.pathname])
 
     const drawer = (
         <div>
-            <Toolbar sx={{ height: dashboard ? '122px' : '60px' }} />
+            <Toolbar
+                sx={{
+                    height: dashboard ? { md: '122px' } : '60px',
+                    alignItems: 'start',
+                    '& .MuiListItemButton-root .MuiListItemIcon-root': {
+                        pl: 2,
+                        fontSize: '20px'
+                    },
+                    '& .MuiListItemButton-root .MuiTypogragphy-root': {
+                        fontWeight: 500, py: .75
+                    }
+                }}>
+                <Grid container item direction='column' xs={12} px={1} pt={3} gap={4} alignItems='end' display={{ xs: 'flex', md: 'none' }}>
+                    <IconButton onClick={handleDrawerToggle}>
+                        <CloseOutlined color='primary' sx={{ fontSize: '26px' }} />
+                    </IconButton>
+                    {isAuthenticated() &&
+                        <Grid container item justifyContent='center' rowGap={3}>
+                            <Stack spacing={2}>
+                                <AvatarDefault size='72px' />
+                                <Typography variant='h4' fontWeight={700} color='primary'>{isAuthenticated() && auth().username}</Typography>
+                            </Stack>
+                            <div style={{ width: '100%' }}>
+                                <Divider />
+                                <ListItemButton onClick={handleProfileClick}>
+                                    <ListItemIcon>
+                                        <AccountCircleOutlined />
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant='h4'>
+                                            Profile
+                                        </Typography>} />
+                                </ListItemButton>
+                                <Divider />
+                            </div>
+                        </Grid>}
+                </Grid>
+            </Toolbar>
             <Grid container item bgcolor='rgba(62, 85, 205, 0.02)'>
                 <Grid container item direction='column' px={3}>
                     <Stack width='100%' spacing={2} my={4} justifyContent='center'>
-                        <Button onClick={handleNewPost} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>{isAuthenticated() ? 'Write a post' : 'Log in to write a post'}</Button>
-                    {isAuthenticated() ?
+                        {!isAuthenticated() &&
+                            <Button variant='contained' onClick={handleStart} sx={{ boxShadow: 'none', '& :hover': { boxShadow: 'none' } }}>Get started</Button>
+                        }
+                        <Button onClick={handleNewPost} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
+                            {isAuthenticated() ? 'Write a post' : 'Log in to write a post'}
+                        </Button>
                         <Button onClick={handleNewGroup} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
                             Create a group
-                        </Button> : null}
+                        </Button>
                     </Stack>
-                    <List disablePadding>
+                    <List disablePadding sx={{ '& .MuiListItemIcon-root': { pl: 2, fontSize: '20px' }, '& .MuiListItemButton-root .MuiTypography-root': { fontWeight: 500, py: .75, fontSize: '16px' } }}>
                         {!isAuthenticated() &&
-                        <div>
-                    <Divider />
-                                    <ListItemButton href={location.pathname !== '/dashboard' && '/dashboard'}>
-                                        <ListItemIcon sx={{ minWidth: '36px' }}>
-                                            <DashboardOutlined sx={{ fontSize: '20px' }} />
-                                        </ListItemIcon>
-                                        <ListItemText primary={
-                                            <Typography variant='h4' fontWeight={500} py={.75}>
-                                                Dashboard
-                                            </Typography>} />
-                                    </ListItemButton>
-                                    </div>
-}
+                            <div>
+                                <Divider />
+                                <ListItemButton href={handleDashboardClick}>
+                                    <ListItemIcon>
+                                        <DashboardOutlined />
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant='h4'>
+                                            Dashboard
+                                        </Typography>} />
+                                </ListItemButton>
+                            </div>
+                        }
                         {isAuthenticated() ?
                             <div>
-                                <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
-                                    
+                                <Divider />
+                                <ListItemButton href=''>
+                                    <ListItemIcon>
+                                        <DocumentScanner />
+                                    </ListItemIcon>
+                                    <ListItemText primary={
+                                        <Typography variant='h4'>
+                                            Career Test
+                                        </Typography>
+                                    } />
+                                </ListItemButton>
+                                {/* <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
+
                                     <Divider />
                                     <ListItemButton href={!location.pathname.includes('profile') ? `/dashboard/profile/${auth().id}` : ''}>
-                                        <ListItemIcon sx={{ minWidth: '36px' }}>
+                                        <ListItemIcon>
                                             <AccountCircleOutlined username={auth().username} size='20px' sx={{ fontSize: '20px' }} />
                                         </ListItemIcon>
                                         <ListItemText primary={
-                                            <Typography variant='h4' fontWeight={500} py={.75}>
+                                            <Typography variant='h4'>
                                                 Profile
                                             </Typography>} />
                                     </ListItemButton>
-                                </Box>
+                                </Box> */}
                                 <Divider />
                                 <ListItemButton href=''>
-                                    <ListItemIcon sx={{ minWidth: '36px' }}>
-                                        <NotificationsOutlined sx={{ fontSize: '20px' }} />
+                                    <ListItemIcon>
+                                        <NotificationsOutlined />
                                     </ListItemIcon>
                                     <ListItemText primary={
-                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                        <Typography variant='h4'>
                                             Notifications
                                         </Typography>} />
                                 </ListItemButton>
                                 <Divider />
                                 <ListItemButton href=''>
-                                    <ListItemIcon sx={{ minWidth: '36px' }}>
-                                        <MessageOutlined sx={{ fontSize: '20px' }} />
+                                    <ListItemIcon>
+                                        <MessageOutlined />
                                     </ListItemIcon>
                                     <ListItemText primary={
-                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                        <Typography variant='h4'>
                                             Messages
                                         </Typography>} />
                                 </ListItemButton>
@@ -260,11 +259,11 @@ function DashboardDrawer(props) {
                             : null}
                         <Divider />
                         <ListItemButton href=''>
-                            <ListItemIcon sx={{ minWidth: '36px' }}>
-                                <Settings sx={{ fontSize: '20px' }} />
+                            <ListItemIcon>
+                                <Settings />
                             </ListItemIcon>
                             <ListItemText primary={
-                                <Typography variant='h4' fontWeight={500} py={.75}>
+                                <Typography variant='h4'>
                                     Settings
                                 </Typography>} />
                         </ListItemButton>
@@ -272,11 +271,11 @@ function DashboardDrawer(props) {
                             <Box sx={{ display: { xs: 'flex', md: 'none' }, flexDirection: 'column' }}>
                                 <Divider />
                                 <ListItemButton onClick={handleLogout}>
-                                    <ListItemIcon sx={{ minWidth: '36px' }}>
-                                        <DashboardOutlined sx={{ fontSize: '20px' }} />
+                                    <ListItemIcon>
+                                        <DashboardOutlined />
                                     </ListItemIcon>
                                     <ListItemText primary={
-                                        <Typography variant='h4' fontWeight={500} py={.75}>
+                                        <Typography variant='h4'>
                                             Logout
                                         </Typography>} />
                                 </ListItemButton>
@@ -302,14 +301,14 @@ function DashboardDrawer(props) {
                         height: dashboard ? '122px' : '60px',
                         bgcolor: 'white', boxShadow: 'none', borderBottom: '1px solid #cbcbcb',
                         transition: '.3s ease-in-out',
-                        overflow: 'hidden',
-                        zIndex: (theme) => theme.zIndex.drawer + 1
+                        overflow: 'visible',
+                        zIndex: 2
                     }}
                 >
                     <Grid container item direction='column' width='100vw' justifyContent='space-between'>
                         <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='40px'
                             mt={dashboard ? 3 : '10px'}
-                            px={dashboard ? '4vw' : 3}
+                            px={3}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
                             <Link to={isAuthenticated ? '/dashboard' : '/'} style={{ display: 'flex', flexDirection: 'row', textDecoration: 'none', alignItems: 'center' }}>
 
@@ -327,8 +326,8 @@ function DashboardDrawer(props) {
                                     Career<span style={{ color: 'rgba(89, 111, 255, 1)' }}>Pivot</span>
                                 </Typography>
                             </Link>
-                            <Box sx={{ position: 'absolute', left: 'calc(256px + 50px)', display: { xs: 'none', md: 'flex' } }}>
-                                <FormControl sx={{ m: 1, maxWidth: '300px', maxHeight: '38px' }} variant="outlined">
+                            <Box sx={{ position: 'absolute', left: 'calc(256px + 50px)', alignItems: 'center', display: { xs: 'none', md: 'flex' } }}>
+                                <FormControl sx={{ maxWidth: '300px', maxHeight: '38px' }} variant="outlined">
                                     <SearchBar
                                         id="outlined-adornment-weight"
                                         placeholder='Search'
@@ -347,7 +346,7 @@ function DashboardDrawer(props) {
                                 </FormControl>
                             </Box>
                             <Box sx={{ display: { xs: 'none', md: 'flex' }, minWidth: '474px', gap: 2, justifyContent: 'end' }}>
-                                <TextButton sx={{ display: { xs: 'none', lg: 'block' } }}>Career Test</TextButton>
+                                {/* <TextButton sx={{ display: { xs: 'none', lg: 'block' } }}>Career Test</TextButton> */}
                                 {/* <TextButton>Career Paths</TextButton> */}
 
                                 {auth() ?
@@ -357,7 +356,7 @@ function DashboardDrawer(props) {
                                     <MainButton variant='contained' onClick={handleRegistrationLink}>Get started</MainButton>
                                 }
                             </Box>
-                            <Box sx={{ display: { xs: 'flex', md: 'none' } }}>
+                            <Box sx={{ display: { xs: 'flex', md: 'none' }, columnGap: 3 }}>
                                 <IconButton
                                     aria-label="show more"
                                     aria-controls={mobileMenuId}
@@ -377,8 +376,9 @@ function DashboardDrawer(props) {
                                 </IconButton>
                             </Box>
                         </Grid>
-                        <Grid container item position='relative' justifyContent='space-between' alignItems='center' height='64px'
+                        <Grid container item position='relative' justifyContent='space-between' alignItems='end' height='58px'
                             px={dashboard ? 3 : '4vw'}
+                            display={dashboard ? 'flex' : 'none'}
                             wrap='nowrap' sx={{ transition: '.3s ease-in-out' }}>
                             <Grid container item alignItems='center' wrap='nowrap' overflow='scroll'>
                                 <Box sx={{ width: { xs: '0px', md: `calc(${drawerWidth}px + 30px)` }, transition: '.3s ease-in-out' }} />
@@ -386,11 +386,11 @@ function DashboardDrawer(props) {
 
                                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                                         <Tab label="Home" value="1" sx={{ width: '120px' }} onClick={() => navigate('/dashboard')} />
-                                        {/* <Tab label="Resources" value="2" sx={{ width: '120px' }} /> */}
-                                        <Tab label="Jobs" value="2" sx={{ width: '120px', px: 3 }} />
-                                        <Tab label="Events" value="3" sx={{ width: '120px' }} />
+                                        <Tab label="Groups" value="2" sx={{ width: '120px', pl: 3 }} />
+                                        <Tab label="Jobs" value="3" sx={{ width: '120px', px: 3 }} />
+                                        <Tab label="Events" value="4" sx={{ width: '120px' }} />
                                     </TabList>
-                                    <Box height='5px' width='120px' position='absolute' bottom={0} left={indicatorPosition} />
+                                    {/* <Box height='5px' width='120px' position='absolute' bottom={0} left={indicatorPosition} /> */}
                                 </Grid>
                                 <Box sx={{ flexGrow: 1 }} />
                             </Grid>
@@ -407,6 +407,7 @@ function DashboardDrawer(props) {
                     <Drawer
                         container={container}
                         variant="temporary"
+                        anchor='right'
                         open={mobileOpen}
                         onClose={handleDrawerToggle}
                         ModalProps={{
@@ -415,10 +416,12 @@ function DashboardDrawer(props) {
                         sx={{
                             position: 'relative',
                             display: { xs: 'block', md: 'none' },
-                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 1, bgcolor: 'white' },
+                            '& .MuiDrawer-paper': { boxSizing: 'border-box', width: drawerWidth, zIndex: 3, bgcolor: 'white' },
+                            // '& .MuiBackdrop-root': {bgcolor: 'green'}
                         }}
                     >
-                        <Box id='back' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='rgba(62, 85, 205, 0.02)' zIndex={0} />
+                        <Box id='back' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='white' zIndex={0} />
+                        <Box id='front' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='rgba(62, 85, 205, 0.02)' zIndex={0} />
 
                         {drawer}
 
@@ -436,8 +439,9 @@ function DashboardDrawer(props) {
                         }}
                         open
                     >
+                        <Box id='back' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='white' zIndex={0} />
+                        <Box id='front' position='absolute' flexGrow={1} top={0} bottom={0} right={0} left={0} bgcolor='rgba(62, 85, 205, 0.02)' zIndex={0} />
                         {drawer}
-                        <Box position='absolute' flexGrow={1} bgcolor='white' />
                     </Drawer>
                 </Box>
                 <Box flexGrow={1} maxWidth={'100%'} mt={dashboard ? '122px' : '60px'}>

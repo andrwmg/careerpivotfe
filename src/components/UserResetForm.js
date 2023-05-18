@@ -4,18 +4,16 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid, IconButton, TextField } from '@mui/material';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { UserContext } from '../contexts/UserContext';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import userService from '../services/user.service';
-import { ToastContext } from '../contexts/ToastContext';
 
 export default function ResetForm() {
 
-    const { setMessage, setSeverity, token } = useContext(UserContext)
-    const { setAlert } = useContext(ToastContext)
+    const { setMessage, setSeverity } = useContext(UserContext)
 
     const [confirm, setConfirm] = useState('')
     const [password, setPassword] = useState('')

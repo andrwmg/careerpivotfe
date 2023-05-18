@@ -1,8 +1,8 @@
 import { Button, Grid, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
-import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { useLocation, useParams } from "react-router-dom";
+import { useAuthUser } from "react-auth-kit";
+import { useParams } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
 import groupService from "../services/group.service";
@@ -14,12 +14,9 @@ export default function GroupVisor({ group }) {
 
     const { setMessage, setSeverity } = useContext(ToastContext)
     const { groups, setGroups } = useContext(UserContext)
-    const isAuthenticated = useIsAuthenticated()
     const auth = useAuthUser()
 
     const { groupId } = useParams()
-
-    const location = useLocation()
 
     const handleClick = () => {
         let isMember = !member

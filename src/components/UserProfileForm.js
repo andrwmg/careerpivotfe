@@ -1,27 +1,25 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Avatar, Grid, IconButton, TextField } from '@mui/material';
+import { Grid, IconButton, TextField } from '@mui/material';
 import UploadFilesService from '../services/upload-files.service'
-import { useAuthHeader, useAuthUser, useSignIn } from 'react-auth-kit';
-import { DefaultAvatar } from './index'
+import { useAuthUser } from 'react-auth-kit';
 import { UserContext } from '../contexts/UserContext';
 import userService from '../services/user.service';
 import { ToastContext } from '../contexts/ToastContext';
 import AvatarDefault from './AvatarDefault';
 import { Edit } from '@mui/icons-material';
 import useUpdateReactAuthKitUserState from '../hooks/useUpdateReactAuthKitUserState';
-import { Box, Stack } from '@mui/system';
+import { Stack } from '@mui/system';
 
 
 export default function ProfileForm() {
-  const { career, setCareer, userImage, setUserImage } = useContext(UserContext)
+  const { career, setCareer, setUserImage } = useContext(UserContext)
   const { setMessage, setSeverity } = useContext(ToastContext)
 
   const auth = useAuthUser()
-  const authHeader = useAuthHeader()
   const updateAuth = useUpdateReactAuthKitUserState()
 
   const [username, setUsername] = useState(auth().username)
@@ -129,14 +127,7 @@ export default function ProfileForm() {
                         component="div"
                         disableRipple={!isEditing}
                         sx={{ borderRadius: '50%', p: 0, height: '150px', width: '150px', position: 'absolute', zIndex: 2 }}>
-                        {(tempImage || userImage) ?
-                          <Avatar
-                            alt={auth().username}
-                            src={tempImage ? tempImage.url : userImage}
-                            style={{ height: '100%', width: '100%', objectFit: 'cover', p: 'none', borderRadius: '50%' }} />
-                          :
-                          <AvatarDefault size='100%' username={auth().username} />
-                        }
+                        <AvatarDefault size='150px' />
                       </Button>
                     </div>
                   </label>

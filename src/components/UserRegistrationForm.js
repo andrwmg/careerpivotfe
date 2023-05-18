@@ -8,7 +8,6 @@ import { useNavigate } from 'react-router-dom';
 import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
-import axios from 'axios';
 import { UserContext } from '../contexts/UserContext';
 import UploadFilesService from '../services/upload-files.service'
 

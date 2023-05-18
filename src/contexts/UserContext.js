@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuthUser, useIsAuthenticated, useSignOut, useSignIn } from 'react-auth-kit'
-import axios from "axios";
+import { useAuthUser, useSignOut, useSignIn } from 'react-auth-kit'
 import userService from "../services/user.service";
 import { ToastContext } from "./ToastContext";
 import Cookies from 'js-cookie'
@@ -20,7 +19,6 @@ export const UserProvider = ({ children }) => {
 
     const navigate = useNavigate()
     const auth = useAuthUser()
-    const isAuthenticated = useIsAuthenticated()
     const signIn = useSignIn()
     const signOut = useSignOut()
 
@@ -90,10 +88,10 @@ export const UserProvider = ({ children }) => {
                             setGroups(data.user.groups)
                             window.localStorage.setItem('groups', JSON.stringify(data.user.groups))
                         }
+                        // navigate(0)
 
                         setMessage(data.message)
                         setSeverity('success')
-                        navigate('/dashboard')
                     }
                 }
             })
@@ -122,7 +120,6 @@ export const UserProvider = ({ children }) => {
             })
     }
 
-
     const updateUser = async (body) => {
         const id = auth().id
         userService.updateUser(id, body)
@@ -141,7 +138,7 @@ export const UserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
-            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, groups, setGroups
+            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, groups, setGroups, updateUser
         }}>
             {children}
         </UserContext.Provider>

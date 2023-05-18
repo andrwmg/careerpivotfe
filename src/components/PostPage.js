@@ -1,32 +1,28 @@
-import { Comment, CommentOutlined, Favorite, FavoriteBorder, FavoriteBorderOutlined, FavoriteOutlined, Visibility } from "@mui/icons-material";
-import { Button, Grid, IconButton, TextField, Toolbar, Typography } from "@mui/material";
+import {Grid } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { Link, useNavigate, useParams } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalContext";
+import { useParams } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
+import { UserContext } from "../contexts/UserContext";
 import commentService from "../services/comment.service";
 import postService from "../services/post.service";
+import CommentNew from "./CommentNew";
 import Comments from "./Comments";
-import Post from "./Post";
+import PostCard from "./PostCard";
+import PostSidebar from "./PostSidebar";
 
 export default function PostPage() {
 
     const [post, setPost] = useState(null)
-    const [timestamp, setTimestamp] = useState(null)
-    const [status, setStatus] = useState(null)
-    const [likeCount, setLikeCount] = useState(0)
     const [comments, setComments] = useState([])
     const [commentCount, setCommentCount] = useState(0)
-    const [newPost, setNewPost] = useState({ title: '', body: '', career: '' })
     const { setMessage, setSeverity } = useContext(ToastContext)
-    const { likePost, convertTime } = useContext(GlobalContext)
+    const { expiredLogout } = useContext(UserContext)
 
     const { postId } = useParams()
 
     const auth = useAuthUser()
     const isAuthenticated = useIsAuthenticated()
-    const navigate = useNavigate()
 
     const getPost = () => {
         postService.get(postId)
@@ -40,83 +36,8 @@ export default function PostPage() {
             })
     }
 
-    const deletePost = () => {
-        const groupId = post.group && post.group._id
-        postService.delete(postId)
-            .then(({ data }) => {
-                setMessage(data.message)
-                setSeverity('success')
-                navigate(`/dashboard/groups/${groupId}`)
-            })
-            .catch(({ response }) => {
-                console.log(response)
-                setMessage(response.data.message)
-                setSeverity('error')
-            })
-    }
-
-    const like = () => {
-        if (isAuthenticated()) {
-            let newValue = likeCount
-            let newStatus
-            if (status === 'liked') {
-                newValue--
-                newStatus = 'disliked'
-            } else {
-                newValue++
-                newStatus = 'liked'
-            }
-            setStatus(newStatus)
-            setLikeCount(newValue)
-            const response = likePost(post._id)
-            if (response === 'error') {
-                if (newStatus === 'liked') {
-                    setStatus('disliked')
-                    console.log(newValue)
-                    newValue--
-                    setLikeCount(newValue)
-                } else {
-                    setStatus('liked')
-                    console.log(newValue)
-                    newValue++
-                    setLikeCount(newValue)
-                }
-            }
-        } else {
-            setMessage("You must be logged in to like post")
-            setSeverity('error')
-        }
-    }
-
-    const updateLikes = () => {
-        if (post.likes.length !== 0) {
-            setLikeCount(post.likes.length)
-        }
-        // if (post.dislikes.length !== 0) {
-        //     setDislikeCount(post.dislikes.length)
-        // }
-        console.log(post)
-        if (auth() && post.likes.map(l => l.user._id.toString()).includes(auth().id)) {
-            setStatus('liked')
-            // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-            //     setStatus('disliked')
-        } else {
-            setStatus(null)
-        }
-    }
-
-    const trimLikes = () => {
-        if (likeCount < 1000) {
-            return `${likeCount}`
-        } else if (likeCount < 1000000) {
-            return `${likeCount / 1000}K`
-        } else if (likeCount < 1000000000) {
-            return `${likeCount / 1000000}M`
-        }
-    }
-
     const showComments = () => {
-        if (commentCount !== 0) {
+        if (commentCount !== 0 && comments.length === 0) {
             commentService.getAll(post._id)
                 .then(({ data }) => {
                     console.log(data)
@@ -129,18 +50,35 @@ export default function PostPage() {
         }
     }
 
-    const handleClick = () => {
-        navigate(`/dashboard/posts/${post._id}`)
+    const submitComment = (commentBody) => {
+        if (isAuthenticated()) {
+
+            const newValue = commentCount + 1
+            setCommentCount(newValue)
+            const obj = { postId: post._id, userId: auth().id, body: commentBody }
+            commentService.create(obj)
+                .then(({ data }) => {
+                    if (commentCount) {
+                        showComments()
+                    }
+                    setMessage(data.message)
+                    setSeverity('success')
+                })
+                .catch(({ response }) => {
+                    setCommentCount(newValue - 1)
+                    setMessage(response.data.message)
+                    setSeverity('error')
+                    expiredLogout(response)
+                    return response
+                })
+        } else {
+            setMessage("You must be logged in to comment")
+            setSeverity('error')
+        }
     }
 
     useEffect(() => {
-        if (post) {
-            console.log(post)
-            updateLikes()
-            setCommentCount(post.commentCount)
-            const date = convertTime(post.createdAt)
-            setTimestamp(date)
-        }
+        setCommentCount(post && post.commentCount)
     }, [post])
 
     useEffect(() => {
@@ -148,49 +86,21 @@ export default function PostPage() {
     }, [])
 
     return (
-        <Grid container item mt={4} px={{ xs: 3, md: 6 }} flexGrow={1}>
-            {post ?
-                <Grid container item direction='column' xs={12} gap={2}>
-                    <Typography variant='h3'>{post.title}</Typography>
-                    <Typography variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                        {`${timestamp} by ${post.author.username}`}
-                        {/* {post.group ?
-                        <Link to={`/dashboard/group/${post.group && post.group._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>                        
-                        {`${post.group.title}`}
-                        </Link> : null} */}
-                    </Typography>
-                    <Typography variant='body1'>{post.body}</Typography>
-
-                    <Grid container item gap={4}>
-                        <Grid container item gap={1} xs='auto'>
-
-                            <IconButton sx={{ p: 0 }} onClick={like}>
-                                {status !== 'liked' ?
-                                    <FavoriteBorder color='primary' sx={{ fontSize: '22px' }} />
-                                    :
-                                    <Favorite color='primary' sx={{ fontSize: '22px' }} />
-                                }
-                            </IconButton>
-
-                            <Typography variant='body1' color='primary' fontWeight={700}>{trimLikes()}</Typography>
-                        </Grid>
-                        <Grid container item gap={1} xs='auto'>
-                            <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
-                                <Comment color="primary" sx={{ fontSize: '22px' }} />
-                            </IconButton>
-                            <Typography variant='body1' color='primary' fontWeight={700}>{commentCount}</Typography>
-                        </Grid>
-                        {/* <Grid container item gap={1} xs='auto'>
-                            <IconButton sx={{ p: 0 }} color='primary' onClick={showComments}>
-                                <Visibility color="primary" sx={{ fontSize: '22px' }} />
-                            </IconButton>
-                            <Typography variant='body1' color='primary' fontWeight={700}>{post.views.length}</Typography>
-                        </Grid> */}
+        <Grid container item height='calc(100vh - 122px)'>
+                <Grid container item direction='column' py={4} xs gap={2.5} pl={{ xs: 3, md: 6 }} pr={1.25} overflow='scroll' wrap='nowrap' maxHeight='100%'>
+                    <Grid item>
+                        <PostCard post={post} showComments={showComments} commentCount={commentCount} />
                     </Grid>
-                    <Grid container item gap={2}>
+                    <Grid item>
+                        <CommentNew post={post} submitComment={submitComment} />
+                    </Grid>
+                    <Grid item>
                         <Comments comments={comments} commentCount={commentCount} setCommentCount={setCommentCount} post={post} initial={true} />
                     </Grid>
-                </Grid> : null}
+                </Grid>
+            <Grid container item height='100%' xs={4} py={4} pr={{ xs: 3, lg: 6 }} pl={1.25} display={{xs: 'none', lg: 'flex'}}>
+                <PostSidebar post={post} />
+            </Grid>
         </Grid>
     )
 }

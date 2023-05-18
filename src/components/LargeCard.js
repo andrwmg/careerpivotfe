@@ -1,14 +1,13 @@
 import styled from "@emotion/styled";
-import { Comment, CommentOutlined, Favorite, FavoriteBorder } from "@mui/icons-material";
-import { Button, Card, CardContent, Grid, IconButton, Typography } from "@mui/material";
+import { CommentOutlined, FavoriteBorderOutlined } from "@mui/icons-material";
+import { Button, Grid, Skeleton, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import moment from 'moment'
 import { ToastContext } from "../contexts/ToastContext";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import postService from "../services/post.service";
 import commentService from "../services/comment.service";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
+import { GlobalContext } from "../contexts/GlobalContext";
 
 const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
@@ -30,134 +29,26 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
 }));
 
-export default function LargeCard({ post, posts }) {
+export default function LargeCard({ post, posts, loading }) {
 
     const [date, setDate] = useState('')
     const [status, setStatus] = useState(null)
     const [likeCount, setLikeCount] = useState(0)
-    const [dislikeCount, setDislikeCount] = useState(0)
-    const [comments, setComments] = useState([])
-    const [commentBody, setCommentBody] = useState('')
     const [commentCount, setCommentCount] = useState(0)
 
     const auth = useAuthUser()
-    const isAuthenticated = useIsAuthenticated()
     const navigate = useNavigate()
     const location = useLocation()
 
     const { setMessage, setSeverity } = useContext(ToastContext)
-
-    const likePost = () => {
-        if (isAuthenticated()) {
-            let newValue = likeCount
-            let newStatus
-            if (status === 'liked') {
-                newValue--
-                newStatus = 'disliked'
-            } else {
-                newValue++
-                newStatus = 'liked'
-            }
-            setStatus(newStatus)
-            setLikeCount(newValue)
-            postService.like(post._id, auth().id)
-                .then(({ data }) => {
-                    setMessage(data.message)
-                    setSeverity('success')
-                    console.log("Post liked!", data)
-                })
-                .catch(({ response }) => {
-                    if (newStatus === 'liked') {
-                        setStatus('disliked')
-                        console.log(newValue)
-                        newValue--
-                        setLikeCount(newValue)
-                    } else {
-                        setStatus('liked')
-                        console.log(newValue)
-                        newValue++
-                        setLikeCount(newValue)
-                    }
-                    setMessage(response.data.message)
-                    setSeverity('error')
-                    console.log('oops!')
-                })
-        } else {
-            setMessage("You must be logged in to like post")
-            setSeverity('error')
-        }
-    }
-
-    const unlike = () => {
-        const value = likeCount + 1
-        setStatus('disliked')
-        setLikeCount(value)
-        postService.like(post._id, auth().id)
-            .then(({ data }) => {
-                setMessage(data.message)
-                setSeverity('success')
-                console.log("Post unliked!", data)
-            })
-            .catch(({ response }) => {
-                setStatus('disliked')
-                setLikeCount(value - 1)
-                setMessage(response.data.message)
-                setSeverity('error')
-                console.log('oops!')
-            })
-    }
-
-    const submitComment = () => {
-        if (isAuthenticated()) {
-
-            const newValue = commentCount + 1
-            setCommentCount(newValue)
-            const obj = { postId: post._id, userId: auth().id, body: commentBody }
-            commentService.create(obj)
-                .then(({ data }) => {
-                    if (commentCount) {
-                        showComments()
-                    }
-                    setCommentBody('')
-                    setMessage(data.message)
-                    setSeverity('success')
-                })
-                .catch(({ response }) => {
-                    setCommentCount(newValue - 1)
-                    setMessage(response.data.message)
-                    setSeverity('error')
-                })
-        } else {
-            setMessage("You must be logged in to comment")
-            setSeverity('error')
-        }
-    }
-
-    const showComments = () => {
-        if (commentCount !== 0) {
-            commentService.getAll(post._id)
-                .then(({ data }) => {
-                    console.log(data)
-                    setComments(data.comments)
-                })
-                .catch(({ response }) => {
-                    setMessage(response.data.message)
-                    setSeverity('error')
-                })
-        }
-    }
+    const { convertTime, trimCount } = useContext(GlobalContext)
 
     const updateLikes = () => {
         if (post.likes.length !== 0) {
             setLikeCount(post.likes.length)
         }
-        // if (post.dislikes.length !== 0) {
-        //     setDislikeCount(post.dislikes.length)
-        // }
         if (auth() && post.likes.map(l => l.user._id).includes(auth().id)) {
             setStatus('liked')
-            // } else if (auth() && post.dislikes.map(d => d.userId).includes(auth().id)) {
-            //     setStatus('disliked')
         } else {
             setStatus(null)
         }
@@ -169,80 +60,63 @@ export default function LargeCard({ post, posts }) {
 
     useEffect(() => {
         if (post) {
-        updateLikes()
-        setCommentCount(post.commentCount)
-
-        const diffInMillis = moment().diff(moment(post.createdAt))
-
-        if (diffInMillis < 60000) {
-            const diffInSeconds = Math.floor(moment.duration(diffInMillis).asSeconds())
-            setDate(`${diffInSeconds} hour${diffInSeconds > 1 ? 's' : ''} ago`)
-            return
-        } else if (diffInMillis < 3600000) {
-            const diffInMinutes = Math.floor(moment.duration(diffInMillis).asMinutes())
-            setDate(`${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`)
-            return
-        } else if (diffInMillis < 86400000) {
-            const diffInHours = Math.floor(moment.duration(diffInMillis).asHours())
-            setDate(`${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`)
-            return
-        } else {
-            const diffInDays = Math.floor(moment.duration(diffInMillis).asDays())
-            if (diffInDays > 30) {
-                setDate('30+ days ago')
-            } else {
-                setDate(`${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`)
-            }
+            updateLikes()
+            setCommentCount(post.commentCount)
+            const time = convertTime(post.createdAt)
+            setDate(time)
         }
-    }
     }, [])
 
     useEffect(() => {
         if (post) {
             updateLikes()
+            const time = convertTime(post.createdAt)
+            setDate(time)
         }
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, borderWidth: '1px', borderStyle: 'solid', borderColor: 'primary.main', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: 'none', flexGrow: 1 }}>
-            {post ?
+        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1 }}>
                 <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
-                    <Stack gap={1} maxWidth='100%'>
-                        <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{post.title}</EllipsisTypographyOne>
+                    <Stack gap={1} width='100%'>
+                        <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{!loading ? post.title : <Skeleton />}
+                        </EllipsisTypographyOne>
                         <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                            {!loading ?
                             <span>
                                 {`${date} by `}
-                             <i>
-                                 {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
-                             </i>
-                                 {'in '}
-                            <span style={{ fontWeight: 500 }}>
-                                {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
+                                <i>
+                                    {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
+                                </i>
+                                {'in '}
+                                <span style={{ fontWeight: 500 }}>
+                                    {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
+                                </span>
                             </span>
-                            </span>
+                            : <Skeleton />}
                         </EllipsisTypographyOne>
-                        <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px'>
-                            {`${post.body}`}
+                        <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
+                            {!loading ? post.body : <Stack><Skeleton /><Skeleton /></Stack>}
                         </EllipsisTypographyTwo>
                     </Stack>
                     <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
                         <Grid container item direction='column' xs='auto'>
                             <Grid container item alignItems='center' gap={1}>
-                                <Favorite color='primary' sx={{ fontSize: '22px' }} />
-                                <Typography variant='h4' color='black'>{likeCount}</Typography>
+                                <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
+                                <Typography variant='h4' color='black' minWidth='9.25px'>{!loading ? trimCount(likeCount) : <Skeleton />}
+                                </Typography>
                             </Grid>
                         </Grid>
                         <Grid container item direction='column' xs>
                             <Grid container item gap={1} xs='auto' alignItems='center'>
-                                <Comment color="primary" sx={{ fontSize: '22px' }} />
-                                <Typography variant='h4' color='black' textAlign='start'>{commentCount}</Typography>
+                                <CommentOutlined color="primary" sx={{ fontSize: '22px' }} />
+                                <Typography variant='h4' color='black' textAlign='start' minWidth='9.25px'>
+                                    {!loading ? trimCount(commentCount) : <Skeleton />}
+                                    </Typography>
                             </Grid>
                         </Grid>
-
                     </Grid>
-
                 </Grid>
-            : null}
         </Button>
     )
 }

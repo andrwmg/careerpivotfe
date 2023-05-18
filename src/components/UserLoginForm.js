@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -9,30 +9,16 @@ import InputAdornment from '@mui/material/InputAdornment';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { UserContext } from '../contexts/UserContext';
-import userService from '../services/user.service';
 
 export default function LoginForm() {
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
-    const [tokenLoaded, setTokenLoaded] = useState(false)
 
     const { login } = useContext(UserContext)
 
     const navigate = useNavigate()
-    const params = useParams()
-
-    // useEffect(() => {
-    //     if (params.token) {
-    //         setTokenLoaded(true)
-    //     }
-    // }, [])
-    
-    // useEffect(()=>{
-    //     tokenLoaded && verify(params.token)
-    // }, [tokenLoaded])
-
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value)

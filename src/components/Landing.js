@@ -1,10 +1,9 @@
 import styled from "@emotion/styled";
 import { Button, Grid, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import React, { useEffect } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import React from "react";
+import { useNavigate } from "react-router-dom";
 import hero from '../images/hero.png'
-import userService from "../services/user.service";
 
 const TextButton = styled(Button)(({ theme }) => ({
     color: 'rgba(89, 111, 255, 1)',

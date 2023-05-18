@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Grid, TextField } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import { UserContext } from '../contexts/UserContext';
 import userService from '../services/user.service';
 import { ToastContext } from '../contexts/ToastContext';
 
@@ -33,12 +32,6 @@ export default function ForgotForm() {
                 setSeverity('error')
             })
     }
-
-    // const selectFile = (event) => {
-    //     const file = event.target.files
-    //     const image = [{ data: file[0], tempUrl: URL.createObjectURL(file[0]) }]
-    //     setProfilePic(image)
-    // }
 
     return (
         <Card sx={{ width: '100%', mx: 'auto' }}>

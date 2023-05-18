@@ -1,30 +1,14 @@
 import {
-    Comment,
-    CommentOutlined,
-    Favorite,
-    FavoriteBorder,
-    FavoriteBorderOutlined,
-    FavoriteOutlined,
-} from "@mui/icons-material";
-import {
     Button,
-    FormControl,
     Grid,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
     TextField,
-    Toolbar,
     Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { useNavigate, useParams } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalContext";
+import { useNavigate } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
-import commentService from "../services/comment.service";
 import postService from "../services/post.service";
 
 export default function NewPostPage() {
@@ -35,10 +19,10 @@ export default function NewPostPage() {
         title: "",
         body: "",
         career,
+        // group
     });
 
     const auth = useAuthUser();
-    const isAuthenticated = useIsAuthenticated();
     const navigate = useNavigate();
 
     const createPost = (e) => {
@@ -71,28 +55,28 @@ export default function NewPostPage() {
                 <Grid container item direction="column" xs={12} gap={2}>
                     <Typography variant="h3">Create New Post</Typography>
                     {/* <FormControl required={true} fullWidth>
-              <InputLabel id="groupSelector">Group</InputLabel>
-              <Select
-                name="groupSelector"
-                onChange={(e) =>
-                    setNewPost({ ...newPost, group: e.target.value })
-                }
-                label='Group'
-                value={newPost.group}
-                type="text"
-                required={true}
-                fullWidth
-              >
-                  <MenuItem value="" disabled={true}>
-                    <em>Select a group</em>
-                  </MenuItem>
-                {groups.length !== 0 && groups.map((item) => (
-                  <MenuItem key={item._id} value={item._id}>
-                    {item.title}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl> */}
+                        <InputLabel id="groupSelector">Group</InputLabel>
+                        <Select
+                            name="groupSelector"
+                            onChange={(e) =>
+                                setNewPost({ ...newPost, group: e.target.value })
+                            }
+                            label='Group'
+                            value={newPost.group}
+                            type="text"
+                            required={true}
+                            fullWidth
+                        >
+                            <MenuItem value="" disabled={true}>
+                                <em>Select a group</em>
+                            </MenuItem>
+                            {groups.length !== 0 && groups.map((item) => (
+                                <MenuItem key={item._id} value={item._id}>
+                                    {item.title}
+                                </MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl> */}
                     <TextField
                         label="Title"
                         type="text"

@@ -1,36 +1,33 @@
 import './App.css';
-import Navbar from './components/Navbar';
 import { createTheme, unstable_createMuiStrictModeTheme } from '@mui/material';
 import Landing from './components/Landing';
 import { ThemeProvider } from '@emotion/react';
-import { Navigate, Route, Router, Routes, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import UserWrapper from './components/UserWrapper';
 import LoginForm from './components/UserLoginForm';
 import RegistrationForm from './components/UserRegistrationForm';
-import { useContext, useState } from 'react';
+import { useContext } from 'react';
 import { UserContext } from './contexts/UserContext';
 import ResetForm from './components/UserResetForm';
 import ForgotForm from './components/UserForgotForm';
 import userService from './services/user.service';
 import UserVerifyCard from './components/UserVerifyCard';
-import Dashboard from './components/Dashboard';
 import DashboardDrawer from './components/DashboardDrawer';
 import { light } from '@mui/material/styles/createPalette';
-import Posts from './components/Posts';
 import { ToastContext } from './contexts/ToastContext';
 import DashboardNav from './components/DashboardNav';
 import PostPage from './components/PostPage';
 import MessageSnackbar from './components/MessageSnackbar';
 import NewPostPage from './components/NewPostPage';
-import GroupPage from './components/GroupPage';
-import { RequireAuth, useAuthUser, useIsAuthenticated } from 'react-auth-kit';
+import GroupPage from './components/CommunityPage';
+import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import ProfileForm from './components/UserProfileForm';
 import NewGroupPage from './components/GroupNew';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: 'rgba(89, 111, 255, 1)',
+      main: '#344FFF',
       hover: 'rgba(89, 111, 255, .8)'
     }
   },
@@ -66,7 +63,7 @@ const theme = createTheme({
       fontSize: "20px"
     },
     body2: {
-      fontSize: "14px"
+      fontSize: "16px"
     },
     subtitle1: {
       fontSize: "15px"
@@ -86,64 +83,16 @@ const dark = unstable_createMuiStrictModeTheme({
   palette: {
     mode: 'dark'
   }
-  // grid: {
-  //   '&:.main': {
-  //     backgroundColor: 'black',
-  //   },
-  // },
-  // typography: {
-  //   h1: {
-  //     fontWeight: 700,
-  //     fontSize: ['50px',
-  //     color: 'white'
-  //   },
-  //   h2: {
-  //     fontWeight: 500,
-  //     fontSize: ["32px",
-  //     color: 'white'
-  //   },
-  //   h3: {
-  //     fontWeight: 400,
-  //     fontSize: ["29px",
-  //     color: 'white'
-  //   },
-  //   h4: {
-  //     fontSize: ["24px",
-  //     letterSpacing: '.1em',
-  //     textTransform: 'uppercase',
-  //     color: 'white'
-  //   },
-  //   h6: {
-  //     color: 'white',
-  //     fontWeight: 700
-  //   },
-  //   body1: {
-  //     fontSize: ["16px",
-  //     color: 'white'
-  //   },
-  //   body2: {
-  //     fontSize: ["14px",
-  //     color: 'white'
-  //   },
-  //   p: {
-  //     fontSize: '12px',
-  //     fontWeight: 700,
-  //     color: 'white'
-  //   },
-  //   fontFamily: [
-  //     'Inter',
-  //     'sans-serif'
-  //   ].join(','),
-  // },
 });
 
 function App() {
 
   const { setMessage, setSeverity } = useContext(ToastContext)
-  const {career} = useContext(UserContext)
+  const { setUserImage, setCareer} = useContext(UserContext)
   const navigate = useNavigate()
   const isAuthenticated = useIsAuthenticated()
   const auth = useAuthUser()
+  const signOut = useSignOut()
 
 
   const HomeRedirect = () => {
@@ -160,6 +109,14 @@ function App() {
     setMessage('You must select a PivotPath')
     setSeverity('error')
     return <Navigate to={`/dashboard/profile/${auth().id}`} />
+  }
+
+  const DashboardRedirect = (route) => {
+    if (isAuthenticated()) {
+      return <Navigate to='/dashboard' />
+    } else {
+     return route 
+    } 
   }
 
   const VerifyLink = () => {
@@ -193,6 +150,23 @@ function App() {
         })
       }
 
+      const LogoutRedirect = () => {
+        userService.logout()
+        .then(() => {
+            signOut();
+            window.localStorage.clear()
+            setUserImage(null)
+            setCareer(null)
+            setMessage('Session expired. Log in again')
+            setSeverity('error')
+            navigate('/login')
+        })
+        .catch(({ response }) => {
+            setMessage(response.data.message)
+            setSeverity('error')
+        })
+      }
+
   return (
     <div className="App">
       <ThemeProvider theme={theme}>
@@ -200,13 +174,14 @@ function App() {
           <MessageSnackbar />
           <Routes>
             <Route path='/' element={<Landing />} />
-            <Route path='/register' element={<UserWrapper form={<RegistrationForm />} />} />
-            <Route path='/login' element={<UserWrapper form={<LoginForm />} />} />
-            <Route path='/forgot' element={<UserWrapper form={<ForgotForm />} />} />
-            <Route path='/reset' element={<UserWrapper form={<ResetForm />} />} />
-            <Route path='/reset/:token' element={<ResetLink />} />
-            <Route path='/verify/:token' element={<VerifyLink />} />
-            <Route path='/verify' element={<UserWrapper form={<UserVerifyCard />} />} />
+            <Route path='/register' element={DashboardRedirect(<UserWrapper form={<RegistrationForm />} />)} />
+            <Route path='/login' element={DashboardRedirect(<UserWrapper form={<LoginForm />} />)} />
+            <Route path='/logout' element={<LogoutRedirect />} />
+            <Route path='/forgot' element={DashboardRedirect(<UserWrapper form={<ForgotForm />} />)} />
+            <Route path='/reset' element={DashboardRedirect(<UserWrapper form={<ResetForm />} />)} />
+            <Route path='/reset/:token' element={DashboardRedirect(<ResetLink />)} />
+            <Route path='/verify/:token' element={DashboardRedirect(<VerifyLink />)} />
+            <Route path='/verify' element={DashboardRedirect(<UserWrapper form={<UserVerifyCard />} />)} />
             <Route path='/dashboard/profile/:userId' element={<ProfileForm />} />
             <Route path='/dashboard/posts/new' element={isAuthenticated() ? 
                 auth().career ? <NewPostPage /> : <ProfileRedirect /> : <LoginRedirect />} />
@@ -215,7 +190,6 @@ function App() {
                 auth().career ? <NewGroupPage /> : <ProfileRedirect /> : <LoginRedirect />} />
             <Route path='/dashboard/groups/:groupId' element={<GroupPage />} />
             <Route path='/dashboard' element={<DashboardNav />} />
-            <Route path='/dashboard/posts' element={<Posts />} />
             <Route path="*" element={<HomeRedirect />} />
           </Routes>
         </DashboardDrawer>

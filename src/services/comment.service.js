@@ -17,12 +17,16 @@ class CommentDataService {
     return http.post(`/posts/${data.postId}/comments/${data.commentId}`, data);
   }
 
-  update(id, data) {
-    return http.put(`/comments/${id}`, data);
+  like(data) {
+    return http.get(`/posts/${data.postId}/comments/${data.commentId}/likes`);
+  }
+
+  update(postId, commentId, data) {
+    return http.put(`/posts/${postId}/comments/${commentId}`, data);
   }
 
   delete(data) {
-    return http.delete(`/posts/${data.id}/comments/${data.commentId}`, data);
+    return http.delete(`/posts/${data.postId}/comments/${data.commentId}`, data);
   }
 
   deleteAll() {

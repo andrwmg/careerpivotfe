@@ -1,46 +1,27 @@
 import {
-    Comment,
-    CommentOutlined,
-    Favorite,
-    FavoriteBorder,
-    FavoriteBorderOutlined,
-    FavoriteOutlined,
-} from "@mui/icons-material";
-import {
     Button,
-    FormControl,
     Grid,
-    IconButton,
-    InputLabel,
-    MenuItem,
-    Select,
     TextField,
-    Toolbar,
     Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
-import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { useNavigate, useParams } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalContext";
+import { useAuthUser } from "react-auth-kit";
+import { useNavigate } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
-import commentService from "../services/comment.service";
 import groupService from "../services/group.service";
-import postService from "../services/post.service";
 
 export default function NewGroupPage() {
     const { setMessage, setSeverity } = useContext(ToastContext);
-    const { career } = useContext(UserContext);
+    const { career, expiredLogout } = useContext(UserContext);
 
     const [newGroup, setNewGroup] = useState({
         title: "",
         tagline: "",
-        career: '',
     });
 
+    const navigate = useNavigate()
     const auth = useAuthUser();
-    const isAuthenticated = useIsAuthenticated();
-    const navigate = useNavigate();
 
     const createGroup = (e) => {
         e.preventDefault();
@@ -54,6 +35,7 @@ export default function NewGroupPage() {
                 setSeverity("success");
             })
             .catch(({ response }) => {
+                expiredLogout(response)
                 setMessage(response.data.message);
                 setSeverity("error");
             });
@@ -70,7 +52,7 @@ export default function NewGroupPage() {
             <form onSubmit={createGroup} style={{ width: '100%' }}>
                 <Grid container item direction="column" xs={12} gap={2}>
                     <Typography variant="h3">Create New Group</Typography>
-                    <TextField
+                    {/* <TextField
                         label="Career"
                         type="text"
                         required
@@ -78,7 +60,7 @@ export default function NewGroupPage() {
                         onChange={(e) =>
                             setNewGroup({ ...newGroup, career: e.target.value })
                         }
-                    />
+                    /> */}
                     <TextField
                         label="Title"
                         type="text"
@@ -96,14 +78,6 @@ export default function NewGroupPage() {
                         multiline
                         onChange={(e) => setNewGroup({ ...newGroup, tagline: e.target.value })}
                     />
-                    {/* <TextField
-              label="Career"
-              required
-              value={newGroup.career}
-              onChange={(e) =>
-                setnewGroup({ ...newGroup, career: e.target.value })
-              }
-            /> */}
                     <Button type="submit" variant='contained' size="large">Create Group</Button>
                 </Grid>
             </form>
