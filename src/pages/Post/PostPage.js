@@ -146,7 +146,7 @@ export default function PostPage() {
 
     return (
         <Grid container item height='calc(100vh - 122px)'>
-            <Grid container item direction='column' py={4} xs gap={2.5} pl={{ xs: 3, md: 6 }} pr={{ xs: 3, md: 1.25 }} overflow='scroll' wrap='nowrap' maxHeight='100%' ref={containerRef}>
+            <Grid container item direction='column' py={4} xs gap={2.5} pl={{ xs: 3, md: 6 }} pr={{ xs: 3, lg: 1.25 }} overflow='scroll' wrap='nowrap' maxHeight='100%' ref={containerRef}>
                 <Grid item>
                     <PostCard post={post} showComments={getMoreComments} commentCount={commentCount} />
                 </Grid>
@@ -154,7 +154,7 @@ export default function PostPage() {
                     <CommentNew post={post} submitComment={submitComment} />
                 </Grid>
                 <Grid item>
-                    <Comments ref={commentCountRef} comments={comments} commentCount={commentCount} setCommentCount={setCommentCount} post={post} initial={true} />
+                    <Comments comments={comments} commentCount={commentCount} setCommentCount={setCommentCount} post={post} initial={true} />
                 </Grid>
             </Grid>
             <Grid container item height='100%' xs={4} py={4} pr={{ xs: 3, lg: 6 }} pl={1.25} display={{ xs: 'none', lg: 'flex' }}>

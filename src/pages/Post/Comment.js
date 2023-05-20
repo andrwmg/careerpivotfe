@@ -11,6 +11,7 @@ import Comments from "./Comments";
 import styled from "@emotion/styled";
 import formatCount from "../../utils/formatCount";
 import formatDate from "../../utils/formatDate";
+import CommentMenu from "./CommentMenu";
 
 const ReplyInput = styled(OutlinedInput)(({ theme }) => ({
     borderRadius: '9.5px',
@@ -64,6 +65,8 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
             setStatus(newStatus)
             setLikeCount(newValue)
             const response = likeComment(post._id, comment._id)
+            console.log(response)
+
             if (response === 'error') {
                 if (newStatus === 'liked') {
                     setStatus('disliked')
@@ -197,16 +200,6 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
         }
     }
 
-    const trimCount = (count) => {
-        if (count < 1000) {
-            return `${count}`
-        } else if (count < 1000000) {
-            return `${count / 1000}K`
-        } else if (count < 1000000000) {
-            return `${count / 1000000}M`
-        }
-    }
-
     useEffect(() => {
         setReplyCount(comment.replyCount)
         updateLikes()
@@ -216,11 +209,11 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
         <Grid container item gap={2.5} width='100%'>
             <Card sx={{ width: '100%', flexGrow: 1, bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexDirection: 'row', display: 'flex', gap: 3 }}>
                 <Grid container item direction='column' xs='auto' alignItems='center'>
-                    <IconButton onClick={like}>
+                    <IconButton onClick={like} color='primary' sx={{ fontSize: '22px' }}>
                         {status !== 'liked' ?
-                            <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
+                            <FavoriteBorderOutlined />
                             :
-                            <Favorite color='primary' sx={{ fontSize: '22px' }} />
+                            <Favorite />
                         }
                     </IconButton>
                     <Typography variant='h5'>
@@ -244,7 +237,9 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                                 <Chip variant='filled' label='you' color='primary' sx={{ borderRadius: 1, fontSize: '13px', maxHeight: '19px', px: 0, fontWeight: 600 }} /> : null}
                             <Typography variant='subtitle1'>{formatDate(comment.createdAt)}</Typography>
                         </Stack>
-                        <Stack direction='row' alignItems='center' spacing={2}>
+                        <Stack direction='row' alignItems='center' spacing={2} 
+                        // sx={{display: {xs: 'none', lg: 'inline-flex'}}}
+                        >
                             {auth() && auth().id === comment.author._id ?
                                 <>
                                     <Button onClick={deleteComment}>
@@ -273,6 +268,9 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                                 </Stack>
                             </Button>
                         </Stack>
+                        {/* <Grid item display={{xs: 'inline-flex', lg: 'none'}}>
+                        <CommentMenu comment={comment} toggleEditing={toggleEditing} toggleReplying={toggleReplying} />
+                        </Grid> */}
                     </Grid>
                     <Grid container item gap={2}>
                         {editing ?

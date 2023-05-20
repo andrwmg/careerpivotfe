@@ -23,7 +23,7 @@ import GroupPage from './pages/Group/GroupPage';
 import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import ProfileForm from './components/UserProfileForm';
 import NewGroupPage from './components/GroupNew';
-import io from 'socket.io-client'
+// import io from 'socket.io-client'
 
 const theme = createTheme({
   palette: {

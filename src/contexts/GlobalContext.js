@@ -28,7 +28,7 @@ export const GlobalProvider = ({ children }) => {
     }
 
     const likeComment = (postId, commentId) => {
-        commentService.like({ postId, commentId })
+        commentService.like(postId, commentId )
             .then(({ data }) => {
                 setMessage(data.message)
                 setSeverity('success')
