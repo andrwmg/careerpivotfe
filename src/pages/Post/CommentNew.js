@@ -3,7 +3,7 @@ import React, { useState } from "react";
 import { useIsAuthenticated } from "react-auth-kit";
 import { Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
-import AvatarDefault from "./AvatarDefault";
+import AvatarDefault from "../../components/AvatarDefault";
 import styled from "@emotion/styled";
 
 const CommentInput = styled(OutlinedInput)(({ theme }) => ({

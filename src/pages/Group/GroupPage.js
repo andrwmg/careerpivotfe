@@ -3,9 +3,9 @@ import { Button, Grid } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React, { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { ToastContext } from "../contexts/ToastContext";
-import groupService from "../services/group.service";
-import Feed from "./Feed";
+import { ToastContext } from "../../contexts/ToastContext";
+import groupService from "../../services/group.service";
+import Feed from "../../components/Feed";
 
 export default function GroupPage() {
 

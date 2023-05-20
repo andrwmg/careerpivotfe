@@ -9,12 +9,20 @@ function stringAvatar(name) {
     };
 }
 
-export default function AvatarDefault({ username, size, fontSize }) {
-    const {userImage} = React.useContext(UserContext)
+export default function AvatarDefault({ username, size, fontSize, src }) {
+    // const {userImage} = React.useContext(UserContext)
+    const [userImage, setUserImage] = React.useState(null)
     const auth = useAuthUser()
+
+    React.useLayoutEffect(() => {
+        if (auth().image) {
+            setUserImage(auth().image.url)
+        }
+    }, [])
+
     return (
         userImage ?
-                <Avatar src={userImage} alt='' sx={{height: size || '37px', width: size || '37px'}} />
+                <Avatar src={src || userImage} alt='' sx={{height: size || '37px', width: size || '37px'}} />
                 :
                 <Avatar {...stringAvatar(username ? username : auth().username)} sx={{ fontSize: fontSize ? fontSize : `calc(${size} * .60)`, fontWeight: 700, height: size || '37px', width: size || '37px', bgcolor: 'primary.main' }} />
     );

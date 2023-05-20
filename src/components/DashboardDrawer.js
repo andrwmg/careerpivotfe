@@ -13,12 +13,11 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Button, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
-import { AccountCircleOutlined, CloseOutlined, DashboardOutlined, DocumentScanner, MenuOutlined, MessageOutlined, NotificationsOutlined, Search, Settings } from '@mui/icons-material';
+import { AccountCircleOutlined, CloseOutlined, DashboardOutlined, DocumentScanner, Grading, MenuOutlined, MessageOutlined, NotificationsOutlined, Search, Settings } from '@mui/icons-material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { useAuthUser, useIsAuthenticated } from 'react-auth-kit';
-import { ToastContext } from '../contexts/ToastContext';
-import logo from '../images/logo.png'
+import logo from '../assets/logo.png'
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { grey } from '@mui/material/colors';
 import styled from '@emotion/styled';
@@ -214,7 +213,7 @@ function DashboardDrawer(props) {
                                 <Divider />
                                 <ListItemButton href=''>
                                     <ListItemIcon>
-                                        <DocumentScanner />
+                                        <Grading />
                                     </ListItemIcon>
                                     <ListItemText primary={
                                         <Typography variant='h4'>

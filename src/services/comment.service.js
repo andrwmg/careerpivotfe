@@ -1,40 +1,38 @@
 import http from "./http-common";
 
 class CommentDataService {
-  getAll(data) {
-    return http.get(`/posts/${data}/comments`);
+  getComments(postId, options) {
+    const params = new URLSearchParams()
+    for (let option in options) {
+      params.append(`${option}`, options[option])
+    }
+    console.log(params.toString())
+    const path = `/posts/${postId}/comments?${params.toString()}`
+    return http.get(path);
   }
 
-  get(data) {
-    return http.get(`/posts/${data.id}/comments/${data.commentId}`);
+  getReplies(postId, commentId) {
+    return http.get(`/posts/${postId}/comments/${commentId}`);
   }
 
-  create(data) {
-    return http.post(`/posts/${data.postId}/comments`, data);
+  create(postId, data) {
+    return http.post(`/posts/${postId}/comments`, data);
   }
 
-  reply(data) {
-    return http.post(`/posts/${data.postId}/comments/${data.commentId}`, data);
+  reply(postId, commentId, data) {
+    return http.post(`/posts/${postId}/comments/${commentId}`, data);
   }
 
-  like(data) {
-    return http.get(`/posts/${data.postId}/comments/${data.commentId}/likes`);
+  like(postId, commentId) {
+    return http.get(`/posts/${postId}/comments/${commentId}/likes`);
   }
 
   update(postId, commentId, data) {
     return http.put(`/posts/${postId}/comments/${commentId}`, data);
   }
 
-  delete(data) {
-    return http.delete(`/posts/${data.postId}/comments/${data.commentId}`, data);
-  }
-
-  deleteAll() {
-    return http.delete(`/comments`);
-  }
-
-  findById(_id) {
-    return http.get(`/comments?title=${_id}`);
+  delete(postId, commentId, data) {
+    return http.delete(`/posts/${postId}/comments/${commentId}`, data);
   }
 }
 

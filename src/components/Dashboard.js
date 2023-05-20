@@ -13,6 +13,7 @@ export default function Dashboard() {
     const [latest, setLatest] = useState([])
     const [feedLoading, setFeedLoading] = useState(true)
     const [popular, setPopular] = useState([])
+    const [feed, setFeed] = useState([])
 
     const { setMessage, setSeverity } = useContext(ToastContext)
     const career = localStorage.getItem('career')

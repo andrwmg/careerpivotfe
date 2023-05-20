@@ -3,12 +3,14 @@ import { Button, Card, Chip, Grid, IconButton, OutlinedInput, Typography } from 
 import { Stack } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { ToastContext } from "../contexts/ToastContext";
-import { GlobalContext } from "../contexts/GlobalContext";
-import commentService from "../services/comment.service";
-import AvatarDefault from "./AvatarDefault";
+import { ToastContext } from "../../contexts/ToastContext";
+import { GlobalContext } from "../../contexts/GlobalContext";
+import commentService from "../../services/comment.service";
+import AvatarDefault from "../../components/AvatarDefault";
 import Comments from "./Comments";
 import styled from "@emotion/styled";
+import formatCount from "../../utils/formatCount";
+import formatDate from "../../utils/formatDate";
 
 const ReplyInput = styled(OutlinedInput)(({ theme }) => ({
     borderRadius: '9.5px',
@@ -31,7 +33,7 @@ const ReplyInput = styled(OutlinedInput)(({ theme }) => ({
 export default function Comment({ post, comment, commentCount, setCommentCount }) {
 
     const { setMessage, setSeverity } = useContext(ToastContext)
-    const { convertTime, likeComment } = useContext(GlobalContext)
+    const { likeComment } = useContext(GlobalContext)
 
     const [editing, setEditing] = useState(false)
     const [body, setBody] = useState(comment.body)
@@ -89,14 +91,16 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
         const newReplyCount = replyCount + 1
         setReplyCount(newReplyCount)
         setCommentCount(newCommentCount)
-        const obj = { commentId: comment._id, postId: post._id, body: replyBody }
-        commentService.reply(obj)
+        const data = { body: replyBody }
+        commentService.reply(post._id, comment._id, data)
             .then(({ data }) => {
                 setMessage(data.message)
                 setSeverity('success')
                 console.log(data)
                 const newReplies = [data.data, ...replies]
                 setReplies(newReplies)
+                setReplying(false)
+                setReplyBody('')
             })
             .catch(() => {
                 setReplyCount(newReplyCount - 1)
@@ -105,8 +109,8 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     }
 
     const updateComment = () => {
-        console.log("Update comment")
-        commentService.update(post._id, comment._id, { body })
+        const data = {body}
+        commentService.update(post._id, comment._id, data)
             .then(({ data }) => {
                 setMessage(data.message)
                 setSeverity('success')
@@ -124,7 +128,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
         if (replies.length) {
             setReplies([])
         } else if (replyCount !== 0) {
-            commentService.get({ commentId: comment._id, postId: post._id })
+            commentService.getReplies(post._id, comment._id)
                 .then(({ data }) => {
                     console.log(data)
                     setReplies(data.replies)
@@ -139,7 +143,8 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     }
 
     const deleteComment = () => {
-        commentService.update(post._id, comment._id, {body: 'This comment was deleted by author'})
+        const data = {body: 'This comment was deleted by author'}
+        commentService.update(post._id, comment._id, data)
         .then(({data}) => {
             setMessage(data.message)
             setSeverity('success')
@@ -205,8 +210,6 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     useEffect(() => {
         setReplyCount(comment.replyCount)
         updateLikes()
-        const time = convertTime(comment.createdAt)
-        setTimestamp(time)
     }, [])
 
     return (
@@ -221,25 +224,25 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                         }
                     </IconButton>
                     <Typography variant='h5'>
-                        {trimCount(likeCount)}
+                        {formatCount(likeCount)}
                     </Typography>
                     <IconButton onClick={showReplies}>
                         <CommentOutlined color='primary' sx={{ fontSize: '22px' }} />
                     </IconButton>
                     <Typography variant='h5'>
-                        {trimCount(replyCount)}
+                        {formatCount(replyCount)}
                     </Typography>
                 </Grid>
                 <Grid container item direction='column' xs gap={2}>
                     <Grid container item gap={2} alignItems='center' justifyContent='space-between' width='100%'>
                         <Stack direction='row' alignItems='center' spacing={2}>
-                            <AvatarDefault username={comment.author.username} size='32px' />
+                            <AvatarDefault username={comment.author.username} src={comment.author.image ? comment.author.image.url : null} size='32px' />
                             <Typography variant='h4' fontWeight={500}>
                                 {`${comment.author.username}`}
                             </Typography>
                             {isAuthenticated() && auth().id === comment.author._id ?
                                 <Chip variant='filled' label='you' color='primary' sx={{ borderRadius: 1, fontSize: '13px', maxHeight: '19px', px: 0, fontWeight: 600 }} /> : null}
-                            <Typography variant='subtitle1'>{timestamp}</Typography>
+                            <Typography variant='subtitle1'>{formatDate(comment.createdAt)}</Typography>
                         </Stack>
                         <Stack direction='row' alignItems='center' spacing={2}>
                             {auth() && auth().id === comment.author._id ?

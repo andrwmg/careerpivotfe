@@ -8,6 +8,8 @@ import commentService from "../services/comment.service";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../contexts/GlobalContext";
+import formatDate from "../utils/formatDate";
+import formatCount from "../utils/formatCount";
 
 const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
@@ -41,7 +43,6 @@ export default function LargeCard({ post, posts, loading }) {
     const location = useLocation()
 
     const { setMessage, setSeverity } = useContext(ToastContext)
-    const { convertTime, trimCount } = useContext(GlobalContext)
 
     const updateLikes = () => {
         if (post.likes.length !== 0) {
@@ -61,17 +62,12 @@ export default function LargeCard({ post, posts, loading }) {
     useEffect(() => {
         if (post) {
             updateLikes()
-            setCommentCount(post.commentCount)
-            const time = convertTime(post.createdAt)
-            setDate(time)
         }
     }, [])
 
     useEffect(() => {
         if (post) {
             updateLikes()
-            const time = convertTime(post.createdAt)
-            setDate(time)
         }
     }, [posts])
 
@@ -84,7 +80,7 @@ export default function LargeCard({ post, posts, loading }) {
                         <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
                             {!loading ?
                             <span>
-                                {`${date} by `}
+                                {`${formatDate(post.createdAt)} by `}
                                 <i>
                                     {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
                                 </i>
@@ -103,7 +99,7 @@ export default function LargeCard({ post, posts, loading }) {
                         <Grid container item direction='column' xs='auto'>
                             <Grid container item alignItems='center' gap={1}>
                                 <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
-                                <Typography variant='h4' color='black' minWidth='9.25px'>{!loading ? trimCount(likeCount) : <Skeleton />}
+                                <Typography variant='h4' color='black' minWidth='9.25px'>{!loading ? formatCount(likeCount) : <Skeleton />}
                                 </Typography>
                             </Grid>
                         </Grid>
@@ -111,7 +107,7 @@ export default function LargeCard({ post, posts, loading }) {
                             <Grid container item gap={1} xs='auto' alignItems='center'>
                                 <CommentOutlined color="primary" sx={{ fontSize: '22px' }} />
                                 <Typography variant='h4' color='black' textAlign='start' minWidth='9.25px'>
-                                    {!loading ? trimCount(commentCount) : <Skeleton />}
+                                    {!loading ? formatCount(post.commentCount) : <Skeleton />}
                                     </Typography>
                             </Grid>
                         </Grid>

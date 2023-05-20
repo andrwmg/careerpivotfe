@@ -2,11 +2,10 @@ import styled from "@emotion/styled";
 import { FavoriteBorderOutlined } from "@mui/icons-material";
 import { Button, Grid, Skeleton, Typography } from "@mui/material";
 import { Stack } from "@mui/system";
-import React, { useContext, useEffect, useState } from "react";
-import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
+import React, { useState } from "react";
+import { useAuthUser } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalContext";
-import { ToastContext } from "../contexts/ToastContext";
+import formatCount from "../utils/formatCount";
 
 const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
@@ -46,7 +45,6 @@ export default function SmallCard({ post, group, loading }) {
 
     const auth = useAuthUser()
     const navigate = useNavigate()
-    const { trimCount } = useContext(GlobalContext)
 
     const handleClick = () => {
         if (post) {
@@ -70,7 +68,7 @@ export default function SmallCard({ post, group, loading }) {
 
                     <Grid container item alignItems='center' gap={1} width='100%'>
                         <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
-                        <Typography variant='h6' color='white' minWidth='9.25px'>{!loading ? trimCount(post.likes.length) : <Skeleton />}</Typography>
+                        <Typography variant='h6' color='white' minWidth='9.25px'>{!loading ? formatCount(post.likes.length) : <Skeleton />}</Typography>
                     </Grid>
                 </Grid>
         </Button>

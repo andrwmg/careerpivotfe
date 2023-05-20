@@ -44,10 +44,6 @@ export default function UserMenu() {
     navigate('/')
 }
 
-React.useEffect(() => {
-    console.log(userImage)
-}, [userImage])
-
   return (
     <React.Fragment>
       <Box sx={{ display: 'flex', alignItems: 'center', textAlign: 'center' }}>

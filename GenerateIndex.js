@@ -1,41 +1,42 @@
-// const fs = require('fs');
-
-// import glob from 'glob'
-
-// const componentsPath = './src/components';
-// const indexFilePath = `${componentsPath}/index.js`;
-
-// const getComponentName = filePath => {
-//   return filePath.split('/').slice(-1)[0].replace(/\.js$/, '');
-// };
-
-// const generateIndexFile = () => {
-//   glob(`${componentsPath}/**/*.js`, (err, files) => {
-//     if (err) {
-//       console.error(err);
-//       return;
-//     }
-
-//     const componentNames = files.map(getComponentName);
-//     const componentsExport = componentNames
-//       .map(name => `export { default as ${name} } from './${name}';\n`)
-//       .join('');
-
-//     fs.writeFileSync(indexFilePath, componentsExport);
-//   });
-// };
-
-// generateIndexFile();
-
 const fs = require('fs');
 const path = require('path');
 
 const COMPONENTS_DIR = './src/components';
+const SERVICES_DIR = './src/services';
+const CONTEXTS_DIR = './src/contexts'
+const UTILS_DIR = './src/utils'
 
-const components = fs.readdirSync(COMPONENTS_DIR)
+const directories = [COMPONENTS_DIR, SERVICES_DIR, CONTEXTS_DIR, UTILS_DIR]
+
+for (let dir in directories) {
+  const files = fs.readdirSync(dir)
   .filter(file => file.endsWith('.js'))
-  .map(file => path.parse(file).name);
+  .map(file => path.parse(file).name)
 
-const indexFileContent = components.map(component => `export { default as ${component} } from './${component}';`).join('\n');
+  const content = files.map(file => `export {default as ${file} } from './${file}';`).join('\n')
+  fs.writeFileSync(path.join(dir, 'index.js'), content)
+}
 
-fs.writeFileSync(path.join(COMPONENTS_DIR, 'index.js'), indexFileContent);
+// const components = fs.readdirSync(COMPONENTS_DIR)
+//   .filter(file => file.endsWith('.js'))
+//   .map(file => path.parse(file).name);
+
+// const componentsIndexFileContent = components.map(component => `export { default as ${component} } from './${component}';`).join('\n');
+
+// fs.writeFileSync(path.join(COMPONENTS_DIR, 'index.js'), componentsIndexFileContent);
+
+// const services = fs.readdirSync(SERVICES_DIR)
+//   .filter(file => file.endsWith('.js'))
+//   .map(file => path.parse(file).name);
+
+// const servicesIndexFileContent = services.map(service => `export { default as ${service} } from './${service}';`).join('\n');
+
+// fs.writeFileSync(path.join(SERVICES_DIR, 'index.js'), servicesIndexFileContent);
+
+// const contexts = fs.readdirSync(CONTEXTS_DIR)
+//   .filter(file => file.endsWith('.js'))
+//   .map(file => path.parse(file).name);
+
+// const contextsIndexFileContent = contexts.map(context => `export { default as ${context} } from './${context}';`).join('\n');
+
+// fs.writeFileSync(path.join(CONTEXTS_DIR, 'index.js'), contextsIndexFileContent);

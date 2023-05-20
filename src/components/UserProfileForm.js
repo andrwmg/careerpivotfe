@@ -3,9 +3,9 @@ import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
-import { Grid, IconButton, TextField } from '@mui/material';
+import { Avatar, Grid, IconButton, TextField } from '@mui/material';
 import UploadFilesService from '../services/upload-files.service'
-import { useAuthUser } from 'react-auth-kit';
+import { useAuthHeader, useAuthUser } from 'react-auth-kit';
 import { UserContext } from '../contexts/UserContext';
 import userService from '../services/user.service';
 import { ToastContext } from '../contexts/ToastContext';
@@ -16,7 +16,7 @@ import { Stack } from '@mui/system';
 
 
 export default function ProfileForm() {
-  const { career, setCareer, setUserImage } = useContext(UserContext)
+  const { career, setCareer, userImage, setUserImage } = useContext(UserContext)
   const { setMessage, setSeverity } = useContext(ToastContext)
 
   const auth = useAuthUser()
@@ -78,7 +78,6 @@ export default function ProfileForm() {
           setIsEditing(false)
         })
         .catch((response) => {
-          console.log(response)
           setMessage(response.response.data.message)
           setSeverity('error')
         })
@@ -127,7 +126,14 @@ export default function ProfileForm() {
                         component="div"
                         disableRipple={!isEditing}
                         sx={{ borderRadius: '50%', p: 0, height: '150px', width: '150px', position: 'absolute', zIndex: 2 }}>
-                        <AvatarDefault size='150px' />
+                        {tempImage ?
+                          <Avatar
+                            alt={auth().username}
+                            src={tempImage.url}
+                            style={{ height: '100%', width: '100%', objectFit: 'cover', p: 'none', borderRadius: '50%' }} />
+                          :
+                          <AvatarDefault size='150px' />
+                        }
                       </Button>
                     </div>
                   </label>

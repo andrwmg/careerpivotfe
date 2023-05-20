@@ -6,7 +6,7 @@ import { Navigate, Route, Routes, useNavigate, useParams } from 'react-router-do
 import UserWrapper from './components/UserWrapper';
 import LoginForm from './components/UserLoginForm';
 import RegistrationForm from './components/UserRegistrationForm';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { UserContext } from './contexts/UserContext';
 import ResetForm from './components/UserResetForm';
 import ForgotForm from './components/UserForgotForm';
@@ -16,13 +16,14 @@ import DashboardDrawer from './components/DashboardDrawer';
 import { light } from '@mui/material/styles/createPalette';
 import { ToastContext } from './contexts/ToastContext';
 import DashboardNav from './components/DashboardNav';
-import PostPage from './components/PostPage';
+import PostPage from './pages/Post/PostPage';
 import MessageSnackbar from './components/MessageSnackbar';
 import NewPostPage from './components/NewPostPage';
-import GroupPage from './components/CommunityPage';
+import GroupPage from './pages/Group/GroupPage';
 import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import ProfileForm from './components/UserProfileForm';
 import NewGroupPage from './components/GroupNew';
+import io from 'socket.io-client'
 
 const theme = createTheme({
   palette: {
@@ -85,14 +86,32 @@ const dark = unstable_createMuiStrictModeTheme({
   }
 });
 
+// const socket = io('http://localhost:7070')
+
 function App() {
 
   const { setMessage, setSeverity } = useContext(ToastContext)
   const { setUserImage, setCareer} = useContext(UserContext)
+  const {messages, setMessages} = useState([])
   const navigate = useNavigate()
   const isAuthenticated = useIsAuthenticated()
   const auth = useAuthUser()
   const signOut = useSignOut()
+
+  useEffect(() => {
+    // Listen for chat messages from the server
+    // socket.on('new notification', (notification) => {
+    //   if (auth().id === notification.originalAuthor) {
+    //   setMessage(notification.body);
+    //   setSeverity('info')
+    //   }
+    // });
+
+    // // Clean up the event listener on unmount
+    // return () => {
+    //   socket.off('new notification');
+    // };
+  }, []);
 
 
   const HomeRedirect = () => {

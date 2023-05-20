@@ -3,9 +3,9 @@ import { Stack } from "@mui/system";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser } from "react-auth-kit";
 import { useParams } from "react-router-dom";
-import { ToastContext } from "../contexts/ToastContext";
-import { UserContext } from "../contexts/UserContext";
-import groupService from "../services/group.service";
+import { ToastContext } from "../../contexts/ToastContext";
+import { UserContext } from "../../contexts/UserContext";
+import groupService from "../../services/group.service";
 
 export default function GroupVisor({ group }) {
 

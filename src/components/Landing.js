@@ -3,7 +3,7 @@ import { Button, Grid, Typography } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import hero from '../images/hero.png'
+import hero from '../assets/hero.png'
 
 const TextButton = styled(Button)(({ theme }) => ({
     color: 'rgba(89, 111, 255, 1)',
