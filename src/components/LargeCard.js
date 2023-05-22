@@ -79,7 +79,7 @@ export default function LargeCard({ post, posts, loading }) {
                         </EllipsisTypographyOne>
                         <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
                             {!loading ?
-                            <span>
+                            <>
                                 {`${formatDate(post.createdAt)} by `}
                                 <i>
                                     {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
@@ -88,7 +88,7 @@ export default function LargeCard({ post, posts, loading }) {
                                 <span style={{ fontWeight: 500 }}>
                                     {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
                                 </span>
-                            </span>
+                            </>
                             : <Skeleton />}
                         </EllipsisTypographyOne>
                         <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>

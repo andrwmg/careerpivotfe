@@ -45,6 +45,11 @@ export default function CommentNew({ submitComment }) {
         }
     }
 
+    const handleRedirect = () => {
+        window.sessionStorage.setItem('redirectUrl', window.location.pathname)
+        navigate('/login')
+    }
+
     return (
         <Card sx={{ width: '100%', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', px: 3, py: 2, borderRadius: 2, border: '1px solid #E8EBFF', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)' }}>
             <Grid container item justifyContent='center' alignItems='center' xs={12} maxHeight='51px' maxWidth='100%'>
@@ -58,9 +63,8 @@ export default function CommentNew({ submitComment }) {
                             <Button variant="contained" type='submit' sx={{ px: 3, height: '51px' }}>Comment</Button>
                         </Stack>
                     </form>
-
                     :
-                    <Button onClick={() => navigate('/login')}>Log in to leave a comment</Button>
+                    <Button onClick={handleRedirect}>Log in to leave a comment</Button>
                 }
             </Grid>
         </Card>

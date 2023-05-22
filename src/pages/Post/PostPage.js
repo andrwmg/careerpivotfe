@@ -106,9 +106,10 @@ export default function PostPage() {
 
         const handleScroll = () => {
             const { scrollTop, clientHeight, scrollHeight } = containerElement;
+            // console.log(scrollTop, clientHeight, scrollHeight)
 
             // Check if the user has scrolled to the bottom
-            if (scrollTop + clientHeight >= scrollHeight) {
+            if (scrollTop + clientHeight >= scrollHeight - 1) {
                 // console.log("Woo!")
                 getMoreComments(currentCount, post.commentCount)
             }

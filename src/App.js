@@ -121,6 +121,9 @@ function App() {
   const LoginRedirect = () => {
     setMessage('You must be logged in')
     setSeverity('error')
+    if (window.location.pathname !== '/login') {
+    sessionStorage.setItem('redirectUrl', window.location.pathname)
+    }
     return <Navigate to={'/login'} />
   }
 

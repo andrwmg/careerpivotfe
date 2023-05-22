@@ -90,7 +90,20 @@ export const UserProvider = ({ children }) => {
                         }
                         
                         window.localStorage.setItem('message', data.message)
-                        window.location.reload()
+                        const redirectUrl = window.sessionStorage.getItem('redirectUrl');
+
+                        // Clear the redirect URL from storage
+                        window.sessionStorage.removeItem('redirectUrl');
+                    
+                        // Redirect the user back to the stored URL
+                        if (redirectUrl) {
+
+                          navigate(redirectUrl);
+
+                        } else {
+                          // If no redirect URL is found, navigate to a default route
+                          navigate('/dashboard');
+                        }
                     }
                 }
             })

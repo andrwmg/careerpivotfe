@@ -28,6 +28,7 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
 }));
 
 const EllipsisTypographyThree = styled(Typography)(({ theme }) => ({
+    height: '48px',
     display: '-webkit-box',
     '-webkit-box-orient': 'vertical',
     '-webkit-line-clamp': 3,

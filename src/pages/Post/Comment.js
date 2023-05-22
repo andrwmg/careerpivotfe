@@ -193,7 +193,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
         if (comment.likes.length !== 0) {
             setLikeCount(comment.likes.length)
         }
-        if (auth() && comment.likes.map(c => c.user).includes(auth().id)) {
+        if (isAuthenticated() && comment.likes.map(c => c.user).includes(auth().id)) {
             setStatus('liked')
         } else {
             setStatus(null)
@@ -240,7 +240,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                         <Stack direction='row' alignItems='center' spacing={2} 
                         // sx={{display: {xs: 'none', lg: 'inline-flex'}}}
                         >
-                            {auth() && auth().id === comment.author._id ?
+                            {isAuthenticated() && auth().id === comment.author._id ?
                                 <>
                                     <Button onClick={deleteComment}>
                                         <Stack direction='row' spacing={1} alignItems='center'>

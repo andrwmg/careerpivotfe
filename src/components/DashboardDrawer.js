@@ -197,7 +197,7 @@ function DashboardDrawer(props) {
                         {!isAuthenticated() &&
                             <div>
                                 <Divider />
-                                <ListItemButton href={handleDashboardClick}>
+                                <ListItemButton onClick={handleDashboardClick}>
                                     <ListItemIcon>
                                         <DashboardOutlined />
                                     </ListItemIcon>
