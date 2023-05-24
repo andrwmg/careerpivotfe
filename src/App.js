@@ -127,11 +127,11 @@ function App() {
     return <Navigate to={'/login'} />
   }
 
-  const ProfileRedirect = () => {
-    setMessage('You must select a PivotPath')
-    setSeverity('error')
-    return <Navigate to={`/dashboard/profile/${auth().id}`} />
-  }
+  // const ProfileRedirect = () => {
+  //   setMessage('You must select a PivotPath')
+  //   setSeverity('error')
+  //   return <Navigate to={`/dashboard/profile/${auth().id}`} />
+  // }
 
   const DashboardRedirect = (route) => {
     if (isAuthenticated()) {
@@ -206,10 +206,10 @@ function App() {
             <Route path='/verify' element={DashboardRedirect(<UserWrapper form={<UserVerifyCard />} />)} />
             <Route path='/dashboard/profile/:userId' element={<ProfileForm />} />
             <Route path='/dashboard/posts/new' element={isAuthenticated() ? 
-                auth().career ? <NewPostPage /> : <ProfileRedirect /> : <LoginRedirect />} />
+                <NewPostPage /> : <LoginRedirect />} />
             <Route path='/dashboard/posts/:postId' element={<PostPage />} />
             <Route path='/dashboard/groups/new' element={isAuthenticated() ? 
-                auth().career ? <NewGroupPage /> : <ProfileRedirect /> : <LoginRedirect />} />
+                <NewGroupPage /> : <LoginRedirect />} />
             <Route path='/dashboard/groups/:groupId' element={<GroupPage />} />
             <Route path='/dashboard' element={<DashboardNav />} />
             <Route path="*" element={<HomeRedirect />} />

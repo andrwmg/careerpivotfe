@@ -263,7 +263,7 @@ function DashboardDrawer(props) {
                                             Messages
                                         </Typography>} />
                                 </ListItemButton>
-                                {auth().username === 'andrwmg' &&   
+                                {/* {auth().username === 'andrwmg' &&   
                                 <div>
                                                              <Divider />
                             <ListItemButton onClick={handleSeed}>
@@ -275,7 +275,7 @@ function DashboardDrawer(props) {
                                         Seed Groups
                                     </Typography>} />
                             </ListItemButton>
-                            </div>}
+                            </div>} */}
                             </div>
                             : null}
                         <Divider />

@@ -16,12 +16,13 @@ export default function GroupSelector({ size, label, group, setGroup, disabled, 
         groupService.getAll()
             .then(({ data }) => {
                 setGroups(data)
-                console.log(data)
                 setMessage(data.message)
                 setSeverity('success')
             })
             .catch(({ response }) => {
                 console.log(response.data.message)
+                setMessage(response.data.message)
+                setSeverity('error')
             })
     }, [])
 

@@ -22,7 +22,7 @@ export default function NewPostPage() {
     const [newPost, setNewPost] = useState({
         title: "",
         body: "",
-        group: auth().career ? auth().career : ''
+        group: auth().career ? auth().career : {_id: '', title: ''}
     });
     const [errors, setErrors] = useState({group: ''})
 
@@ -39,7 +39,6 @@ export default function NewPostPage() {
         postService
             .create({...newPost, group: newPost.group._id})
             .then(({ data }) => {
-                console.log(data)
                 navigate(`/dashboard/posts/${data.data._id}`);
                 setMessage(data.message);
                 setSeverity("success");
