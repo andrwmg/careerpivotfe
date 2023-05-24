@@ -33,7 +33,7 @@ const theme = createTheme({
     }
   },
   typography: {
-    fontSize: '14px',
+    fontSize: '12px',
     button: {
       textTransform: 'inherit'
     },
@@ -61,7 +61,7 @@ const theme = createTheme({
       fontWeight: 600
     },
     body1: {
-      fontSize: "20px"
+      fontSize: "16px"
     },
     body2: {
       fontSize: "16px"

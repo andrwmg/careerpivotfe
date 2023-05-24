@@ -13,7 +13,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { Button, FormControl, Grid, InputAdornment, OutlinedInput, Tab } from '@mui/material';
-import { AccountCircleOutlined, CloseOutlined, DashboardOutlined, DocumentScanner, Grading, MenuOutlined, MessageOutlined, NotificationsOutlined, Search, Settings } from '@mui/icons-material';
+import { AccountCircleOutlined, CloseOutlined, DashboardOutlined, DocumentScanner, Grading, MenuOutlined, MessageOutlined, NotificationsOutlined, Search, Settings, Speed } from '@mui/icons-material';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import { useAuthUser, useIsAuthenticated } from 'react-auth-kit';
@@ -25,6 +25,8 @@ import UserMenu from './UserMenu';
 import { UserContext } from '../contexts/UserContext';
 import { Stack } from '@mui/system';
 import AvatarDefault from './AvatarDefault';
+import groupService from '../services/group.service';
+import jobTitles from '../GroupSeeds';
 
 
 const drawerWidth = 256;
@@ -133,9 +135,16 @@ function DashboardDrawer(props) {
         navigate('/dashboard')
     }
 
+    const handleSeed = () => {
+        console.log(jobTitles)
+        groupService.seed({careers: jobTitles})
+        .then(({data}) => {
+            console.log(data)
+        })
+    }
+
     React.useEffect(() => {
-        const result = localStorage.getItem('career')
-        setCareer(result)
+        setCareer(auth().career)
         const image = localStorage.getItem('userImage')
         setUserImage(image)
     }, [])
@@ -254,6 +263,19 @@ function DashboardDrawer(props) {
                                             Messages
                                         </Typography>} />
                                 </ListItemButton>
+                                {auth().username === 'andrwmg' &&   
+                                <div>
+                                                             <Divider />
+                            <ListItemButton onClick={handleSeed}>
+                                <ListItemIcon>
+                                    <Speed />
+                                </ListItemIcon>
+                                <ListItemText primary={
+                                    <Typography variant='h4'>
+                                        Seed Groups
+                                    </Typography>} />
+                            </ListItemButton>
+                            </div>}
                             </div>
                             : null}
                         <Divider />
@@ -283,7 +305,6 @@ function DashboardDrawer(props) {
                     </List>
                 </Grid>
             </Grid>
-
         </div>
     );
 

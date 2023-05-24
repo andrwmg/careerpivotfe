@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
@@ -13,6 +13,7 @@ import AvatarDefault from './AvatarDefault';
 import { Edit } from '@mui/icons-material';
 import useUpdateReactAuthKitUserState from '../hooks/useUpdateReactAuthKitUserState';
 import { Stack } from '@mui/system';
+import GroupSelector from './GroupSelector';
 
 
 export default function ProfileForm() {
@@ -23,13 +24,14 @@ export default function ProfileForm() {
   const updateAuth = useUpdateReactAuthKitUserState()
 
   const [username, setUsername] = useState(auth().username)
-  const [newCareer, setNewCareer] = useState(auth().career)
+  const [newCareer, setNewCareer] = useState(auth().career ? auth().career : {_id: '', title: ''})
   const [email, setEmail] = useState(auth().email)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [tempImage, setTempImage] = useState(null)
   const [loading, setLoading] = useState(false)
+  const [errors, setErrors] = useState({email: '', username: '', password: ''})
 
 
   // const [userImage, setUserImage] = useState((profile !== undefined) ? [JSON.parse(profile)] : null)
@@ -39,24 +41,32 @@ export default function ProfileForm() {
   }
 
   const handleUsernameChange = (event) => {
+    setErrors({...errors, username: ''})
     setUsername(event.target.value)
   }
 
   const handlePasswordChange = (event) => {
+    setErrors({...errors, password: ''})
     setPassword(event.target.value)
   }
 
   const handleConfirmChange = (event) => {
+    setErrors({...errors, password: ''})
     setConfirm(event.target.value)
   }
 
   const handleEmailChange = (event) => {
+    setErrors({...errors, email: ''})
     setEmail(event.target.value)
   }
 
   const handleSubmit = async (event) => {
     event.preventDefault()
     setLoading(true)
+    setErrors({email: '', username: '', password: ''})
+    if (password !== confirm) {
+      setErrors({...errors, password: 'Password do not match'})
+    }
     let obj = { career: newCareer, username, email, password, confirm }
     if (tempImage) {
       const image = await UploadFilesService.upload([tempImage])
@@ -71,14 +81,14 @@ export default function ProfileForm() {
             localStorage.setItem('userImage', data.data.image.url);
             setUserImage(data.data.image.url)
           }
-          localStorage.setItem('career', data.data.career)
           setCareer(data.data.career)
           setMessage(data.message)
           setSeverity('success')
           setIsEditing(false)
         })
-        .catch((response) => {
-          setMessage(response.response.data.message)
+        .catch(({response}) => {
+          setErrors(response.data)
+          setMessage(response.data.message)
           setSeverity('error')
         })
     }
@@ -142,7 +152,7 @@ export default function ProfileForm() {
               </Grid>
             </Grid>
             <Stack gap={4} py={1} width='360px' maxHeight={isEditing ? '500px' : '220px'} overflow='hidden' sx={{transition: '.3s ease-in-out'}}>
-              <TextField
+              {/* <TextField
 
                 id="outlined-pivotpath-input"
                 label="PivotPath"
@@ -152,7 +162,8 @@ export default function ProfileForm() {
                 autoComplete="new-pivotpath"
                 size="small"
                 disabled={!isEditing}
-              />
+              /> */}
+              <GroupSelector size='small' label='Career Path' group={newCareer} setGroup={setNewCareer} disabled={!isEditing} />
               <TextField
 
                 id="outlined-email-input"
@@ -163,6 +174,8 @@ export default function ProfileForm() {
                 autoComplete="new-email"
                 size="small"
                 disabled={!isEditing}
+                error={Boolean(errors.email)}
+                helperText={errors.email}
               />
               <TextField
                 id="outlined-username-input"
@@ -173,6 +186,8 @@ export default function ProfileForm() {
                 autoComplete="new-username"
                 size="small"
                 disabled={!isEditing}
+                error={Boolean(errors.username)}
+                helperText={errors.username}
               />
               <Stack rowGap={4} 
               // sx={{opacity: isEditing ? 1 : 0, flexDirection: 'column', transitionDelay: '.1s', transition: '.3s ease-in-out'}}
@@ -186,6 +201,8 @@ export default function ProfileForm() {
                     autoComplete="new-password"
                     size="small"
                     disabled={!isEditing}
+                    error={Boolean(errors.password)}
+                helperText={errors.password}
                   />
                   <TextField
                     id="outlined-confirm-input"

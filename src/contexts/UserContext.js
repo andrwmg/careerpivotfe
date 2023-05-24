@@ -11,6 +11,7 @@ export const UserContext = createContext();
 export const UserProvider = ({ children }) => {
 
     const [userImage, setUserImage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState('')
     const [career, setCareer] = useState(null)
     const [groups, setGroups] = useState([])
     const [token, setToken] = useState(null)
@@ -82,7 +83,7 @@ export const UserProvider = ({ children }) => {
                         }
                         if (data.user.career) {
                             setCareer(data.user.career)
-                            window.localStorage.setItem('career', data.user.career)
+                            window.localStorage.setItem('career', JSON.stringify(data.user.career))
                         }
                         if (data.user.groups) {
                             setGroups(data.user.groups)
@@ -97,7 +98,7 @@ export const UserProvider = ({ children }) => {
                     
                         // Redirect the user back to the stored URL
                         if (redirectUrl) {
-
+                            
                           navigate(redirectUrl);
 
                         } else {
@@ -108,11 +109,13 @@ export const UserProvider = ({ children }) => {
                 }
             })
             .catch(({ response }) => {
+                setErrorMessage(response.data.message)
                 setMessage(response.data.message)
                 setSeverity('error')
                 if (response.data.message === 'Account not verified') {
                     navigate('/verify')
                 }
+                return response.data.message
             })
     }
 
@@ -150,7 +153,7 @@ export const UserProvider = ({ children }) => {
 
     return (
         <UserContext.Provider value={{
-            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, groups, setGroups, updateUser
+            login, register, resend, verify, logout, token, setToken, userImage, setUserImage, career, setCareer, groups, setGroups, updateUser, errorMessage, setErrorMessage
         }}>
             {children}
         </UserContext.Provider>

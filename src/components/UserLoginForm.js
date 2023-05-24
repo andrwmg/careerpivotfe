@@ -16,7 +16,7 @@ export default function LoginForm() {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
-    const { login } = useContext(UserContext)
+    const { login, errorMessage, setErrorMessage } = useContext(UserContext)
 
     const navigate = useNavigate()
 
@@ -26,6 +26,7 @@ export default function LoginForm() {
 
     const handlePasswordChange = (event) => {
         setPassword(event.target.value)
+        setErrorMessage('')
     }
 
     const handleClickShowPassword = () => {
@@ -38,6 +39,7 @@ export default function LoginForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
+        setErrorMessage('')
         let obj = { email, password }
         login(obj)
     }
@@ -71,6 +73,8 @@ export default function LoginForm() {
                             size="small"
                             fullWidth
                             required
+                            error={Boolean(errorMessage)}
+                            helperText={errorMessage}
                             InputProps={{
                                 endAdornment:
                                     <InputAdornment position="end">

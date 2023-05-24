@@ -10,20 +10,26 @@ import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import { UserContext } from '../contexts/UserContext';
 import UploadFilesService from '../services/upload-files.service'
+import { ToastContext } from '../contexts/ToastContext';
+import userService from '../services/user.service';
 
 export default function RegistrationForm() {
+
+  const { setMessage, setSeverity } = useContext(ToastContext)
 
   const [username, setUsername] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [tempImage, setTempImage] = useState(null)
+  const [errors, setErrors] = useState({email: '', username: ''})
 
   const { register } = useContext(UserContext)
 
   let navigate = useNavigate()
 
   const handleUsernameChange = (event) => {
+    errors.username && setErrors({...errors, username: ''})
     setUsername(event.target.value)
   }
 
@@ -32,6 +38,7 @@ export default function RegistrationForm() {
   }
 
   const handleEmailChange = (event) => {
+    errors.email && setErrors({...errors, email: ''})
     setEmail(event.target.value)
   }
 
@@ -45,9 +52,19 @@ export default function RegistrationForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
+    setErrors({email: '', username: ''})
     const image = tempImage ? await UploadFilesService.upload(tempImage) : null
     const obj = { username, email, password, image: image ? image[0] : null }
-    register(obj)
+    userService.register(obj)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setSeverity('success')
+                navigate('/login')
+            })
+            .catch(({ response }) => {
+              // console.log(response.data)
+              setErrors(response.data)
+            })
   }
 
   const selectFile = (event) => {
@@ -97,6 +114,8 @@ export default function RegistrationForm() {
               autoComplete="new-email"
               size="small"
               fullWidth
+              error={Boolean(errors.email)}
+              helperText={errors.email}
               required
             />
             <TextField
@@ -108,6 +127,8 @@ export default function RegistrationForm() {
               autoComplete="new-username"
               size="small"
               fullWidth
+              error={Boolean(errors.username)}
+              helperText={errors.username}
               required
             />
             <TextField

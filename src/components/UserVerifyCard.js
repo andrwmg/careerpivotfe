@@ -5,13 +5,20 @@ import Typography from '@mui/material/Typography';
 import { Button, Grid, IconButton, InputAdornment, Paper, TextField } from '@mui/material';
 import { UserContext } from '../contexts/UserContext';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { ToastContext } from '../contexts/ToastContext';
+import userService from '../services/user.service';
+import { useNavigate } from 'react-router-dom';
 
 export default React.memo(function VerifyCard() {
     const { resend } = useContext(UserContext)
+    const { setMessage, setSeverity } = useContext(ToastContext)
 
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
+    const [error, setError] = useState('')
+
+    const navigate = useNavigate()
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value)
@@ -32,7 +39,17 @@ export default React.memo(function VerifyCard() {
     const handleSubmit = (event) => {
         event.preventDefault();
         let obj = { email, password }
-        resend(obj)
+        userService.resend(obj)
+            .then(({ data }) => {
+                setMessage(data.message)
+                setSeverity('success')
+                navigate('/login')
+            })
+            .catch(({ response }) => {
+                setError(response.data.message)
+                // setMessage(response.data.message)
+                // setSeverity('error')
+            })
     }
 
     return (
@@ -40,7 +57,7 @@ export default React.memo(function VerifyCard() {
             <CardContent>
                 <Paper elevation={0} component='form' onSubmit={handleSubmit}>
                     <Grid container item direction='column' rowGap={4} justifyContent='center'>
-                    
+
                         <Typography variant="h7" color="text.secondary" textAlign='center'>
                             Your verification code has already been sent.
                         </Typography>
@@ -65,6 +82,8 @@ export default React.memo(function VerifyCard() {
                             size="small"
                             fullWidth
                             required
+                            error={Boolean(error)}
+                            helperText={error}
                             InputProps={{
                                 endAdornment:
                                     <InputAdornment position="end">
@@ -74,7 +93,7 @@ export default React.memo(function VerifyCard() {
                                             onMouseDown={handleMouseDownPassword}
                                             edge="end"
                                         >
-                                            {showPassword ? <VisibilityOff /> : <Visibility />}
+                                            {showPassword ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                             }}

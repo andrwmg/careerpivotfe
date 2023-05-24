@@ -12,7 +12,7 @@ export default function Comments ({ comments, post, commentCount, setCommentCoun
                     <motion.div key={comment._id} initial={{ x: 100, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -50, opacity: 0 }} transition={{ type: 'tween', delay: .2 * (index % 10), duration: 1 }} style={{ width: '100%' }}>
                         <Stack direction='row' key={comment._id}>
                             {!initial ?
-                                <Box minWidth='32px' /> : null}
+                                <Box minWidth='8px' /> : null}
                             <Comment comment={comment} commentCount={commentCount} setCommentCount={setCommentCount} post={post} lastComment={index === comments.length - 1} />
                             {!initial ?
                                 <Box minWidth='8px' /> : null}

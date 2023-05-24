@@ -12,6 +12,7 @@ export default function ForgotForm() {
     const { setMessage, setSeverity } = useContext(ToastContext)
 
     const [email, setEmail] = useState('')
+    const [sent, setSent] = useState(false)
 
     let navigate = useNavigate()
 
@@ -25,7 +26,8 @@ export default function ForgotForm() {
             .then(({ data }) => {
                 setMessage(data.message)
                 setSeverity('success')
-                    navigate('/login')
+                setSent(true)
+                    // navigate('/login')
             })
             .catch(({response}) => {
                 setMessage(response.data.message)
@@ -36,6 +38,10 @@ export default function ForgotForm() {
     return (
         <Card sx={{ width: '100%', mx: 'auto' }}>
             <CardContent>
+            <Grid item container rowGap={4} justifyContent='center'>
+                {sent ?
+                <Typography variant='body1' textAlign='center'>Verification email sent</Typography>
+                :
                 <form onSubmit={handleSubmit}>
                     <Grid container item rowGap={4}>
                         <Typography variant="h4" color="text.secondary">
@@ -53,9 +59,11 @@ export default function ForgotForm() {
                             required
                         />
                         <Button type='submit' variant='contained' sx={{ width: '100%', mx: 'auto' }}>Submit</Button>
-                        <Button onClick={() => navigate('/login')} variant='text' sx={{ width: '100%', mx: 'auto' }}>Back to log in</Button>
                     </Grid>
-                </form>
+                </form>}
+                <Button mt={4} onClick={() => navigate('/login')} variant='text' sx={{ width: '100%', mx: 'auto' }}>Back to log in</Button>
+                </Grid>
+
             </CardContent>
         </Card>
     );

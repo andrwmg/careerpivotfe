@@ -1,13 +1,10 @@
 import styled from "@emotion/styled";
 import { CommentOutlined, FavoriteBorderOutlined } from "@mui/icons-material";
 import { Button, Grid, Skeleton, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { ToastContext } from "../contexts/ToastContext";
-import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import commentService from "../services/comment.service";
+import React, { useEffect, useState } from "react";
+import { useAuthUser } from "react-auth-kit";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
-import { GlobalContext } from "../contexts/GlobalContext";
 import formatDate from "../utils/formatDate";
 import formatCount from "../utils/formatCount";
 
@@ -33,16 +30,12 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
 
 export default function LargeCard({ post, posts, loading }) {
 
-    const [date, setDate] = useState('')
     const [status, setStatus] = useState(null)
     const [likeCount, setLikeCount] = useState(0)
-    const [commentCount, setCommentCount] = useState(0)
 
     const auth = useAuthUser()
     const navigate = useNavigate()
     const location = useLocation()
-
-    const { setMessage, setSeverity } = useContext(ToastContext)
 
     const updateLikes = () => {
         if (post.likes.length !== 0) {
@@ -73,46 +66,50 @@ export default function LargeCard({ post, posts, loading }) {
 
     return (
         <Button onClick={handleClick} variant="contained" sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1 }}>
-                <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
-                    <Stack gap={1} width='100%'>
-                        <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{!loading ? post.title : <Skeleton />}
-                        </EllipsisTypographyOne>
-                        <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                            {!loading ?
+            <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
+                <Stack gap={1} width='100%'>
+                    <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>{!loading ? post.title : <Skeleton />}
+                    </EllipsisTypographyOne>
+                    <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                        {!loading ?
                             <>
                                 {`${formatDate(post.createdAt)} by `}
                                 <i>
-                                    {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
+                                    {post.author.username}
                                 </i>
-                                {'in '}
                                 <span style={{ fontWeight: 500 }}>
-                                    {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
+                                    {!location.pathname.includes('/group') && post.group ? ` in ${post.group.title}` : ""}
                                 </span>
                             </>
                             : <Skeleton />}
-                        </EllipsisTypographyOne>
-                        <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
-                            {!loading ? post.body : <Stack><Skeleton /><Skeleton /></Stack>}
-                        </EllipsisTypographyTwo>
-                    </Stack>
-                    <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
-                        <Grid container item direction='column' xs='auto'>
-                            <Grid container item alignItems='center' gap={1}>
-                                <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
-                                <Typography variant='h4' color='black' minWidth='9.25px'>{!loading ? formatCount(likeCount) : <Skeleton />}
-                                </Typography>
-                            </Grid>
+                    </EllipsisTypographyOne>
+                    {!loading ? <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
+                        {post.body}
+                    </EllipsisTypographyTwo>
+                        :
+                        <Stack width='100%'>
+                            <Skeleton />
+                            <Skeleton />
+                        </Stack>}
+                </Stack>
+                <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
+                    <Grid container item direction='column' xs='auto'>
+                        <Grid container item alignItems='center' gap={1}>
+                            <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
+                            <Typography variant='h4' color='black' minWidth='9.25px'>{!loading ? formatCount(likeCount) : <Skeleton />}
+                            </Typography>
                         </Grid>
-                        <Grid container item direction='column' xs>
-                            <Grid container item gap={1} xs='auto' alignItems='center'>
-                                <CommentOutlined color="primary" sx={{ fontSize: '22px' }} />
-                                <Typography variant='h4' color='black' textAlign='start' minWidth='9.25px'>
-                                    {!loading ? formatCount(post.commentCount) : <Skeleton />}
-                                    </Typography>
-                            </Grid>
+                    </Grid>
+                    <Grid container item direction='column' xs>
+                        <Grid container item gap={1} xs='auto' alignItems='center'>
+                            <CommentOutlined color="primary" sx={{ fontSize: '22px' }} />
+                            <Typography variant='h4' color='black' textAlign='start' minWidth='9.25px'>
+                                {!loading ? formatCount(post.commentCount) : <Skeleton />}
+                            </Typography>
                         </Grid>
                     </Grid>
                 </Grid>
+            </Grid>
         </Button>
     )
 }

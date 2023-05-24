@@ -19,6 +19,7 @@ export default function PostPage() {
     const [post, setPost] = useState(null)
     const [comments, setComments] = useState([])
     const [commentCount, setCommentCount] = useState(0)
+    const [allLoaded, setAllLoaded] = useState(false)
     const { setMessage, setSeverity } = useContext(ToastContext)
     const { expiredLogout } = useContext(UserContext)
 
@@ -61,10 +62,13 @@ export default function PostPage() {
     }
 
     const getMoreComments = (current, count) => {
-        if (current < count) {
+        if (!allLoaded) {
         commentService.getComments(postId, {skip: comments.length, limit: 10})
         .then(({data}) => {
             console.log(data)
+            if (data.length === 0) {
+                setAllLoaded(true)
+            }
             const newComments = [...comments, ...data]
             setComments(newComments)
             commentCountRef.current += data.length
@@ -147,7 +151,7 @@ export default function PostPage() {
 
     return (
         <Grid container item height='calc(100vh - 122px)'>
-            <Grid container item direction='column' py={4} xs gap={2.5} pl={{ xs: 3, md: 6 }} pr={{ xs: 3, lg: 1.25 }} overflow='scroll' wrap='nowrap' maxHeight='100%' ref={containerRef}>
+            <Grid container item direction='column' py={4} xs gap={2.5} pl={{ xs: 1, md: 6 }} pr={{ xs: 1, lg: 1.25 }} overflow='scroll' wrap='nowrap' maxHeight='100%' ref={containerRef}>
                 <Grid item>
                     <PostCard post={post} showComments={getMoreComments} commentCount={commentCount} />
                 </Grid>

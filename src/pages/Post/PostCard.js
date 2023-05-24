@@ -108,7 +108,7 @@ export default function PostCard({ post, showComments, commentCount }) {
                             </i>
                             {'in '}
                             <span style={{ fontWeight: 500 }}>
-                                {`${!location.pathname.includes('/group') && post.career ? post.career : ""}`}
+                                {`${!location.pathname.includes('/group') && post.group ? post.group.title : ""}`}
                             </span>
                         </span>
                         : <Skeleton />}

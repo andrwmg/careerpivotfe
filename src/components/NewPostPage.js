@@ -10,30 +10,37 @@ import { useNavigate } from "react-router-dom";
 import { ToastContext } from "../contexts/ToastContext";
 import { UserContext } from "../contexts/UserContext";
 import postService from "../services/post.service";
+import GroupSelector from "./GroupSelector";
 
 export default function NewPostPage() {
     const { setMessage, setSeverity } = useContext(ToastContext);
     const { career } = useContext(UserContext);
 
-    const [newPost, setNewPost] = useState({
-        title: "",
-        body: "",
-        career,
-        // group
-    });
-
     const auth = useAuthUser();
     const navigate = useNavigate();
 
+    const [newPost, setNewPost] = useState({
+        title: "",
+        body: "",
+        group: auth().career ? auth().career : ''
+    });
+    const [errors, setErrors] = useState({group: ''})
+
+    const setGroup = (value) => {
+        setErrors({...errors, group: ''})
+        setNewPost({...newPost, group: value})
+    }
+
     const createPost = (e) => {
         e.preventDefault();
-        const obj = { ...newPost, author: auth().id };
+        if (!newPost.group) {
+            setErrors({...errors, group: 'Select a group'})
+        } else {
         postService
-            .create(obj)
+            .create({...newPost, group: newPost.group._id})
             .then(({ data }) => {
                 console.log(data)
                 navigate(`/dashboard/posts/${data.data._id}`);
-                // setNewPost({ title: "", body: "", career });
                 setMessage(data.message);
                 setSeverity("success");
             })
@@ -41,13 +48,8 @@ export default function NewPostPage() {
                 setMessage(response.data.message);
                 setSeverity("error");
             });
-    };
-
-    useEffect(() => {
-        if (career) {
-            setNewPost({ ...newPost, career })
         }
-    }, []);
+    };
 
     return (
         <Grid container item mt={4} px={{ xs: 3, sm: 6 }} flexGrow={1} width='100%'>
@@ -77,6 +79,7 @@ export default function NewPostPage() {
                             ))}
                         </Select>
                     </FormControl> */}
+                    <GroupSelector group={newPost.group} setGroup={setGroup} error={errors.group} />
                     <TextField
                         label="Title"
                         type="text"

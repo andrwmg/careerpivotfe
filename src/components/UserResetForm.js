@@ -19,6 +19,7 @@ export default function ResetForm() {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
+    const [error, setError] = useState('')
 
     let navigate = useNavigate()
 
@@ -44,6 +45,7 @@ export default function ResetForm() {
 
     const handleSubmit = async (event) => {
         event.preventDefault()
+        setError('')
         if (password === confirm) {
             let obj = { password, confirm }
             await userService.reset(obj)
@@ -57,8 +59,9 @@ export default function ResetForm() {
                     setSeverity('error')
                 })
         } else {
-            setMessage('Passwords do not match. Try again.')
-            setSeverity('error')
+            setError('Passwords do not match')
+            // setMessage('Passwords do not match. Try again.')
+            // setSeverity('error')
         }
     }
 
@@ -117,6 +120,8 @@ export default function ResetForm() {
                             size="small"
                             fullWidth
                             required
+                            error={Boolean(error)}
+                            helperText={error}
                             InputProps={{
                                 endAdornment:
                                     <InputAdornment position="end">
@@ -126,7 +131,7 @@ export default function ResetForm() {
                                             onMouseDown={handleClickShowConfirm}
                                             edge="end"
                                         >
-                                            {showConfirm ? <VisibilityOff /> : <Visibility />}
+                                            {showConfirm ? <Visibility /> : <VisibilityOff />}
                                         </IconButton>
                                     </InputAdornment>
                             }}

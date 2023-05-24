@@ -4,6 +4,10 @@ import http from "./http-common";
 class GroupDataService {
 
   getAll() {
+    return http.get('/groups/titles')
+  }
+
+  getSome() {
     const path = "/groups" + window.location.search
     return http.get(path);
   }
@@ -44,7 +48,7 @@ class GroupDataService {
   }
 
   seed(data) {
-      return http.post('/groups', data)
+      return http.post('/groups/seed', data)
   }
 
   get(groupId) {
