@@ -24,14 +24,14 @@ export default function ProfileForm() {
   const updateAuth = useUpdateReactAuthKitUserState()
 
   const [username, setUsername] = useState(auth().username)
-  const [newCareer, setNewCareer] = useState(auth().career ? auth().career : {_id: '', title: ''})
+  const [newCareer, setNewCareer] = useState(auth().career ? auth().career : null)
   const [email, setEmail] = useState(auth().email)
   const [password, setPassword] = useState('')
   const [confirm, setConfirm] = useState('')
   const [isEditing, setIsEditing] = useState(false)
   const [tempImage, setTempImage] = useState(null)
   const [loading, setLoading] = useState(false)
-  const [errors, setErrors] = useState({email: '', username: '', password: ''})
+  const [errors, setErrors] = useState({image: '', email: '', username: '', password: ''})
 
 
   // const [userImage, setUserImage] = useState((profile !== undefined) ? [JSON.parse(profile)] : null)
@@ -96,9 +96,14 @@ export default function ProfileForm() {
   }
 
   const selectFile = (event) => {
-    const file = event.target.files
-    const image = { data: file[0], url: URL.createObjectURL(file[0]) }
-    setTempImage(image)
+    const file = event.target.files[0]
+    if (file && (file.size / 1000000 > 10)) {
+      setErrors({...errors, image: 'Image is too large. Max size is 10MB'})
+    } else {
+      setErrors({...errors, image: ''})
+      const image = { data: file, url: URL.createObjectURL(file) }
+      setTempImage(image)
+    }
   }
 
   return (
@@ -115,7 +120,7 @@ export default function ProfileForm() {
               </IconButton>
             </Grid>
             <Grid container item justifyContent='start'>
-              <Grid container item direction='column' gap={2} alignItems='center' width='auto'>
+              <Grid container item direction='column' gap={2} alignItems='start' width='auto'>
                 <Grid container item width='150px' height='150px' position='relative'>
                   <label htmlFor="images">
                     <div className="form-group">
@@ -148,7 +153,7 @@ export default function ProfileForm() {
                     </div>
                   </label>
                 </Grid>
-                {/* <Typography variant='h4' fontWeight={700}>Change profile picture</Typography> */}
+                <Typography variant='h4' color='red'>{errors.image}</Typography>
               </Grid>
             </Grid>
             <Stack gap={4} py={1} width='360px' maxHeight={isEditing ? '500px' : '220px'} overflow='hidden' sx={{transition: '.3s ease-in-out'}}>

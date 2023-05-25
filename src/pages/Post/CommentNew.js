@@ -46,7 +46,7 @@ export default function CommentNew({ submitComment }) {
     }
 
     const handleRedirect = () => {
-        window.sessionStorage.setItem('redirectUrl', window.location.pathname)
+        window.sessionStorage.setItem('redirectUrl', window.location.pathname + window.location.search)
         navigate('/login')
     }
 

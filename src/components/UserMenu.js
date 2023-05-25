@@ -40,7 +40,6 @@ export default function UserMenu() {
   const handleLogout = () => {
     setAnchorEl(null)
     logout()
-    navigate('/')
 }
 
   return (
@@ -55,7 +54,7 @@ export default function UserMenu() {
             aria-haspopup="true"
             aria-expanded={open ? 'true' : undefined}
           >
-              <AvatarDefault username={auth().username} size='37px' />
+              <AvatarDefault username={auth().username} src={userImage} size='37px' />
 
               <Typography variant='h4' fontWeight={700} mx={1} color='primary' sx={{display: {xs: 'none', md: 'flex'}}}>{auth().username}</Typography>
               {open ? <KeyboardArrowUp color='primary' sx={{fontSize: '16px'}} /> : <KeyboardArrowDown color='primary' sx={{fontSize: '16px'}} />}

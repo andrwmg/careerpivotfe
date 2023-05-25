@@ -29,7 +29,7 @@ export default function Dashboard() {
         }
         window.localStorage.removeItem('message')
 
-        postService.trending(auth().career ? { group: auth().career._id } : {})
+        postService.trending(isAuthenticated() && auth().career ? { group: auth().career._id } : {})
             .then(({ data }) => {
                 setTrending(data.data)
                 setTrendingLoad(false)
@@ -38,7 +38,7 @@ export default function Dashboard() {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
-        postService.latest(auth().career ? { group: auth().career._id } : {})
+        postService.latest(isAuthenticated() && auth().career ? { group: auth().career._id } : {})
             .then(({ data }) => {
                 setLatest(data.data)
                 setFeedLoading(false)
@@ -53,7 +53,7 @@ export default function Dashboard() {
         <Grid container item gap={1} maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0}>
             <Grid container item direction='column' xs={12} minHeight='195px' rowGap={1}>
                 <Typography variant='h4' fontWeight={700} px={{ xs: 3, md: 6 }}>
-                    {`Trending ${auth().career ? `in ${auth().career.title}` : 'now'}`}
+                    {`Trending ${isAuthenticated() && auth().career ? `in ${auth().career.title}` : 'now'}`}
                 </Typography>
                 <SmallCardRow posts={trending} loading={trendingLoad} />
             </Grid>

@@ -90,11 +90,14 @@ export const UserProvider = ({ children }) => {
                             window.localStorage.setItem('groups', JSON.stringify(data.user.groups))
                         }
                         
-                        window.localStorage.setItem('message', data.message)
+                        window.sessionStorage.setItem('message', data.message)
                         const redirectUrl = window.sessionStorage.getItem('redirectUrl');
 
                         // Clear the redirect URL from storage
                         window.sessionStorage.removeItem('redirectUrl');
+
+                        setMessage(data.message)
+                        setSeverity('success')
                     
                         // Redirect the user back to the stored URL
                         if (redirectUrl) {

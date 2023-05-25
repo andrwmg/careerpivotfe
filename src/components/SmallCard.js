@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import { useAuthUser } from "react-auth-kit";
 import { useNavigate } from "react-router-dom";
 import formatCount from "../utils/formatCount";
+import { motion } from 'framer-motion'
 
 const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
@@ -57,21 +58,38 @@ export default function SmallCard({ post, group, loading }) {
 
     return (
         <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', minHeight: '144px', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
-                <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
-                    <Stack spacing={1} textAlign='start'>
-                        <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
-                            {!loading ? post.title : <Skeleton />}
-                        </EllipsisTypographyTwo>
-                        <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
-                            {!loading ? post.body : <Stack><Skeleton /><Skeleton /><Skeleton /></Stack>}
-                        </EllipsisTypographyThree>
-                    </Stack>
-
-                    <Grid container item alignItems='center' gap={1} width='100%'>
-                        <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
-                        <Typography variant='h6' color='white' minWidth='9.25px'>{!loading ? formatCount(post.likes.length) : <Skeleton />}</Typography>
-                    </Grid>
-                </Grid>
+            <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
+                {!loading ?
+                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }}>
+                        <Stack spacing={1} textAlign='start' width='100%'>
+                            <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
+                                {post.title}
+                            </EllipsisTypographyTwo>
+                            <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
+                                {post.body}
+                            </EllipsisTypographyThree>
+                        </Stack>
+                        <Grid container item alignItems='center' gap={1} width='100%'>
+                            <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
+                            <Typography variant='h6' color='white' minWidth='9.25px'>{formatCount(post.likes.length)}</Typography>
+                        </Grid>
+                    </motion.div> :
+                    <>
+                        <Stack textAlign='start' width='100%'>
+                            <EllipsisTypographyTwo variant="h4">
+                                <Skeleton />
+                            </EllipsisTypographyTwo>
+                            <Stack height='48px'>
+                                <EllipsisTypographyThree variant="p" lineHeight='16px'>
+                                    <Skeleton />
+                                    <Skeleton />
+                                    <Skeleton />
+                                </EllipsisTypographyThree>
+                            </Stack>
+                        </Stack>
+                        <Skeleton width='50px' />
+                    </>}
+            </Grid>
         </Button>
     )
 }

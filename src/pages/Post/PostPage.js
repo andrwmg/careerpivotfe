@@ -84,7 +84,7 @@ export default function PostPage() {
             const data = { body: commentBody }
             commentService.create(post._id, data)
                 .then(({ data }) => {
-                    console.log(data.data)
+                    console.log(data)
                     const newComments = [data.data, ...comments]
                     setComments(newComments)
                     setMessage(data.message)

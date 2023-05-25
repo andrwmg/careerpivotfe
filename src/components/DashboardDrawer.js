@@ -27,6 +27,7 @@ import { Stack } from '@mui/system';
 import AvatarDefault from './AvatarDefault';
 import groupService from '../services/group.service';
 import jobTitles from '../GroupSeeds';
+import { ToastContext } from '../contexts/ToastContext';
 
 
 const drawerWidth = 256;
@@ -69,6 +70,9 @@ const SearchBar = styled(OutlinedInput)(({ theme }) => ({
 }))
 
 function DashboardDrawer(props) {
+
+    const { setMessage, setSeverity } = React.useContext(ToastContext)
+
     const { window } = props;
     const [mobileOpen, setMobileOpen] = React.useState(false);
     const [value, setValue] = React.useState('1');
@@ -144,9 +148,15 @@ function DashboardDrawer(props) {
     }
 
     React.useEffect(() => {
-        setCareer(auth().career)
+        setCareer(isAuthenticated() ? auth().career : '')
         const image = localStorage.getItem('userImage')
         setUserImage(image)
+        // const greeting = sessionStorage.getItem('message')
+        // if (greeting) {
+        //     setMessage(greeting)
+        //     setSeverity('success')
+        //     localStorage.removeItem('message')
+        // }
     }, [])
 
     const drawer = (

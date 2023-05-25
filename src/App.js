@@ -33,7 +33,7 @@ const theme = createTheme({
     }
   },
   typography: {
-    fontSize: '12px',
+    fontSize: [12, '!important'],
     button: {
       textTransform: 'inherit'
     },

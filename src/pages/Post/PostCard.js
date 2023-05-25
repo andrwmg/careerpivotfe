@@ -104,12 +104,15 @@ export default function PostCard({ post, showComments, commentCount }) {
                         <span>
                             {`${formatDate(post.createdAt)} by `}
                             <i>
-                                {`${post.author.username} ${!location.pathname.includes('/group') && post.group ? 'in ' : ''}`}
+                                {post.author.username}
                             </i>
-                            {'in '}
+                            {!location.pathname.includes('/group') && post.group ?
+                            <>
+                            {' in '}
                             <span style={{ fontWeight: 500 }}>
                                 {`${!location.pathname.includes('/group') && post.group ? post.group.title : ""}`}
                             </span>
+                            </> : null}
                         </span>
                         : <Skeleton />}
                 </Typography>

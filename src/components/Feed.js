@@ -19,9 +19,9 @@ export default function Feed({ heading, posts, loading }) {
                 </Grid> : null}
             <Grid container item gap={3} maxWidth='100%' overflow='scroll' px={{ xs: 3, md: 6 }} pr={3} py={2}>
                 {array.map((post, index) => (
-                    <motion.div key={post ? post._id : index} initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{x: -50, opacity: 0}} transition={{ delay: .2 * index, duration: 1 }} style={{ width: '100%' }}>
+                    // <motion.div key={post ? post._id : index} initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{x: -50, opacity: 0}} transition={{ delay: .2 * index, duration: 1 }} style={{ width: '100%' }}>
                         <LargeCard key={!loading ? post._id : `largeCard${index}`} post={post} posts={posts} loading={loading} />
-                    </motion.div>
+                    // </motion.div>
                 ))}
             </Grid>
         </Grid>
