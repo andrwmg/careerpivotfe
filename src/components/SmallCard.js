@@ -58,9 +58,10 @@ export default function SmallCard({ post, group, loading }) {
 
     return (
         <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', minHeight: '144px', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
-            <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
                 {!loading ?
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }}>
+                                    <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
+
                         <Stack spacing={1} textAlign='start' width='100%'>
                             <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
                                 {post.title}
@@ -73,8 +74,11 @@ export default function SmallCard({ post, group, loading }) {
                             <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
                             <Typography variant='h6' color='white' minWidth='9.25px'>{formatCount(post.likes.length)}</Typography>
                         </Grid>
+                        </Grid>
                     </motion.div> :
                     <>
+                                <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
+
                         <Stack textAlign='start' width='100%'>
                             <EllipsisTypographyTwo variant="h4">
                                 <Skeleton />
@@ -88,8 +92,8 @@ export default function SmallCard({ post, group, loading }) {
                             </Stack>
                         </Stack>
                         <Skeleton width='50px' />
+                        </Grid>
                     </>}
-            </Grid>
         </Button>
     )
 }
