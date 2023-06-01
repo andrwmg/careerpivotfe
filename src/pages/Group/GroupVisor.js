@@ -59,18 +59,22 @@ export default function GroupVisor({ group }) {
     return (
         <Grid container item gap={4} alignItems='center' px={{ xs: 3, md: 6 }} bgcolor='white' color='primary.main' borderBottom='1px solid rgba(62,85,205,.2)
         ' pb={3} wrap='nowrap'>
-            <img src={career} style={{width: '65px', height: '65px'}} />
-            <Stack spacing={1}>
-                <Grid container item gap={2}>
-                <Typography variant='h2' color='black'>
-                    {group.title}
-                </Typography>
-                <Button variant={member ? "contained": "outlined"} onClick={handleClick} size='small'>{member ? 'Joined' : 'Join'}</Button>
-            </Grid>
+            <img src={career} style={{ width: '65px', height: '65px' }} />
+            <Grid container item rowGap={1} columnGap={2}>
+                <Grid container item direction='column' xs={12} sm='auto'>
+                    <Typography variant='h2' color='black'>
+                        {group.title}
+                    </Typography>
+                    </Grid>
+                    <Grid container item direction='column' xs='auto'>
+                    <Button variant={member ? "contained" : "outlined"} onClick={handleClick} size='small'>{member ? 'Joined' : 'Join'}</Button>
+                    </Grid>
+                    <Grid container item direction='column' xs='auto' sm={12}>
                 <Typography variant='body1'>
                     {`${memberCount} ${memberCount > 1 || memberCount === 0 ? 'members' : 'member'}`}
                 </Typography>
-            </Stack>
+                </Grid>
+            </Grid>
         </Grid>
     )
 }

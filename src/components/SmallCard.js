@@ -8,13 +8,11 @@ import { useNavigate } from "react-router-dom";
 import formatCount from "../utils/formatCount";
 import { motion } from 'framer-motion'
 
-const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
-    display: '-webkit-box',
-    '-webkit-box-orient': 'vertical',
-    '-webkit-line-clamp': 1,
-    WebkitLineClamp: 1,
-    lineClamp: 1,
+const Title = styled(Typography)(({ theme }) => ({
+    display: 'block',
+    maxWidth: '100%',
     overflow: 'hidden',
+    whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
 }));
 
@@ -57,42 +55,40 @@ export default function SmallCard({ post, group, loading }) {
     }
 
     return (
-        <Button onClick={handleClick} disabled={loading} sx={{ minWidth: '300px', maxWidth: '350px', minHeight: '144px', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
+        <Button onClick={handleClick} disabled={loading} sx={{ minWidth: '300px', maxWidth: '350px', height: 'fit-content', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
             {!loading ?
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{ width: '100%' }}>
-                    <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
-
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{ width: '100%', height: 'fit-content' }}>
+                    <Grid container item direction='column' gap={2}>
                         <Stack spacing={1} textAlign='start' width='100%'>
-                            <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
+                            <Title variant="h4" fontWeight={600} color='white'>
                                 {post.title && post.title}
-                            </EllipsisTypographyTwo>
+                            </Title>
                             <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
                                 {post.body && post.body}
                             </EllipsisTypographyThree>
                         </Stack>
                         <Grid container item alignItems='center' gap={1} width='100%'>
                             <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
-                            <Typography variant='h6' color='white' minWidth='9.25px'>{post.likes && formatCount(post.likes.length)}</Typography>
+                            <Typography variant='h6' color='white'>{post.likes && formatCount(post.likes.length)}</Typography>
                         </Grid>
                     </Grid>
-                </motion.div> :
-                <>
-                    <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>
-                        <Stack textAlign='start' width='100%'>
-                            <EllipsisTypographyTwo variant="h4">
-                                <Skeleton />
-                            </EllipsisTypographyTwo>
-                            <Stack height='48px'>
-                                <EllipsisTypographyThree variant="p" lineHeight='16px'>
-                                    <Skeleton />
-                                    <Skeleton />
-                                    <Skeleton />
-                                </EllipsisTypographyThree>
-                            </Stack>
-                        </Stack>
+                </motion.div>
+                :
+                <Grid container item direction='column' gap={2}>
+                    <Stack textAlign='start' width='100%' spacing={1}>
+                        <Title variant="h4" fontWeight={600}>
+                            <Skeleton />
+                        </Title>
+                        <EllipsisTypographyThree variant="p" lineHeight='16px'>
+                            <Skeleton />
+                            <Skeleton />
+                            <Skeleton />
+                        </EllipsisTypographyThree>
+                    </Stack>
+                    <Typography variant='h6'>
                         <Skeleton width='50px' />
-                    </Grid>
-                </>}
+                    </Typography>
+                </Grid>}
         </Button>
     )
 }

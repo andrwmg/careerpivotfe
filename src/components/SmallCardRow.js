@@ -28,7 +28,7 @@ export default function SmallCardRow({ posts, groups }) {
     }, [])
 
     return (
-        <Grid container item gap={3} wrap='nowrap' py={1} maxWidth='100%' overflow='scroll' px={{ xs: 3, md: 6 }} pr={3}>
+        <Grid container item gap={3} wrap='nowrap' py={1} maxWidth='100%' height='fit-content' overflow='scroll' px={{ xs: 3, md: 6 }} pr={3}>
             {array.map((item, index) => (
                 // <motion.div key={post ? post._id : index} initial={{ x: 1000, opacity: 0 }} animate={{ x: 0, opacity: 1 }} transition={{ delay: .2 * index, duration: 1 }} style={{ width: '100%' }}>
                     <SmallCard key={!loading ? item._id : `smallCard${index}`} post={item} loading={loading} />
