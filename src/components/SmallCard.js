@@ -57,7 +57,7 @@ export default function SmallCard({ post, group, loading }) {
     }
 
     return (
-        <Button onClick={handleClick} sx={{ minWidth: '300px', maxWidth: '350px', minHeight: '144px', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
+        <Button onClick={handleClick} disabled={loading} sx={{ minWidth: '300px', maxWidth: '350px', minHeight: '144px', bgcolor: 'primary.main', p: 2, borderRadius: 2, '&:hover': { bgcolor: 'primary.hover' } }}>
             {!loading ?
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{ width: '100%' }}>
                     <Grid container item direction='column' justifyContent='space-between' height='100%' gap={2}>

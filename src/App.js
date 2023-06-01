@@ -71,6 +71,9 @@ const theme = createTheme({
     subtitle1: {
       fontSize: "15px"
     },
+    subtitle2: {
+      fontSize: '12px'
+    },
     p: {
       fontSize: '12px',
     },

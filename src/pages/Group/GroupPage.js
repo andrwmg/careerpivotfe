@@ -70,7 +70,7 @@ export default function GroupPage() {
     return (
         <Grid container item gap={3} pt={4} direction='column' maxWidth={{ xs: '100%', md: 'calc(100vw - 256px)' }} zIndex={0} flexGrow={1}>
             <GroupVisor group={group} />
-            <Stack direction='row' spacing={2} px={6} sx={{'& .MuiChip-root': {px: 1}}}>
+            <Stack direction='row' spacing={2} px={{xs: 3, md: 6}} sx={{'& .MuiChip-root': {px: 1}}}>
                 <Chip label='New' variant='contained' color={active === 'New' ? 'primary' : 'default'} icon={<Schedule />} onClick={getNew} />
                 <Chip label='Top' variant='contained' color={active === 'Top' ? 'primary' : 'default'} icon={<NorthEast />} onClick={getTop} />
                 <Chip label='Hot' variant='contained' color={active === 'Hot' ? 'primary' : 'default'} icon={<Whatshot />} onClick={getHot} />

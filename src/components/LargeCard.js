@@ -28,7 +28,7 @@ const Body = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
 }));
 
-export default function LargeCard({ post, posts, loading, groups, group }) {
+export default function LargeCard({ post, posts, loading }) {
 
     const [status, setStatus] = useState(null)
     const [likeCount, setLikeCount] = useState(0)
@@ -67,15 +67,18 @@ export default function LargeCard({ post, posts, loading, groups, group }) {
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1, position: 'relative' }}>
-            {/* <Chip variant='filled' label={post.group && post.group.title} size='small' sx={{ width: 'fit-content', ml: 'auto', position: 'absolute', top: -15, left: 'auto', right: 'auto', borderRadius: 1, bgcolor: 'white' }} /> */}
+        <Button onClick={handleClick} variant="contained" disabled={loading} sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1, position: 'relative' }}>
 
             {!loading ?
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{ width: '100%' }}>
                     <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
                         <Stack gap={1} width='100%'>
+                        {/* <Chip variant='outlined' label={post.group && post.group.title} size='small' sx={{ width: 'fit-content', mr: 'auto', borderRadius: 1, bgcolor: 'white' }} /> */}
+                        {/* <Title variant='subtitle2' color='text.secondary' textAlign='start'>
+                                    {post.group && post.group.title}
+                                </Title> */}
                             <Title variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>
-                                {post ? post.title : null || group ? group.title : null}
+                                {post ? post.title : null}
                             </Title>
                             {post &&
                                 <Title variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
@@ -83,9 +86,9 @@ export default function LargeCard({ post, posts, loading, groups, group }) {
                                     <i>
                                         {post.author.username}
                                     </i>
-                                    {!location.pathname.includes('/group') && post.group ? ' in ' : ''}
+                                    {!location.pathname.includes('/groups') && post.group ? ' in ' : ''}
                                     <span style={{ fontWeight: 500 }}>
-                                        {!location.pathname.includes('/group') && post.group ? `${post.group.title}` : ""}
+                                        {!location.pathname.includes('/groups') && post.group ? `${post.group.title}` : ""}
                                     </span>
                                 </Title>
                             }

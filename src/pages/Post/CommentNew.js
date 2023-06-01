@@ -1,7 +1,7 @@
 import { Button, Card, Grid, OutlinedInput } from "@mui/material";
 import React, { useState } from "react";
 import { useIsAuthenticated } from "react-auth-kit";
-import { Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import AvatarDefault from "../../components/AvatarDefault";
 import styled from "@emotion/styled";
@@ -57,7 +57,9 @@ export default function CommentNew({ submitComment }) {
                     <form onSubmit={handleSubmit} style={{ width: '100%' }}>
 
                         <Stack direction='row' alignItems='center' gap={2} width='100%' maxHeight='100%'>
+                            <Box sx={{display: {xs: 'none', sm: 'inline-block'}}}>
                             <AvatarDefault size='51px' />
+                            </Box>
                             <CommentInput value={commentBody} onChange={handleChange} placeholder='What do you think?' required sx={{ flexGrow: 1, maxHeight: '100%' }} />
 
                             <Button variant="contained" type='submit' sx={{ px: 3, height: '51px' }}>Comment</Button>

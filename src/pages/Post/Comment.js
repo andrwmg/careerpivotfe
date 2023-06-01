@@ -12,6 +12,7 @@ import styled from "@emotion/styled";
 import formatCount from "../../utils/formatCount";
 import formatDate from "../../utils/formatDate";
 import CommentMenu from "./CommentMenu";
+import mobileDate from "../../utils/mobileDate";
 
 const ReplyInput = styled(OutlinedInput)(({ theme }) => ({
     borderRadius: '9.5px',
@@ -112,7 +113,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     }
 
     const updateComment = () => {
-        const data = {body}
+        const data = { body }
         commentService.update(post._id, comment._id, data)
             .then(({ data }) => {
                 setMessage(data.message)
@@ -128,6 +129,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     }
 
     const showReplies = () => {
+        toggleReplying()
         if (replies.length) {
             setReplies([])
         } else if (replyCount !== 0) {
@@ -146,18 +148,18 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     }
 
     const deleteComment = () => {
-        const data = {body: 'This comment was deleted by author'}
+        const data = { body: 'This comment was deleted by author' }
         commentService.update(post._id, comment._id, data)
-        .then(({data}) => {
-            setMessage(data.message)
-            setSeverity('success')
-            setNewBody(data.data.body)
-            setDeleting(false)
-        })
-        .catch(({ response }) => {
-            setMessage(response.data.message)
-            setSeverity('error')
-        })
+            .then(({ data }) => {
+                setMessage(data.message)
+                setSeverity('success')
+                setNewBody(data.data.body)
+                setDeleting(false)
+            })
+            .catch(({ response }) => {
+                setMessage(response.data.message)
+                setSeverity('error')
+            })
     }
 
     const toggleReplying = () => {
@@ -208,24 +210,6 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
     return (
         <Grid container item gap={2.5} width='100%'>
             <Card sx={{ width: '100%', flexGrow: 1, bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexDirection: 'row', display: 'flex', gap: 3 }}>
-                <Grid container item direction='column' xs='auto' alignItems='center'>
-                    <IconButton onClick={like} color='primary' sx={{ fontSize: '22px' }}>
-                        {status !== 'liked' ?
-                            <FavoriteBorderOutlined />
-                            :
-                            <Favorite />
-                        }
-                    </IconButton>
-                    <Typography variant='h5'>
-                        {formatCount(likeCount)}
-                    </Typography>
-                    <IconButton onClick={showReplies}>
-                        <CommentOutlined color='primary' sx={{ fontSize: '22px' }} />
-                    </IconButton>
-                    <Typography variant='h5'>
-                        {formatCount(replyCount)}
-                    </Typography>
-                </Grid>
                 <Grid container item direction='column' xs gap={2}>
                     <Grid container item gap={2} alignItems='center' justifyContent='space-between' width='100%'>
                         <Stack direction='row' alignItems='center' spacing={2}>
@@ -235,9 +219,10 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                             </Typography>
                             {isAuthenticated() && auth().id === comment.author._id ?
                                 <Chip variant='filled' label='you' color='primary' sx={{ borderRadius: 1, fontSize: '13px', maxHeight: '19px', px: 0, fontWeight: 600 }} /> : null}
-                            <Typography variant='subtitle1'>{formatDate(comment.createdAt)}</Typography>
+                            <Typography variant='subtitle1' sx={{ display: { xs: 'none', sm: 'inline-block' } }}>{formatDate(comment.createdAt)}</Typography>
+                            <Typography variant='subtitle1' sx={{ display: { xs: 'inline-block', sm: 'none' } }}>{mobileDate(comment.createdAt)}</Typography>
                         </Stack>
-                        <Stack direction='row' alignItems='center' spacing={2} 
+                        {/* <Stack direction='row' alignItems='center' spacing={2} 
                         // sx={{display: {xs: 'none', lg: 'inline-flex'}}}
                         >
                             {isAuthenticated() && auth().id === comment.author._id ?
@@ -267,7 +252,7 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                                     </Typography>
                                 </Stack>
                             </Button>
-                        </Stack>
+                        </Stack> */}
                         {/* <Grid item display={{xs: 'inline-flex', lg: 'none'}}>
                         <CommentMenu comment={comment} toggleEditing={toggleEditing} toggleReplying={toggleReplying} />
                         </Grid> */}
@@ -285,17 +270,42 @@ export default function Comment({ post, comment, commentCount, setCommentCount }
                             :
                             <Typography variant="body2">{newBody || comment.body}</Typography>
                         }
-                        {replying ?
-                            <Grid container item justifyContent='center' alignItems='center' xs={12} maxHeight='51px' maxWidth='100%'>
-                                <Stack direction='row' alignItems='center' gap={2} width='100%' maxHeight='51px'>
-                                    {/* <AvatarDefault size='51px' username={auth().username} /> */}
-                                    <ReplyInput value={replyBody} onChange={handleChange} placeholder='What do you think?' sx={{ flexGrow: 1, maxHeight: '51px' }} />
-
-                                    <Button variant="contained" onClick={reply} sx={{ px: 3, height: '51px' }}>Reply</Button>
-                                </Stack>
-                            </Grid>
-                            : null}
                     </Grid>
+                    <Grid container item alignItems='center' gap={2}>
+                        <Stack direction='row' alignItems='center'>
+                            <IconButton onClick={like} color='primary' sx={{ fontSize: '22px' }}>
+                                {status !== 'liked' ?
+                                    <FavoriteBorderOutlined />
+                                    :
+                                    <Favorite />
+                                }
+                            </IconButton>
+                            <Typography variant='h5'>
+                                {formatCount(likeCount)}
+                            </Typography>
+                        </Stack>
+                        <Stack direction='row' alignItems='center'>
+
+                            <Button onClick={showReplies} startIcon={<Reply color='primary' sx={{ fontSize: '22px' }} />} sx={{ fontSize: '14px' }}>
+                                {/* <Reply color='primary'  />
+                        <Typography color='primary'>Reply</Typography> */}
+                                {`Reply (${formatCount(replyCount)})`}
+                            </Button>
+                            {/* <Typography variant='h5'>
+                                {formatCount(replyCount)}
+                            </Typography> */}
+                        </Stack>
+                    </Grid>
+                    {replying ?
+                        <Grid container item justifyContent='center' alignItems='center' xs={12} maxHeight='51px' maxWidth='100%'>
+                            <Stack direction='row' alignItems='center' gap={2} width='100%' maxHeight='51px'>
+                                {/* <AvatarDefault size='51px' username={auth().username} /> */}
+                                <ReplyInput value={replyBody} onChange={handleChange} placeholder='What do you think?' sx={{ flexGrow: 1, maxHeight: '51px' }} />
+
+                                <Button variant="contained" onClick={reply} sx={{ px: 3, height: '51px' }}>Reply</Button>
+                            </Stack>
+                        </Grid>
+                        : null}
                 </Grid>
             </Card>
             {replies.length ?

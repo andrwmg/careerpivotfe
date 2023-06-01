@@ -58,7 +58,7 @@ export default function GroupVisor({ group }) {
 
     return (
         <Grid container item gap={4} alignItems='center' px={{ xs: 3, md: 6 }} bgcolor='white' color='primary.main' borderBottom='1px solid rgba(62,85,205,.2)
-        ' pb={3}>
+        ' pb={3} wrap='nowrap'>
             <img src={career} style={{width: '65px', height: '65px'}} />
             <Stack spacing={1}>
                 <Grid container item gap={2}>
