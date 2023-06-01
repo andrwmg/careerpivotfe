@@ -197,7 +197,7 @@ function DashboardDrawer(props) {
                         <CloseOutlined color='primary' sx={{ fontSize: '26px' }} />
                     </IconButton>
                     {isAuthenticated() &&
-                        <Grid container item justifyContent='center' rowGap={3}>
+                        <Grid container item justifyContent='center' rowGap={3} sx={{ '& .MuiListItemIcon-root': { pl: 2, fontSize: '20px' }, '& .MuiListItemButton-root .MuiTypography-root': { fontWeight: 500, py: .75, fontSize: '16px' } }}>
                             <Stack spacing={2}>
                                 <AvatarDefault size='72px' />
                                 <Typography variant='h4' fontWeight={700} color='primary'>{isAuthenticated() && auth().username}</Typography>

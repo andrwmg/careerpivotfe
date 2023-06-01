@@ -1,6 +1,6 @@
 import styled from "@emotion/styled";
 import { CommentOutlined, FavoriteBorderOutlined } from "@mui/icons-material";
-import { Button, Grid, Skeleton, Typography } from "@mui/material";
+import { Button, Chip, Grid, Skeleton, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { Stack } from "@mui/system";
@@ -9,17 +9,16 @@ import formatDate from "../utils/formatDate";
 import formatCount from "../utils/formatCount";
 import { motion } from 'framer-motion'
 
-const EllipsisTypographyOne = styled(Typography)(({ theme }) => ({
-    display: '-webkit-box',
-    '-webkit-box-orient': 'vertical',
-    '-webkit-line-clamp': 1,
-    WebkitLineClamp: 1,
-    lineClamp: 1,
+
+const Title = styled(Typography)(({ theme }) => ({
+    display: 'block',
+    maxWidth: '100%',
     overflow: 'hidden',
+    whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
 }));
 
-const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
+const Body = styled(Typography)(({ theme }) => ({
     display: '-webkit-box',
     '-webkit-box-orient': 'vertical',
     '-webkit-line-clamp': 2,
@@ -68,31 +67,33 @@ export default function LargeCard({ post, posts, loading, groups, group }) {
     }, [posts])
 
     return (
-        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1 }}>
+        <Button onClick={handleClick} variant="contained" sx={{ width: '100%', minHeight: '225px', bgcolor: 'rgba(232, 235, 255, 0)', color: 'black', p: 3, borderRadius: 2, border: '1px solid #E8EBFF', '&:hover': { bgcolor: 'rgba(232, 235, 255, .4)', boxShadow: 'none' }, boxShadow: '0px 0px 5px rgba(0, 0, 0, 0.2)', flexGrow: 1, position: 'relative' }}>
+            {/* <Chip variant='filled' label={post.group && post.group.title} size='small' sx={{ width: 'fit-content', ml: 'auto', position: 'absolute', top: -15, left: 'auto', right: 'auto', borderRadius: 1, bgcolor: 'white' }} /> */}
+
             {!loading ?
-                    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{width: '100%'}}>
-            <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: .5 }} style={{ width: '100%' }}>
+                    <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
                         <Stack gap={1} width='100%'>
-                            <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>
+                            <Title variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>
                                 {post ? post.title : null || group ? group.title : null}
-                            </EllipsisTypographyOne>
+                            </Title>
                             {post &&
-                            <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
-                                {`${formatDate(post.createdAt)} by `}
-                                <i>
-                                    {post.author.username}
-                                </i>
-                                {!location.pathname.includes('/group') && post.group ? ' in ' : ''}
-                                <span style={{ fontWeight: 500 }}>
-                                    {!location.pathname.includes('/group') && post.group ? `${post.group.title}` : ""}
-                                </span>
-                            </EllipsisTypographyOne>
-}
-{post &&
-                            <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
-                                {post && post.body}
-                            </EllipsisTypographyTwo>
-}
+                                <Title variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
+                                    {`${formatDate(post.createdAt)} by `}
+                                    <i>
+                                        {post.author.username}
+                                    </i>
+                                    {!location.pathname.includes('/group') && post.group ? ' in ' : ''}
+                                    <span style={{ fontWeight: 500 }}>
+                                        {!location.pathname.includes('/group') && post.group ? `${post.group.title}` : ""}
+                                    </span>
+                                </Title>
+                            }
+                            {post &&
+                                <Body variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
+                                    {post && post.body}
+                                </Body>
+                            }
                         </Stack>
                         <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
                             <Grid container item direction='column' xs='auto'>
@@ -112,29 +113,29 @@ export default function LargeCard({ post, posts, loading, groups, group }) {
                                 </Grid>
                             </Grid>
                         </Grid>
+                    </Grid>
+                </motion.div> :
+                <>
+                    <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
+                        <Stack gap={1} width='100%'>
+                            <Title variant="h3" lineHeight='30px'>
+                                <Skeleton />
+                            </Title>
+                            <Title variant='subtitle1' lineHeight='20px'>
+                                <Skeleton />
+                            </Title>
+                            <Body variant='body1'>
+                                <Skeleton />
+                                <Skeleton />
+                            </Body>
+                        </Stack>
+                        <Grid container item width='100%'>
+                            <Typography variant='h4' width='125px'>
+                                <Skeleton />
+                            </Typography>
                         </Grid>
-                    </motion.div> :
-                    <>
-                        <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
-                            <Stack gap={1} width='100%'>
-                                <EllipsisTypographyOne variant="h3" lineHeight='30px'>
-                                    <Skeleton />
-                                </EllipsisTypographyOne>
-                                <EllipsisTypographyOne variant='subtitle1' lineHeight='20px'>
-                                    <Skeleton />
-                                </EllipsisTypographyOne>
-                                <EllipsisTypographyTwo variant='body1'>
-                                    <Skeleton />
-                                    <Skeleton />
-                                </EllipsisTypographyTwo>
-                            </Stack>
-                            <Grid container item width='100%'>
-                                <Typography variant='h4' width='125px'>
-                                    <Skeleton />
-                                </Typography>
-                            </Grid>
-                        </Grid>
-                    </>}
+                    </Grid>
+                </>}
         </Button>
     )
 }
