@@ -101,12 +101,10 @@ export const UserProvider = ({ children }) => {
                     
                         // Redirect the user back to the stored URL
                         if (redirectUrl) {
-                            
-                          navigate(redirectUrl);
-
+                          window.location.replace(redirectUrl);
                         } else {
                           // If no redirect URL is found, navigate to a default route
-                          navigate('/dashboard');
+                          window.location.replace('/dashboard');
                         }
                     }
                 }

@@ -5,7 +5,7 @@ import groupService from '../services/group.service';
 import { ToastContext } from '../contexts/ToastContext';
 import { useAuthUser } from 'react-auth-kit';
 
-export default function GroupSelector({ size, label, group, setGroup, disabled, error }) {
+export default function GroupSelector({ size, label, group, setGroup, disabled, error, required }) {
 
     const { setMessage, setSeverity } = React.useContext(ToastContext)
 
@@ -33,7 +33,7 @@ export default function GroupSelector({ size, label, group, setGroup, disabled, 
                 onChange={(event, newValue) => {
                     setGroup(newValue);
                 }}
-                size={size || 'medium'}
+                size={size || 'small'}
                 inputValue={inputValue}
                 onInputChange={(event, newInputValue) => {
                     setInputValue(newInputValue);
@@ -42,8 +42,8 @@ export default function GroupSelector({ size, label, group, setGroup, disabled, 
                 options={groups}
                 getOptionLabel={(option) => option.title}
                 disabled={disabled}
-                sx={{ width: 300 }}
-                renderInput={(params) => <TextField {...params} error={Boolean(error)} helperText={error} label={label || "Group"} />}
+                renderInput={(params) => <TextField fullWidth {...params} error={Boolean(error)} helperText={error} required={required || false} label={label || "Group"} />}
+                sx={{'& .MuiAutocomplete-endAdornment': {top: 'auto'}}}
             />
         </div>
     );

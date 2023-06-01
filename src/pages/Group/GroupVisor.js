@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { ToastContext } from "../../contexts/ToastContext";
 import { UserContext } from "../../contexts/UserContext";
 import groupService from "../../services/group.service";
+import career from '../../assets/career.png'
 
 export default function GroupVisor({ group }) {
 
@@ -50,22 +51,26 @@ export default function GroupVisor({ group }) {
 
     useEffect(() => {
         if (group.members) {
-        setMemberCount(group.members.length)
-        setMember(group.members.map(member => member.user).includes(auth().id))
+            setMemberCount(group.members.length)
+            setMember(group.members.map(member => member.user).includes(auth().id))
         }
-}, [group])
+    }, [group])
 
-return (
-    <Grid container item gap={4} alignItems='start' px={{xs: 3, md: 6}} bgcolor='white' color='primary.main' justifyContent='space-between' borderBottom='1px solid #cbcbcb' py={4}>
-        <Stack spacing={1}>
-        <Typography variant='h4'>{group.title}</Typography>
-        <Typography variant='body1'>{`${memberCount} ${memberCount > 1 || memberCount === 0 ? 'members' : 'member'}`}</Typography>
-        </Stack>
-        {member ?
-            <Button variant="contained" onClick={handleClick}>Joined</Button>
-            :
-            <Button onClick={handleClick}>Join</Button>
-        }
-    </Grid>
-)
+    return (
+        <Grid container item gap={4} alignItems='center' px={{ xs: 3, md: 6 }} bgcolor='white' color='primary.main' borderBottom='1px solid rgba(62,85,205,.2)
+        ' pb={3}>
+            <img src={career} style={{width: '65px', height: '65px'}} />
+            <Stack spacing={1}>
+                <Grid container item gap={2}>
+                <Typography variant='h2' color='black'>
+                    {group.title}
+                </Typography>
+                <Button variant={member ? "contained": "outlined"} onClick={handleClick} size='small'>{member ? 'Joined' : 'Join'}</Button>
+            </Grid>
+                <Typography variant='body1'>
+                    {`${memberCount} ${memberCount > 1 || memberCount === 0 ? 'members' : 'member'}`}
+                </Typography>
+            </Stack>
+        </Grid>
+    )
 }

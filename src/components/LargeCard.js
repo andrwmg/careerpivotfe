@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import { CommentOutlined, FavoriteBorderOutlined } from "@mui/icons-material";
 import { Button, Grid, Skeleton, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import { useAuthUser } from "react-auth-kit";
+import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import { Stack } from "@mui/system";
 import { useLocation, useNavigate } from "react-router-dom";
 import formatDate from "../utils/formatDate";
@@ -29,12 +29,13 @@ const EllipsisTypographyTwo = styled(Typography)(({ theme }) => ({
     textOverflow: 'ellipsis',
 }));
 
-export default function LargeCard({ post, posts, loading }) {
+export default function LargeCard({ post, posts, loading, groups, group }) {
 
     const [status, setStatus] = useState(null)
     const [likeCount, setLikeCount] = useState(0)
 
     const auth = useAuthUser()
+    const isAuthenticated = useIsAuthenticated()
     const navigate = useNavigate()
     const location = useLocation()
 
@@ -42,7 +43,7 @@ export default function LargeCard({ post, posts, loading }) {
         if (post.likes.length !== 0) {
             setLikeCount(post.likes.length)
         }
-        if (auth() && post.likes.map(l => l.user._id).includes(auth().id)) {
+        if (isAuthenticated() && post.likes.map(l => l.user._id).includes(auth().id)) {
             setStatus('liked')
         } else {
             setStatus(null)
@@ -55,6 +56,7 @@ export default function LargeCard({ post, posts, loading }) {
 
     useEffect(() => {
         if (post) {
+            console.log(post)
             updateLikes()
         }
     }, [])
@@ -72,8 +74,9 @@ export default function LargeCard({ post, posts, loading }) {
             <Grid container item direction='column' alignItems='start' xs={12} rowGap={3} height='fit-content' maxWidth='100%'>
                         <Stack gap={1} width='100%'>
                             <EllipsisTypographyOne variant="h3" fontWeight={700} noWrap lineHeight='35px' textAlign='start'>
-                                {post.title}
+                                {post ? post.title : null || group ? group.title : null}
                             </EllipsisTypographyOne>
+                            {post &&
                             <EllipsisTypographyOne variant='subtitle1' color='text.secondary' lineHeight='20px' textAlign='start'>
                                 {`${formatDate(post.createdAt)} by `}
                                 <i>
@@ -84,16 +87,19 @@ export default function LargeCard({ post, posts, loading }) {
                                     {!location.pathname.includes('/group') && post.group ? `${post.group.title}` : ""}
                                 </span>
                             </EllipsisTypographyOne>
+}
+{post &&
                             <EllipsisTypographyTwo variant='body1' textAlign='start' lineHeight='30px' letterSpacing='-2%' minHeight='60px' width='100%'>
-                                {post.body}
+                                {post && post.body}
                             </EllipsisTypographyTwo>
+}
                         </Stack>
                         <Grid container item justifyContent='start' alignItems='start' gap={4.5} color='primary'>
                             <Grid container item direction='column' xs='auto'>
                                 <Grid container item alignItems='center' gap={1}>
                                     <FavoriteBorderOutlined color='primary' sx={{ fontSize: '22px' }} />
                                     <Typography variant='h4' color='black'>
-                                        {formatCount(likeCount)}
+                                        {post && formatCount(likeCount)}
                                     </Typography>
                                 </Grid>
                             </Grid>
@@ -101,7 +107,7 @@ export default function LargeCard({ post, posts, loading }) {
                                 <Grid container item gap={1} xs='auto' alignItems='center'>
                                     <CommentOutlined color="primary" sx={{ fontSize: '22px' }} />
                                     <Typography variant='h4' color='black' textAlign='start'>
-                                        {formatCount(post.commentCount)}
+                                        {post && formatCount(post.commentCount)}
                                     </Typography>
                                 </Grid>
                             </Grid>

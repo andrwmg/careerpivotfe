@@ -6,7 +6,7 @@ import { motion } from 'framer-motion'
 
 export default function Feed({ heading, posts, loading }) {
 
-    const array = !loading ? posts : new Array(6).fill(null)
+    const array = !loading && posts ? posts : new Array(6).fill(null)
 
     return (
         <Grid container item direction='column' xs={12}>
@@ -20,7 +20,7 @@ export default function Feed({ heading, posts, loading }) {
             <Grid container item gap={3} maxWidth='100%' overflow='scroll' px={{ xs: 3, md: 6 }} pr={3} py={2}>
                 {array.map((post, index) => (
                     // <motion.div key={post ? post._id : index} initial={{ x: 150, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{x: -50, opacity: 0}} transition={{ delay: .2 * index, duration: 1 }} style={{ width: '100%' }}>
-                        <LargeCard key={!loading ? post._id : `largeCard${index}`} post={post} posts={posts} loading={loading} />
+                        <LargeCard key={!loading && post ? post._id : `largeCard${index}`} post={post} posts={posts} loading={loading} />
                     // </motion.div>
                 ))}
             </Grid>

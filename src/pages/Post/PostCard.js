@@ -4,7 +4,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { ToastContext } from "../../contexts/ToastContext";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
 import postService from "../../services/post.service";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { GlobalContext } from "../../contexts/GlobalContext";
 import formatCount from "../../utils/formatCount";
 import formatDate from "../../utils/formatDate";
@@ -112,9 +112,9 @@ export default function PostCard({ post, showComments, commentCount }) {
                                         {!location.pathname.includes('/group') && post.group ?
                                             <>
                                                 {' in '}
-                                                <span style={{ fontWeight: 500 }}>
+                                                <Link to={`/dashboard/groups/${post.group._id}`} style={{ fontWeight: 500, textDecoration: 'none', color: 'inherit' }}>
                                                     {`${!location.pathname.includes('/group') && post.group ? post.group.title : ""}`}
-                                                </span>
+                                                </Link>
                                             </> : null}
                                     </span>
                                 </Typography>

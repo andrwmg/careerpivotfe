@@ -1,13 +1,12 @@
 import { Grid, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { useAuthUser, useIsAuthenticated } from "react-auth-kit";
-import { ToastContext } from "../contexts/ToastContext";
-import { UserContext } from "../contexts/UserContext";
-import postService from "../services/post.service";
-import Feed from "./Feed";
-import SmallCardRow from "./SmallCardRow";
+import Feed from "../../components/Feed";
+import SmallCardRow from "../../components/SmallCardRow";
+import { ToastContext } from "../../contexts/ToastContext";
+import groupService from "../../services/group.service";
 
-export default function Dashboard() {
+export default function GroupsPage() {
 
     const [trending, setTrending] = useState(null)
     const [trendingLoad, setTrendingLoad] = useState(true)
@@ -22,8 +21,16 @@ export default function Dashboard() {
     const auth = useAuthUser()
 
     useEffect(() => {
+        const result = window.localStorage.getItem('message')
+        if (result) {
+            setMessage(result)
+            setSeverity('success')
+        }
+        window.localStorage.removeItem('message')
 
-        postService.trending(isAuthenticated() && auth().career ? { group: auth().career._id } : {})
+        groupService.trending(
+            // isAuthenticated() && auth().career ? { group: auth().career._id } : 
+            {})
             .then(({ data }) => {
                 setTrending(data.data)
                 setTrendingLoad(false)
@@ -32,7 +39,9 @@ export default function Dashboard() {
                 setMessage(response.data.message)
                 setSeverity('error')
             })
-        postService.latest(isAuthenticated() && auth().career ? { group: auth().career._id } : {})
+        groupService.latest(
+            // isAuthenticated() && auth().career ? { group: auth().career._id } : 
+            {})
             .then(({ data }) => {
                 setLatest(data.data)
                 setFeedLoading(false)
@@ -49,9 +58,9 @@ export default function Dashboard() {
                 <Typography variant='h4' fontWeight={700} px={{ xs: 3, md: 6 }}>
                     {`Trending ${isAuthenticated() && auth().career ? `in ${auth().career.title}` : 'now'}`}
                 </Typography>
-                <SmallCardRow posts={trending} loading={trendingLoad} />
+                <SmallCardRow groups={trending} />
             </Grid>
-            <Feed posts={latest} loading={feedLoading} heading={isAuthenticated() ? 'Your Feed' : 'Feed'} />
+            {/* <Feed posts={latest} loading={feedLoading} heading={isAuthenticated() ? 'Your Feed' : 'Feed'} /> */}
         </Grid>
     )
 }

@@ -23,6 +23,8 @@ import GroupPage from './pages/Group/GroupPage';
 import { useAuthUser, useIsAuthenticated, useSignOut } from 'react-auth-kit';
 import ProfileForm from './components/UserProfileForm';
 import NewGroupPage from './components/GroupNew';
+import GroupsPage from './pages/Groups/GroupsPage';
+import Dashboard from './components/Dashboard';
 // import io from 'socket.io-client'
 
 const theme = createTheme({
@@ -91,8 +93,8 @@ const dark = unstable_createMuiStrictModeTheme({
 function App() {
 
   const { setMessage, setSeverity } = useContext(ToastContext)
-  const { setUserImage, setCareer} = useContext(UserContext)
-  const {messages, setMessages} = useState([])
+  const { setUserImage, setCareer } = useContext(UserContext)
+  const { messages, setMessages } = useState([])
   const navigate = useNavigate()
   const isAuthenticated = useIsAuthenticated()
   const auth = useAuthUser()
@@ -119,10 +121,10 @@ function App() {
   }
 
   const LoginRedirect = () => {
-    setMessage('You must be logged in')
-    setSeverity('error')
+    // setMessage('You must be logged in')
+    // setSeverity('error')
     if (window.location.pathname !== '/login') {
-    sessionStorage.setItem('redirectUrl', window.location.pathname)
+      sessionStorage.setItem('redirectUrl', window.location.pathname)
     }
     return <Navigate to={'/login'} />
   }
@@ -137,57 +139,57 @@ function App() {
     if (isAuthenticated()) {
       return <Navigate to='/dashboard' />
     } else {
-     return route 
-    } 
+      return route
+    }
   }
 
   const VerifyLink = () => {
     const { token } = useParams()
     userService.verify(token)
       .then(({ data }) => {
-          setMessage(data.message)
-          setSeverity('success')
-          navigate('/login')
-        })
-        .catch(({response}) => {
-          setMessage(response.data.message)
-          setSeverity('error')
-          navigate('/login')
-        })
-      }
+        setMessage(data.message)
+        setSeverity('success')
+        navigate('/login')
+      })
+      .catch(({ response }) => {
+        setMessage(response.data.message)
+        setSeverity('error')
+        navigate('/login')
+      })
+  }
 
   const ResetLink = () => {
     const { token } = useParams()
     userService.setToken(token)
       .then(({ data }) => {
         window.localStorage.setItem('returned stuff', data)
-          setMessage(data.message)
-          setSeverity('success')
-          navigate('/reset')
-        })
-        .catch(({response}) => {
-          setMessage(response.data.message)
-          setSeverity('error')
-          navigate('/login')
-        })
-      }
+        setMessage(data.message)
+        setSeverity('success')
+        navigate('/reset')
+      })
+      .catch(({ response }) => {
+        setMessage(response.data.message)
+        setSeverity('error')
+        navigate('/login')
+      })
+  }
 
-      const LogoutRedirect = () => {
-        userService.logout()
-        .then(() => {
-            signOut();
-            window.localStorage.clear()
-            setUserImage(null)
-            setCareer(null)
-            setMessage('Session expired. Log in again')
-            setSeverity('error')
-            navigate('/login')
-        })
-        .catch(({ response }) => {
-            setMessage(response.data.message)
-            setSeverity('error')
-        })
-      }
+  const LogoutRedirect = () => {
+    userService.logout()
+      .then(() => {
+        signOut();
+        window.localStorage.clear()
+        setUserImage(null)
+        setCareer(null)
+        setMessage('Session expired. Log in again')
+        setSeverity('error')
+        navigate('/login')
+      })
+      .catch(({ response }) => {
+        setMessage(response.data.message)
+        setSeverity('error')
+      })
+  }
 
   return (
     <div className="App">
@@ -205,13 +207,14 @@ function App() {
             <Route path='/verify/:token' element={DashboardRedirect(<VerifyLink />)} />
             <Route path='/verify' element={DashboardRedirect(<UserWrapper form={<UserVerifyCard />} />)} />
             <Route path='/dashboard/profile/:userId' element={<ProfileForm />} />
-            <Route path='/dashboard/posts/new' element={isAuthenticated() ? 
-                <NewPostPage /> : <LoginRedirect />} />
+            <Route path='/dashboard/posts/new' element={isAuthenticated() ?
+              <NewPostPage /> : <LoginRedirect />} />
             <Route path='/dashboard/posts/:postId' element={<PostPage />} />
-            <Route path='/dashboard/groups/new' element={isAuthenticated() ? 
-                <NewGroupPage /> : <LoginRedirect />} />
+            <Route path='/dashboard/groups' element={<GroupsPage />} />
+            <Route path='/dashboard/groups/new' element={isAuthenticated() ?
+              <NewGroupPage /> : <LoginRedirect />} />
             <Route path='/dashboard/groups/:groupId' element={<GroupPage />} />
-            <Route path='/dashboard' element={<DashboardNav />} />
+            <Route path='/dashboard' element={<Dashboard />} />
             <Route path="*" element={<HomeRedirect />} />
           </Routes>
         </DashboardDrawer>

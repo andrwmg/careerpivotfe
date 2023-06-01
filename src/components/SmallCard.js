@@ -64,15 +64,15 @@ export default function SmallCard({ post, group, loading }) {
 
                         <Stack spacing={1} textAlign='start' width='100%'>
                             <EllipsisTypographyTwo variant="h4" fontWeight={600} color='white'>
-                                {post.title}
+                                {post.title && post.title}
                             </EllipsisTypographyTwo>
                             <EllipsisTypographyThree variant="p" color='white' letterSpacing='-2%' lineHeight='16px'>
-                                {post.body}
+                                {post.body && post.body}
                             </EllipsisTypographyThree>
                         </Stack>
                         <Grid container item alignItems='center' gap={1} width='100%'>
                             <FavoriteBorderOutlined sx={{ fontSize: '18px', color: 'white' }} />
-                            <Typography variant='h6' color='white' minWidth='9.25px'>{formatCount(post.likes.length)}</Typography>
+                            <Typography variant='h6' color='white' minWidth='9.25px'>{post.likes && formatCount(post.likes.length)}</Typography>
                         </Grid>
                     </Grid>
                 </motion.div> :

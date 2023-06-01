@@ -210,6 +210,14 @@ const jobTitles = [
     "Yoga instructor",
     "Zookeeper",
     "Zoologist"
-  ];
+  ].map(job => {
+    const arr = job.split(' ')
+    const newArr = []
+    for (let a of arr) {
+      a = a.charAt(0).toUpperCase() + a.substring(1)
+      newArr.push(a)
+    }
+    return newArr.join(' ')
+  });
 
 export default jobTitles

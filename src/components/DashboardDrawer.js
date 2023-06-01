@@ -89,6 +89,7 @@ function DashboardDrawer(props) {
     const mobileMenuId = 'primary-search-account-menu-mobile';
 
     const handleChange = (event, newValue) => {
+        console.log(newValue)
         setValue(newValue);
     };
 
@@ -147,16 +148,34 @@ function DashboardDrawer(props) {
         })
     }
 
+    React.useLayoutEffect(() => {
+        switch (location.pathname) {
+            case ('/dashboard'):
+                console.log('1')
+                setValue('1')
+                break
+            case ('/dashboard/groups'):
+                console.log('2')
+                setValue('2')
+                break
+            default: console.log(location.pathname, 'default')
+        }
+        // if (location.pathname === '/dashboard/groups') {
+        //     setValue('2')
+        // }
+    }, [location.pathname])
+
     React.useEffect(() => {
         setCareer(isAuthenticated() ? auth().career : '')
         const image = localStorage.getItem('userImage')
         setUserImage(image)
-        // const greeting = sessionStorage.getItem('message')
-        // if (greeting) {
-        //     setMessage(greeting)
-        //     setSeverity('success')
-        //     localStorage.removeItem('message')
-        // }
+
+        const result = sessionStorage.getItem('message')
+        if (result) {
+            setMessage(result)
+            setSeverity('success')
+        }
+        sessionStorage.removeItem('message')
     }, [])
 
     const drawer = (
@@ -208,9 +227,9 @@ function DashboardDrawer(props) {
                         <Button onClick={handleNewPost} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
                             {isAuthenticated() ? 'Write a post' : 'Log in to write a post'}
                         </Button>
-                        <Button onClick={handleNewGroup} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
+                        {/* <Button onClick={handleNewGroup} variant='outlined' color='primary' sx={{ bgcolor: 'white' }} fullWidth>
                             Create a group
-                        </Button>
+                        </Button> */}
                     </Stack>
                     <List disablePadding sx={{ '& .MuiListItemIcon-root': { pl: 2, fontSize: '20px' }, '& .MuiListItemButton-root .MuiTypography-root': { fontWeight: 500, py: .75, fontSize: '16px' } }}>
                         {!isAuthenticated() &&
@@ -273,7 +292,7 @@ function DashboardDrawer(props) {
                                             Messages
                                         </Typography>} />
                                 </ListItemButton>
-                                {/* {auth().username === 'andrwmg' &&   
+                                {auth().username === 'andrwmg' &&   
                                 <div>
                                                              <Divider />
                             <ListItemButton onClick={handleSeed}>
@@ -285,7 +304,7 @@ function DashboardDrawer(props) {
                                         Seed Groups
                                     </Typography>} />
                             </ListItemButton>
-                            </div>} */}
+                            </div>}
                             </div>
                             : null}
                         <Divider />
@@ -416,9 +435,9 @@ function DashboardDrawer(props) {
 
                                     <TabList onChange={handleChange} aria-label="lab API tabs example">
                                         <Tab label="Home" value="1" sx={{ width: '120px' }} onClick={() => navigate('/dashboard')} />
-                                        <Tab label="Groups" value="2" sx={{ width: '120px', pl: 3 }} />
-                                        <Tab label="Jobs" value="3" sx={{ width: '120px', px: 3 }} />
-                                        <Tab label="Events" value="4" sx={{ width: '120px' }} />
+                                        <Tab label="Groups" value="2" sx={{ width: '120px', pl: 3 }} onClick={() => navigate('/dashboard/groups')} />
+                                        {/* <Tab label="Jobs" value="3" sx={{ width: '120px', px: 3 }} />
+                                        <Tab label="Events" value="4" sx={{ width: '120px' }} /> */}
                                     </TabList>
                                     {/* <Box height='5px' width='120px' position='absolute' bottom={0} left={indicatorPosition} /> */}
                                 </Grid>

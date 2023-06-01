@@ -17,6 +17,24 @@ class GroupDataService {
     return http.get(path)
   }
 
+  trending(data) {
+    const params = new URLSearchParams()
+    for (let key in data) {
+      params.append(key, data[key])
+    }
+    const path = `/groups/trending?${params.toString()}`
+    return http.get(path);
+  }
+
+  latest(data) {
+    const params = new URLSearchParams()
+    for (let key in data) {
+      params.append(key, data[key])
+    }
+    const path = `/groups/latest?${params.toString()}`
+    return http.get(path);
+  }
+
   join(groupId, data) {
     const path = `/groups/${groupId}/members`
     return http.put(path, data)
